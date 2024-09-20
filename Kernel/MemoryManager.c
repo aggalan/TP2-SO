@@ -83,7 +83,7 @@ void * mm_malloc(uint32_t size) {
 
     allocate_mem(position, required_blocks);
 
-    return mm.start + position;
+    return mm.start + position*BLOCK_SIZE;
 
 }
 
