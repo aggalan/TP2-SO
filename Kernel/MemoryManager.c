@@ -29,6 +29,7 @@ void mm_init(uint64_t mem_size, void * mem_start) {
 
     if (mem_size > HEAP_SIZE) {
         drawWordColor("NOT ENOUGH MEMORY FOR HEAP INITIALIZATION", WHITE, RED);
+        return;
     }
     mm.start = mem_start;
     mm.size = mem_size;
