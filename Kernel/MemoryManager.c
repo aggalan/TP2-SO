@@ -73,7 +73,7 @@ void allocate_mem(uint8_t index, uint32_t size) {
 }
 
 void * mm_malloc(uint32_t size) {
-    uint8_t required_blocks = (size/BLOCK_SIZE) + 1
+    uint8_t required_blocks = (size/BLOCK_SIZE) + 1;
 
     int position = find_contiguous_mem(required_blocks);
 
