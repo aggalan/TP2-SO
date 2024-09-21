@@ -3,7 +3,7 @@
 
 typedef struct memory_manager {
     void * start;
-    unint64_t size;
+    uint64_t size;
     uint32_t qty_blocks;
     uint32_t used_blocks;
     uint8_t * bitmap;
@@ -79,7 +79,7 @@ void * mm_malloc(uint32_t size) {
 
     if (position == -1) {
         drawWordColor("NOT ENOUGH MEMORY FOR ALLOCATION", WHITE, RED);
-        return NULL;
+        return 0;
     }
 
     allocate_mem(position, required_blocks);
