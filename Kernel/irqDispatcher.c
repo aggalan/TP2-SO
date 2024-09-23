@@ -9,6 +9,8 @@
 #include "syscalls.h"
 #include "keyboardDriver.h"
 #include <stdbool.h>
+#include "test_util.h"
+#include "memoryManager.h"
 
 static void int_20();
 static void int_21();
@@ -108,6 +110,13 @@ uint64_t int_80(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t
         case 22:
                 printImage();
                 break;
+		case 23:
+				char * argv[] = {"266240"};
+				test_mm(1, argv);
+				break;
+		case 24:
+				mm_status();
+				break;
 		default:
 				return 0;
 				

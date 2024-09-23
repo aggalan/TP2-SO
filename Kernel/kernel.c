@@ -7,6 +7,8 @@
 #include <videoDriver.h>
 #include <font.h>
 #include "idtLoader.h"
+#include "test_util.h"
+#include "memoryManager.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -90,6 +92,16 @@ void * initializeKernelBinary()
 int main()
 {
 	load_idt();
+
+	mm_init(0x600000, 0x1000000);
+	char * argv[] = {"266240"};
+	test_mm(1, argv);
+	mm_status();
+
+	((EntryPoint)sampleCodeModuleAddress)();
+	
+	
+	// test_mm(1, argv);
 //    int x = 1024/2;
 //    int y = 762/2;
 //    for (int i =0; i < NOSOTROS_HEIGHT * NOSOTROS_WIDTH;i++) {
@@ -112,7 +124,7 @@ int main()
 //	ncPrintHex((uint64_t)sampleCodeModuleAddress);
 //	ncNewline();
 //	ncPrint("  Calling the sample code module returned: ");
-	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
+	// ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
 	while(1);
 //	ncNewline();
 //	ncNewline();

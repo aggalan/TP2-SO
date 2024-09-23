@@ -28,7 +28,6 @@ int main() {
 	// print("This is test: %d \n", 3);
 	// print("This is test: %c\n", '4');
 
-
 	shellStart();
 	//Test if BSS is properly set up
 	if (var1 == 0 && var2 == 0)

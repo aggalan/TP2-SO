@@ -21,6 +21,8 @@ GLOBAL call_move_screen_right
 GLOBAL call_eliminator_flag_on
 GLOBAL call_eliminator_flag_off
 GLOBAL call_print_image
+GLOBAL call_test_mm
+GLOBAL call_status_mm
 
 section .text
 
@@ -81,3 +83,7 @@ call_eliminator_flag_off:
     call_handler 21
 call_print_image:
     call_handler 22
+call_test_mm:
+    call_handler 23
+call_status_mm:
+    call_handler 24

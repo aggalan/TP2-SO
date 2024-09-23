@@ -13,7 +13,7 @@ typedef struct memory_manager {
 } memory_manager;
 
 typedef enum {
-    FREE = 0,
+    FREE = 3,
     ALLOCATED = 1,
     START = 2
 } block_state;
@@ -57,9 +57,20 @@ void mm_init(void * mem_start, uint64_t mem_size) {
     mm.bitmap = mem_start;
     mm.current = 0;
 
-    // printf("Heap initialized at %p\n", mm.start);
-
     allocate_heap();
+
+    drawWord("size: ");
+    drawNumber(mm.size);
+    newline();
+    drawWord("blocks: ");
+    drawNumber(mm.qty_blocks);
+    newline();
+    drawWord("size (as parameter): ");
+    drawNumber(mem_size);
+    newline();
+    drawWord("bitmap size: ");
+    drawNumber(mm.bitmap_size);
+    newline();
 }
 
 
@@ -105,9 +116,6 @@ void * mm_malloc(uint32_t size) {
     uint32_t index = 0;
 
     if (required_blocks > mm.qty_blocks - mm.used_blocks) {
-        // for (int i = 0; i < 10000000; i++) {
-        //     printf("NOT ENOUGH MEMORY FOR ALLOCATION1 required blocks: %d, used blocks: %d, qty blocks: %d\n", required_blocks, mm.used_blocks, mm.qty_blocks);
-        // }
         drawWordColor("NOT ENOUGH MEMORY FOR ALLOCATION", WHITE, RED);
         return NULL;
     }
@@ -119,20 +127,11 @@ void * mm_malloc(uint32_t size) {
     void *ptr = find_contiguous_mem(required_blocks, &index);
 
     if (ptr == NULL) {  
-        // for (int i = 0; i < 10000000; i++) {
-        //     printf("NOT ENOUGH MEMORY FOR ALLOCATION2");
-        // }
         drawWordColor("NOT ENOUGH MEMORY FOR ALLOCATION", WHITE, RED);
         return NULL;
     }
 
-    // printf("index : %d\n", index);
-
-    // printf("bitmap: %d\n", mm.bitmap[position]);
-
     allocate_mem(index, required_blocks);
-
-    // printf("Memory allocated at %p for %d blocks for %d size\n", mm.start + index * BLOCK_SIZE, required_blocks, size);
 
     mm.used_blocks += required_blocks;
         
@@ -143,12 +142,8 @@ void * mm_malloc(uint32_t size) {
 
 void mm_free(void * ptr) {
     uint32_t index = (ptr - mm.start) / BLOCK_SIZE;
+
     if (index > mm.qty_blocks || mm.bitmap[index] != (uint32_t)START) {
-
-        // for (int i = 0; i < 10000000; i++) {
-        //     printf("INVALID MEMORY ADDRESS TO FREE");
-        // }
-
         drawWordColor("INVALID MEMORY ADDRESS TO FREE", WHITE, RED);
         return;
     }

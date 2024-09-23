@@ -31,4 +31,6 @@ void call_move_screen_right();
 void call_reg_state();
 void call_eliminator_flag_on();
 void call_eliminator_flag_off();
+void call_test_mm();
+void call_status_mm();
 #endif
