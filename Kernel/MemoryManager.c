@@ -13,7 +13,7 @@ typedef struct memory_manager {
 } memory_manager;
 
 typedef enum {
-    FREE = 3,
+    FREE = 0,
     ALLOCATED = 1,
     START = 2
 } block_state;
