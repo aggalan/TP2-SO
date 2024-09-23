@@ -58,19 +58,6 @@ void mm_init(void * mem_start, uint64_t mem_size) {
     mm.current = 0;
 
     allocate_heap();
-
-    drawWord("size: ");
-    drawNumber(mm.size);
-    newline();
-    drawWord("blocks: ");
-    drawNumber(mm.qty_blocks);
-    newline();
-    drawWord("size (as parameter): ");
-    drawNumber(mem_size);
-    newline();
-    drawWord("bitmap size: ");
-    drawNumber(mm.bitmap_size);
-    newline();
 }
 
 
