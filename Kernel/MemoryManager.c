@@ -143,7 +143,6 @@ void mm_free(void * ptr) {
 }
 
 void mm_status() {
-    void mm_status() {
     drawWord("Total Memory: ");
     drawNumber(mm.qty_blocks*BLOCK_SIZE);
     newline();
@@ -154,5 +153,3 @@ void mm_status() {
     drawNumber((mm.qty_blocks - mm.used_blocks)*BLOCK_SIZE);
     newline();
 }
-}
-
