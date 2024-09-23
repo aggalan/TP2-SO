@@ -198,6 +198,16 @@ void drawWordColor(char * string, uint64_t fColor, uint64_t bColor){
 
 }
 
+void drawNumber(int value) {
+    drawNumberColor(value, defaultFColor, defaultBColor);
+}
+
+void drawNumberColor(int value, uint64_t fcolor, uint64_t bcolor) {
+    char buff[256] = {0};
+    intToStr(value, buff, 10);
+    drawWordColor(buff, fcolor, bcolor);
+}
+
 void transparent_space() {
     if (posX >= VBE_mode_info->width-(10*size)) {
         posY += 16*size;

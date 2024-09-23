@@ -10,6 +10,7 @@
 void * mm_malloc(uint32_t size);
 void mm_free(void * ptr);
 void mm_init(void * mem_start, uint64_t mem_size );
+void mm_status();
 
 
 #endif

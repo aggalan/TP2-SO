@@ -30,7 +30,6 @@ void allocate_heap() {
 void mm_init(void * mem_start, uint64_t mem_size) {
 
     uint64_t total_size = mem_size;
-    uint32_t bitmap_size;
 
     if (mem_size > HEAP_SIZE) {
         drawWordColor("NOT ENOUGH MEMORY FOR HEAP INITIALIZATION", WHITE, RED);
@@ -44,16 +43,16 @@ void mm_init(void * mem_start, uint64_t mem_size) {
         total_size = mm.qty_blocks * BLOCK_SIZE;
     }
 
-    bitmap_size = mm.qty_blocks/BLOCK_SIZE;
+    mm.bitmap_size = mm.qty_blocks/BLOCK_SIZE;
 
     if(mm.qty_blocks % BLOCK_SIZE != 0) {
-        bitmap_size++;
+        mm.bitmap_size++;
     }
 
-    total_size += bitmap_size * BLOCK_SIZE;
+    total_size += mm.bitmap_size * BLOCK_SIZE;
 
     mm.size = total_size;
-    mm.start = mem_start +  bitmap_size * BLOCK_SIZE;
+    mm.start = mem_start +  mm.bitmap_size * BLOCK_SIZE;
     mm.used_blocks = 0;
     mm.bitmap = mem_start;
     mm.current = 0;
@@ -159,5 +158,17 @@ void mm_free(void * ptr) {
         mm.used_blocks--;
     }while (index < mm.qty_blocks && mm.bitmap[index] == (uint32_t)ALLOCATED);
 
+}
+
+void mm_status() {
+    drawWord("Total Memory: ");
+    drawNumber(mm.size - mm.bitmap_size*BLOCK_SIZE);
+    newline();
+    drawWord("Total Memory In Use: ");
+    drawNumber(mm.used_blocks*BLOCK_SIZE);
+    newline();
+    drawWord("Total Free: ");
+    drawNumber(mm.size - mm.bitmap_size*BLOCK_SIZE - mm.used_blocks*BLOCK_SIZE);
+    newline();
 }
 
