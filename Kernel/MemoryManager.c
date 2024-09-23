@@ -143,14 +143,16 @@ void mm_free(void * ptr) {
 }
 
 void mm_status() {
+    void mm_status() {
     drawWord("Total Memory: ");
-    drawNumber(mm.size - mm.bitmap_size*BLOCK_SIZE);
+    drawNumber(mm.qty_blocks*BLOCK_SIZE);
     newline();
     drawWord("Total Memory In Use: ");
     drawNumber(mm.used_blocks*BLOCK_SIZE);
     newline();
     drawWord("Total Free: ");
-    drawNumber(mm.size - mm.bitmap_size*BLOCK_SIZE - mm.used_blocks*BLOCK_SIZE);
+    drawNumber((mm.qty_blocks - mm.used_blocks)*BLOCK_SIZE);
     newline();
+}
 }
 
