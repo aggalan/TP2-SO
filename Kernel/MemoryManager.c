@@ -12,18 +12,22 @@ typedef struct memory_manager {
     uint32_t current;
 } memory_manager;
 
-typedef enum {
-    FREE = 0,
-    ALLOCATED = 1,
-    START = 2
-} block_state;
+// typedef enum {
+//     FREE = 0,
+//     ALLOCATED = 1,
+//     START = 2
+// } block_state;
+
+#define FREE 0
+#define ALLOCATED 1
+#define START 2
 
 memory_manager mm;
 
 
 void allocate_heap() {
     for (uint32_t i = 0; i < mm.qty_blocks; i++) {
-        mm.bitmap[i] =(uint32_t)FREE;
+        mm.bitmap[i] = FREE;
     }
 }
 
@@ -92,9 +96,9 @@ void * find_contiguous_mem(uint32_t req_blocks, uint32_t * index) {
 }
 
 void allocate_mem(uint32_t index, uint32_t blocks) {
-    mm.bitmap[index] = (uint32_t)START;
+    mm.bitmap[index] = START;
     for (uint32_t i = 1; i < blocks; i++) {
-        mm.bitmap[index + i] = (uint32_t)ALLOCATED;
+        mm.bitmap[index + i] = ALLOCATED;
     }
 }
 
@@ -130,7 +134,7 @@ void * mm_malloc(uint32_t size) {
 void mm_free(void * ptr) {
     uint32_t index = (ptr - mm.start) / BLOCK_SIZE;
 
-    if (index > mm.qty_blocks || mm.bitmap[index] != (uint32_t)START) {
+    if (index > mm.qty_blocks || mm.bitmap[index] != START) {
         drawWordColor("INVALID MEMORY ADDRESS TO FREE", WHITE, RED);
         return;
     }
@@ -138,7 +142,7 @@ void mm_free(void * ptr) {
     do {
         mm.bitmap[index++] = FREE;
         mm.used_blocks--;
-    }while (index < mm.qty_blocks && mm.bitmap[index] == (uint32_t)ALLOCATED);
+    }while (index < mm.qty_blocks && mm.bitmap[index] == ALLOCATED);
 
 }
 
