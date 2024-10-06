@@ -3,9 +3,16 @@
 
 #include <stdint.h>
 #include "registers.h"
+#include <sys/types.h>
+
+#define BLOCKED 0
+#define RUNNING 2
+#define READY 1
+#define ZOMBIE 3
+//#define DEAD 4
 
 typedef struct PCB{
-    uint64_t ticks
+    uint64_t ticks;
     void * process;
     uint8_t priority;
     registerStruct regstate;
@@ -21,11 +28,25 @@ typedef struct process {
     p_memory_block * heap;
     p_memory_block * stack;
     char * name;
-    char is_foreground
+    char is_foreground;
     uint8_t state;
-    uint64_t pid;
-    uint64_t parent_pid;
+    pid_t pid;
+    pid_t parent_pid;
 }process;
+
+uint64_t create_process(void * fn, uint64_t argc, char ** argv);
+
+void kill_process_pid(pid_t pid);
+
+void kill_process();
+
+void list_processes();
+
+void block_process(pid_t pid);
+
+void unblock_process(pid_t pid);
+
+int wait_pid(pid_t pid);
 
 
 #endif
