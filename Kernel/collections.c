@@ -18,13 +18,13 @@ linked_list * ll_init() {
 }
 
 
-void insert(void * elem, linked_list * list) {
+void insert(void * data, linked_list * list) {
     node_t * node = (node_t *)mm_malloc(sizeof(node_t));
     if (node == NULL) {
         //msg error
         return NULL;
     }
-    node->elem = elem;
+    node->data = data;
 
     if (list->first == NULL) {
         node->next = node;
@@ -40,13 +40,13 @@ void insert(void * elem, linked_list * list) {
     return;
 }
 
-void remove(void * elem, linked_list * list) {
+void remove(void * data, linked_list * list) {
     if (list->first == NULL) {
         return;
     }
     node_t * aux = list->first;
 
-    if (list->size == 1 && aux->elem == elem) {
+    if (list->size == 1 && aux->data == data) {
         mm_free(list->first);
         list->first = NULL;
         list->last = NULL;
@@ -56,7 +56,7 @@ void remove(void * elem, linked_list * list) {
     }
 
     while (aux != list->last) {
-        if (aux->next->elem == elem) {
+        if (aux->next->data == data) {
             if (aux->next == list->current) {
                 list->current = list->current->next;
             }

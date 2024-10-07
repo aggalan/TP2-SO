@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 typedef struct node_t {
-    void * elem;
-    node_t * next;
+    void * data;
+    struct node_t * next;
 }node_t;
 
 typedef struct linked_list{ //es circular que last apunte a first
@@ -17,8 +17,8 @@ typedef struct linked_list{ //es circular que last apunte a first
 
 linked_list * ll_init();
 
-void insert(void * elem, linked_list * list);
+void insert(void * data, linked_list * list);
 
-void remove(void * elem, linked_list * list);
+void remove(void * data, linked_list * list);
 
 #endif
