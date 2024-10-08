@@ -10,25 +10,26 @@
 #define READY 1
 #define ZOMBIE 3
 //#define DEAD 4
+#define STACK 4096
+#define MAX_PROCESSES 64
 
 typedef struct PCB{
     uint64_t ticks;
-    void * process;
+    process * process;
     uint8_t priority;
-    registerStruct regstate;
 }PCB;
 
 typedef struct p_memory_block {
     void * base_ptr;
-    uint64_t size;
-    void * current;
+//    uint64_t size;
+//    void * current;
 }p_memory_block;
 
 typedef struct process {
     p_memory_block * heap;
     p_memory_block * stack;
     char * name;
-    char is_foreground;
+//    char is_foreground;
     uint8_t state;
     pid_t pid;
     pid_t parent_pid;
@@ -47,6 +48,8 @@ void block_process(pid_t pid);
 void unblock_process(pid_t pid);
 
 int wait_pid(pid_t pid);
+
+void * create_context(void * stack_base_ptr, void * fn_ptr, uint64_t argc, char ** argv);
 
 
 #endif

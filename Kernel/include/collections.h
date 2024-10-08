@@ -3,22 +3,13 @@
 
 #include <stdint.h>
 
-typedef struct node_t {
-    void * data;
-    struct node_t * next;
-}node_t;
+typedef struct linked_list * linked_list_ADT;
 
-typedef struct linked_list{ //es circular que last apunte a first
-    node_t * first;
-    node_t * last;
-    node_t * current;
-    uint64_t size;
-}linked_list;
 
-linked_list * ll_init();
+linked_list_ADT ll_init();
 
-void insert(void * data, linked_list * list);
+void insert(void * data, linked_list_ADT list);
 
-void remove(void * data, linked_list * list);
+void remove(void * data, linked_list_ADT list);
 
 #endif

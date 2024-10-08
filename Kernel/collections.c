@@ -3,8 +3,21 @@
 #include "memoryManager.h"
 
 
-linked_list * ll_init() {
-    linked_list * list_ptr =(linked_list *)mm_malloc(sizeof(linked_list));
+typedef struct node_t {
+    void * data;
+    struct node_t * next;
+}node_t;
+
+typedef struct linked_list{ //es circular que last apunte a first
+    node_t * first;
+    node_t * last;
+    node_t * current;
+    uint64_t size;
+}linked_list;
+
+
+linked_list_ADT ll_init() {
+    linked_list_ADT list_ptr =(linked_list_ADT)mm_malloc(sizeof(linked_list));
     if (list_ptr == NULL) {
         //insertar mensaje de error
         return NULL;
@@ -18,11 +31,11 @@ linked_list * ll_init() {
 }
 
 
-void insert(void * data, linked_list * list) {
+void insert(void * data, linked_list_ADT list) {
     node_t * node = (node_t *)mm_malloc(sizeof(node_t));
     if (node == NULL) {
         //msg error
-        return NULL;
+        return;
     }
     node->data = data;
 
@@ -40,7 +53,7 @@ void insert(void * data, linked_list * list) {
     return;
 }
 
-void remove(void * data, linked_list * list) {
+void remove(void * data, linked_list_ADT list) {
     if (list->first == NULL) {
         return;
     }
@@ -62,6 +75,9 @@ void remove(void * data, linked_list * list) {
             }
             node_t *to_remove = aux->next;
             aux->next = aux->next->next;
+            if (list->last == to_remove) {
+                list->last = aux; // y ya en la linea anterior nos encargamos de que siga siendo circular la lista
+            }
             mm_free(to_remove);
             list->size--;
             return;

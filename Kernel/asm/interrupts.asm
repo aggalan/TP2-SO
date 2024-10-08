@@ -26,6 +26,7 @@ EXTERN printRegisters
 EXTERN clear
 EXTERN clearColor
 EXTERN getStackBase
+EXTERN schedule
 
 SECTION .text
 
@@ -136,6 +137,8 @@ SECTION .text
 %endmacro
 
 
+
+
 printRegistersASM:
 	mov qword rdi, registers
 	call printRegisters
@@ -203,6 +206,22 @@ picSlaveMask:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
+        pushState
+
+    	mov rdi, 0 ;llamo a timer tick (interrupcion 0)
+    	call irqDispatcher
+
+    	mov rdi, rsp
+    	call schedule ;deberia devolver el proximo stack a donde quiero ir en posicion en la que quedo antes
+    	mov rsp, rax
+
+    	; signal pic EOI (End of Interrupt)
+    	mov al, 20h
+    	out 20h, al
+
+    	popState
+    	iretq
+
 	irqHandlerMaster 0
 
 ;Keyboard
