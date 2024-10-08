@@ -211,9 +211,9 @@ _irq00Handler:
     	mov rdi, 0 ;llamo a timer tick (interrupcion 0)
     	call irqDispatcher
 
-    	mov rdi, rsp
-    	call schedule ;deberia devolver el proximo stack a donde quiero ir en posicion en la que quedo antes
-    	mov rsp, rax
+    	;mov rdi, rsp
+    	;call schedule ;deberia devolver el proximo stack a donde quiero ir en posicion en la que quedo antes
+    	;mov rsp, rax
 
     	; signal pic EOI (End of Interrupt)
     	mov al, 20h
@@ -221,8 +221,6 @@ _irq00Handler:
 
     	popState
     	iretq
-
-	irqHandlerMaster 0
 
 ;Keyboard
 _irq01Handler:

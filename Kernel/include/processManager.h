@@ -13,12 +13,6 @@
 #define STACK 4096
 #define MAX_PROCESSES 64
 
-typedef struct PCB{
-    uint64_t ticks;
-    process * process;
-    uint8_t priority;
-}PCB;
-
 typedef struct p_memory_block {
     void * base_ptr;
 //    uint64_t size;
@@ -35,7 +29,17 @@ typedef struct process {
     pid_t parent_pid;
 }process;
 
-uint64_t create_process(void * fn, uint64_t argc, char ** argv);
+typedef struct PCB{
+    uint64_t ticks;
+    process * process;
+    uint8_t priority;
+}PCB;
+
+
+
+
+
+pid_t create_process(void * fn, uint64_t argc, char ** argv);
 
 void kill_process_pid(pid_t pid);
 

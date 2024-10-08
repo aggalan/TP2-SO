@@ -1,9 +1,9 @@
 #include <stdint.h>
 #include <sys/types.h>
-#include 'include/processManager.h'
-#include 'collections.h'
-#include 'memoryManager.h'
-#include 'scheduler.h'
+#include "processManager.h"
+#include "collections.h"
+#include "memoryManager.h"
+#include "scheduler.h"
 
 static pid_t pid = 0;
 
@@ -17,18 +17,18 @@ pid_t create_process(void * fn, uint64_t argc, char ** argv) {
     pcb->priority = 1;
     process * p = (process *)mm_malloc(sizeof(process));
     if (p == NULL) {
-        rturn -1;
+        return -1;
     }
     p->name = argv[0];
     p->state = READY;
     p->pid = pid++;
-    p->parent_pid = runnig_process();
+    p->parent_pid = running_process();
 
     p_memory_block * heap = (p_memory_block *)mm_malloc(sizeof(p_memory_block));
     if (heap == NULL) {
         return -1;
     }
-    heap->base_ptr = fn; //deberia hacer un malloc? no tengo idea
+    heap->base_ptr = fn;
 
     p->heap = heap;
 

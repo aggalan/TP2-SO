@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include "collections.h"
-#include "interrupts.asm"
 #include "processManager.h"
 #include <sys/types.h>
 
@@ -27,4 +26,12 @@ void add_process(PCB * pcb) {
 
 void remove_process(pid_t pid) {
     remove(pid, processes);
+}
+
+pid_t running_process() {
+    return 1;
+}
+
+void schedule(void * current_stack_ptr) {
+    return;
 }

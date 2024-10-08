@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <sys/types.h>
-#include 'processManager.h'
+#include "processManager.h"
 
 void my_nice(pid_t pid, int priority);
 
