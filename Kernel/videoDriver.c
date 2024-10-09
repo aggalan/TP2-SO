@@ -60,7 +60,7 @@ uint64_t defaultFColor = WHITE;
 uint64_t defaultBColor = BLACK;
 
 void putPixel(uint64_t hexColor, uint64_t x, uint64_t y) {
-    uint8_t * framebuffer = (uint8_t *) VBE_mode_info->framebuffer;
+    uint8_t * framebuffer = (uint8_t *)(uintptr_t) VBE_mode_info->framebuffer;
     uint64_t offset = (x * ((VBE_mode_info->bpp)/8)) + (y * VBE_mode_info->pitch);
     framebuffer[offset]     =  (hexColor) & 0xFF;
     framebuffer[offset+1]   =  (hexColor >> 8) & 0xFF; 
@@ -101,7 +101,6 @@ void drawCharColor(char c, uint64_t fcolor, uint64_t bcolor) {
 
     for (cy = 0; cy < 16; cy++) {
         int maskCheck = 0x01;
-        int maskCheck2 = 0x01;
         for (cx = 0; cx < 10; cx++) {
             if (((font[(pos*32) + (2*cy)] & (maskCheck << cx)) != 0) && cx < 8) {
 
@@ -248,7 +247,7 @@ void backspace() {
 }
 
 void backspaceMove() {
-    uint8_t * framebuffer = (uint8_t *) VBE_mode_info->framebuffer;
+    uint8_t * framebuffer = (uint8_t *) (uintptr_t) VBE_mode_info->framebuffer;
 
     for (int i = posY; i < VBE_mode_info->height && i < posY + 3*16*size; i++) {
         for (int j = MARGIN; j < VBE_mode_info->width-MARGIN; j++) {
@@ -325,7 +324,7 @@ void clearColor(uint64_t color){
 void moveScreen() {
     posY -= 16*size;
 
-    uint8_t * framebuffer = (uint8_t *) VBE_mode_info->framebuffer;
+    uint8_t * framebuffer = (uint8_t *) (uintptr_t) VBE_mode_info->framebuffer;
 
     for (int i = MARGIN + (16*size); i < VBE_mode_info->height + 16; i++) {
         for (int j = MARGIN; j < VBE_mode_info->width; j++) {
@@ -441,7 +440,7 @@ void moveRight() {
 
 void moveScreenRight() {
     cursorOff();
-    uint8_t * framebuffer = (uint8_t *) VBE_mode_info->framebuffer;
+    uint8_t * framebuffer = (uint8_t *) (uintptr_t) VBE_mode_info->framebuffer;
     for (int i = (VBE_mode_info->height >posY + 3*16*size)? posY + 3*16*size:VBE_mode_info->height; i > posY; i--) {
         for (int j = VBE_mode_info->width-MARGIN-5; j >= MARGIN; j--) {
 
@@ -469,7 +468,7 @@ void moveScreenRight() {
 
 uint64_t pixelColorAt(uint32_t x, uint32_t y) {
 
-    uint8_t * framebuffer = (uint8_t *) VBE_mode_info->framebuffer;
+    uint8_t * framebuffer = (uint8_t *)(uintptr_t) VBE_mode_info->framebuffer;
     uint64_t offset = (x * ((VBE_mode_info->bpp)/8)) + (y * VBE_mode_info->pitch);
 
     uint8_t blue = framebuffer[offset];

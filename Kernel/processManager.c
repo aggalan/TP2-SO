@@ -35,6 +35,8 @@ pid_t create_process(void * fn, uint64_t argc, char ** argv) {
     p_memory_block * stack = (p_memory_block *)mm_malloc(sizeof(p_memory_block));
     if (stack == NULL) {
         return -1;
+
+    return p->pid;
     }
 
     void * stack_base = mm_malloc(STACK);

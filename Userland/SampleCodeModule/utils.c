@@ -76,7 +76,7 @@ void print( char * fmt, ...){
             fmt++;
             switch(*fmt){
                 case 'd':{
-                    int d = va_arg(args, int *) ;
+                    int d = va_arg(args, int) ;
                     char buff[BUFFERLIMIT];
                     intToStr(d, buff, 10);
                     call_sys_write(buff, strlen(buff), STDOUT);

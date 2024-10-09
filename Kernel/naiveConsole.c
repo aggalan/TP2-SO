@@ -75,7 +75,7 @@ void ncClear()
 
 }
 void ncBackspace(){
-	if(currentVideo >= 0xB8002){
+	if(currentVideo >= (uint8_t *) 0xB8002){
 		currentVideo -= 2;
 		*currentVideo = ' ';
 	}

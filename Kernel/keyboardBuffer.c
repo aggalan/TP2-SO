@@ -2,7 +2,6 @@
 #include <keyboardBuffer.h>
 #include <videoDriver.h>
 #include "keyboardBuffer.h"
-#include "keyboardDriver.h"
 
 static struct kbuff buff = {0, 0, {'\0'}};
 static buffer_ptr ptr = &buff;

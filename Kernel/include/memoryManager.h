@@ -5,7 +5,6 @@
 
 #define HEAP_SIZE       0x10000000  // 256MB heap REVISAR
 #define BLOCK_SIZE      32        //  bytes per block
-#define NULL 0
 
 
 void * mm_malloc(uint32_t size);

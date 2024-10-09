@@ -2,6 +2,7 @@
 #include "collections.h"
 #include "processManager.h"
 #include <sys/types.h>
+#include "interrupts.h"
 
 
 linked_list_ADT processes;
@@ -17,7 +18,7 @@ void scheduler_init() {
     processes = ll_init();
 
     char * argv[] = {"idle"};
-    create_process((uint64_t)idle, 0, argv);
+    create_process((uint64_t) &idle, 0, argv);
 }
 
 void add_process(PCB * pcb) {
