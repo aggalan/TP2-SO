@@ -7,6 +7,8 @@
 
 
 linked_list_ADT processes;
+PCB * idle_p;
+int idle_has_run = 1;
 
 void idle() {
     while(1) {
@@ -18,8 +20,7 @@ void scheduler_init() {
 
     processes = ll_init();
 
-    char * argv[] = {"idle"};
-    create_process(idle, 0, argv);
+    idle_p = create_idle_process(idle);
 }
 
 void add_process(PCB * pcb) { //ver bien y tema idle
@@ -34,22 +35,30 @@ pid_t running_process() {
     return processes->current->data->process->pid; // ver si pasamos el parent_pid como argumento o hacemos esto. ver si no se caga en ningun caso
 }
 
-void update_all_stack_base(PCB * pcb, void * new_stack_ptr) { //para prioridad por ahora estan todas en uno y no cambia pero a futuro
-    uint8_t priority = 0;
-    node_t * aux = processes->current;
-    while(priority < pcb->priority) {
-        if (aux->data == pcb) { //puede q el proceso no exista? considerar, creo que no
-            aux->data->process->stack->current = new_stack_ptr;
-            priority++;
-        }
-        aux = aux->next;
-    }
-}
-
 void * schedule(void * current_stack_ptr) {
-    //depende como manejemos lo de idle aca faltan cosas o no, decidir
-    update_all_stack_base(processes->current->data, current_stack_ptr);
-    processes->current = processes->current->next;
+
+    if (processes->size == 0) {
+        idle_has_run = 1;
+        idle_p->process->stack->current = current_stack_ptr;
+        return idle_p->process->stack->current;
+    }
+
+    if (!idle_has_run) {
+        processes->current->data->process->stack->current = current_stack_ptr;
+    } else {
+        idle_p->process->stack->current = current_stack_ptr;
+    }
+
+    node_t * aux = processes->current;
+    do {
+        processes->current = processes->current->next;
+    }while(processes->current->next->data->process->state != READY && processes->current != aux);
+    if (processes->current == aux) {
+        idle_has_run = 1;
+        return idle_p->process->stack->current;
+    }
+
+    idle_has_run = 0;
     return processes->current->data->process->stack->current;
 }
 
