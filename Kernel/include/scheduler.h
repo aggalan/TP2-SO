@@ -7,17 +7,13 @@
 
 void my_nice(pid_t pid, int priority);
 
-void scheduler_init();
-
-void schedule(void * current_stack_ptr); // no hace falta definirla creo porq solo se llama desde asm
+void  scheduler_init();
 
 void add_process(PCB * pcb);
 
 void remove_process(pid_t pid);
 
 pid_t running_process();
-
-
 
 
 #endif

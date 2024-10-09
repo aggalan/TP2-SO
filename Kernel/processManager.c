@@ -44,14 +44,17 @@ pid_t create_process(void * fn, uint64_t argc, char ** argv) {
         return -1;
     }
     stack_base += STACK - 1;
-
     stack->base_ptr = stack_base;
+    stack->current = create_context(stack->base_ptr, heap->base_ptr); // aca se va a mover el rsp asi q me devuelve el current
 
     p->stack = stack;
 
+
     pcb->process = p;
 
-    add_process(pcb); //faltaria aca hacer el stack frame
+    add_process(pcb);
+
+    return p->pid;
 }
 
 void kill_process_pid(pid_t pid) {

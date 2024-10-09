@@ -1,19 +1,8 @@
 #include <stdint.h>
 #include "collections.h"
 #include "memoryManager.h"
-
-
-typedef struct node_t {
-    void * data;
-    struct node_t * next;
-}node_t;
-
-typedef struct linked_list{ //es circular que last apunte a first
-    node_t * first;
-    node_t * last;
-    node_t * current;
-    uint64_t size;
-}linked_list;
+#include <sys/types.h>
+#include "processManager.h"
 
 
 linked_list_ADT ll_init() {
@@ -31,7 +20,7 @@ linked_list_ADT ll_init() {
 }
 
 
-void insert(void * data, linked_list_ADT list) {
+void insert(PCB * data, linked_list_ADT list) {
     node_t * node = (node_t *)mm_malloc(sizeof(node_t));
     if (node == NULL) {
         //msg error
@@ -53,13 +42,13 @@ void insert(void * data, linked_list_ADT list) {
     return;
 }
 
-void remove(void * data, linked_list_ADT list) {
+void remove(pid_t pid, linked_list_ADT list) {
     if (list->first == NULL) {
         return;
     }
     node_t * aux = list->first;
 
-    if (list->size == 1 && aux->data == data) {
+    if (list->size == 1 && aux->data->process->pid == pid) { //revisar pero creo que deberiamos buscar por pid
         mm_free(list->first);
         list->first = NULL;
         list->last = NULL;
@@ -69,7 +58,7 @@ void remove(void * data, linked_list_ADT list) {
     }
 
     while (aux != list->last) {
-        if (aux->next->data == data) {
+        if (aux->next->data->process->pid == pid) {
             if (aux->next == list->current) {
                 list->current = list->current->next;
             }

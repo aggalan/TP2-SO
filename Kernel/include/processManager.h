@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "registers.h"
 #include <sys/types.h>
+#include "process.h"
 
 #define BLOCKED 0
 #define RUNNING 2
@@ -16,7 +17,7 @@
 typedef struct p_memory_block {
     void * base_ptr;
 //    uint64_t size;
-//    void * current;
+    void * current;
 }p_memory_block;
 
 typedef struct process {
@@ -53,7 +54,6 @@ void unblock_process(pid_t pid);
 
 int wait_pid(pid_t pid);
 
-void * create_context(void * stack_base_ptr, void * fn_ptr, uint64_t argc, char ** argv);
-
+//void * create_context(void * stack_base_ptr, void * fn_ptr, uint64_t argc, char ** argv); //esto hace colombia creo y no se para que los otros 2 argumentos
 
 #endif
