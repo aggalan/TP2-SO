@@ -24,7 +24,7 @@ pid_t create_process(void * fn, uint64_t argc, char ** argv) {
     }
 
     //Por ahora todos hijos del proceso init hasta que implemetemos fork
-    p->parent_pid = 0;
+    p->parent_pid = running_process();
 
 
     //Implementar strlen y strcpy
@@ -34,7 +34,7 @@ pid_t create_process(void * fn, uint64_t argc, char ** argv) {
         free(p);
         return -1;
     }
-    
+
     strcpy(p->name, argv[0]);
 
     p->state = READY;
