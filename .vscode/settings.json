@@ -3,6 +3,7 @@
         "shell.h": "c",
         "keyboarddriver.h": "c",
         "cstring": "c",
-        "locale": "c"
+        "locale": "c",
+        "usersyscalls.h": "c"
     }
 }

@@ -23,6 +23,7 @@ GLOBAL call_eliminator_flag_off
 GLOBAL call_print_image
 GLOBAL call_test_mm
 GLOBAL call_status_mm
+GLOBAL call_test_processes
 
 section .text
 
@@ -87,3 +88,5 @@ call_test_mm:
     call_handler 23
 call_status_mm:
     call_handler 24
+call_test_processes:
+    call_handler 26

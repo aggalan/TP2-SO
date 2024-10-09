@@ -6,13 +6,19 @@
 #include <sys/types.h>
 #include "process.h"
 
-#define BLOCKED 0
-#define RUNNING 2
-#define READY 1
-#define ZOMBIE 3
-#define KILLED 4
+// #define BLOCKED 0
+// #define RUNNING 2
+// #define READY 1
+// #define ZOMBIE 3
+// #define KILLED 4
 #define STACK 4096
 #define MAX_PROCESSES 64
+
+enum State { BLOCKED,
+            READY,
+            RUNNING,
+            ZOMBIE,
+             KILLED };
 
 typedef struct p_memory_block {
     void * base_ptr;
@@ -43,7 +49,7 @@ typedef struct PCB{
 pid_t create_process(void * fn, uint64_t argc, char ** argv);
 PCB * create_idle_process();
 
-void kill_process_pid(pid_t pid);
+pid_t kill_process_pid(pid_t pid);
 
 void kill_process();
 

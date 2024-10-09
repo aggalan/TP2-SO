@@ -130,16 +130,18 @@ PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
     return pcb;
 }
 
-void kill_process_pid(pid_t pid) {
+pid_t kill_process_pid(pid_t pid) {
     PCB * pcb = find_process(pid);
     if (pcb == NULL) {
-        return;
+        return -1;
     }
     int state = pcb->process->state;
     pcb->process->state = KILLED;
     if (state == RUNNING) {
         int_20();
     }
+
+    return pcb->process->pid;
 }
 
 pid_t block_process(pid_t pid){

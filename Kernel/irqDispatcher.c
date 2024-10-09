@@ -11,6 +11,10 @@
 #include <stdbool.h>
 #include "test_util.h"
 #include "memoryManager.h"
+#include "processManager.h"
+#include "test_processes.h"
+#include <stddef.h>
+
 
 void int_20();
 static void int_21();
@@ -116,6 +120,10 @@ uint64_t int_80(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t
 				break;
 		case 24:
 				mm_status();
+				break;
+		case 26:
+				char * argv2[] = {"1"};
+				test_processes(1, argv2);
 				break;
 		default:
 				return 0;
