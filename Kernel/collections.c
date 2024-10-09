@@ -49,7 +49,7 @@ void remove(pid_t pid, linked_list_ADT list) {
     node_t * aux = list->first;
 
     if (list->size == 1 && aux->data->process->pid == pid) { //revisar pero creo que deberiamos buscar por pid
-        mm_free(list->first);
+        free_node(list->first);
         list->first = NULL;
         list->last = NULL;
         list->current = NULL;
@@ -67,7 +67,7 @@ void remove(pid_t pid, linked_list_ADT list) {
             if (list->last == to_remove) {
                 list->last = aux; // y ya en la linea anterior nos encargamos de que siga siendo circular la lista
             }
-            mm_free(to_remove);
+            free_node(to_remove);
             list->size--;
             return;
         }
@@ -90,3 +90,15 @@ PCB * find(pid_t pid, linked_list_ADT list) {
     return NULL;
 }
 
+void free_node(node_t * node) { //revisar
+    mm_free(node->data->process->stack->base_ptr);
+    mm_free(node->data->process->stack->current);
+    mm_free(node->data->process->heap->base_ptr);
+    mm_free(node->data->process->heap->current);
+    mm_free(node->data->process->stack);
+    mm_free(node->data->process->heap);
+    mm_free(node->data->process->name);
+    mm_free(node->data->process);
+    mm_free(node->data);
+    mm_free(node);
+}

@@ -49,9 +49,9 @@ void kill_process();
 
 void list_processes();
 
-void block_process(pid_t pid);
+pid_t block_process(pid_t pid);
 
-void unblock_process(pid_t pid);
+pid_t unblock_process(pid_t pid);
 
 int wait_pid(pid_t pid);
 

@@ -29,4 +29,6 @@ void remove(pid_t pid, linked_list_ADT list);
 
 PCB * find(pid_t pid, linked_list_ADT list);
 
+void free_node(node_t * node);
+
 #endif

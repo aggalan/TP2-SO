@@ -82,18 +82,6 @@ void * schedule(void * current_stack_ptr) {
     return processes->current->data->process->stack->current;
 }
 
-void free_node(node_t * node) { //revisar
-    mm_free(node->data->process->stack->base_ptr);
-    mm_free(node->data->process->stack->current);
-    mm_free(node->data->process->heap->base_ptr);
-    mm_free(node->data->process->heap->current);
-    mm_free(node->data->process->stack);
-    mm_free(node->data->process->heap);
-    mm_free(node->data->process->name);
-    mm_free(node->data->process);
-    mm_free(node->data);
-    mm_free(node);
-}
 
 
 

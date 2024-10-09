@@ -12,7 +12,7 @@
 #include "test_util.h"
 #include "memoryManager.h"
 
-static void int_20();
+void int_20();
 static void int_21();
 static uint64_t int_80(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10);
 typedef void (*InterruptHandler)(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10);

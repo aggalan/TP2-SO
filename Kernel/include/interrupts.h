@@ -23,6 +23,7 @@ void _exception0Handler(void);
 void _exception6Handler(void);
 void printRegistersASM();
 void saveRegState();
+void int_20();
 
 void _cli(void);
 

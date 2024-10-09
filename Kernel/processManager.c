@@ -44,17 +44,6 @@ PCB * create_idle_process(){
     return create_pcb(idle, 0, argv);
 }
 
-void kill_process_pid(pid_t pid) {
-    PCB * pcb = find_process(pid);
-    if (pcb == NULL) {
-        return;
-    }
-    int state = pcb->process->state;
-    pcb->process->state = KILLED;
-    if (state == RUNNING) {
-        //llamar a timer tick
-    }
-}
 
 PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
 
@@ -139,5 +128,39 @@ PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
     pcb->process = p;
 
     return pcb;
+}
+
+void kill_process_pid(pid_t pid) {
+    PCB * pcb = find_process(pid);
+    if (pcb == NULL) {
+        return;
+    }
+    int state = pcb->process->state;
+    pcb->process->state = KILLED;
+    if (state == RUNNING) {
+        int_20();
+    }
+}
+
+pid_t block_process(pid_t pid){
+    PCB * pcb = find_process(pid);
+    if (pcb == NULL) {
+        return -1;
+    }
+    if(pcb->process->state == RUNNING || pcb->process->state == READY){
+        pcb->process->state = BLOCKED;
+    }
+    return pcb->process->pid;
+}
+
+pid_t unblock_process(pid_t pid){
+    PCB * pcb = find_process(pid);
+    if (pcb == NULL) {
+        return -1;
+    }
+    if(pcb->process->state == BLOCKED){
+        pcb->process->state = READY;
+    }
+    return pcb->process->pid;
 }
 
