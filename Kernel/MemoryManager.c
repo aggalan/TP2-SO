@@ -81,6 +81,7 @@ void * find_contiguous_mem(uint32_t req_blocks, uint32_t * index) {
                 *index = mm.current;
             }
             cont_blocks++;
+            
          } else {
             cont_blocks = 0;
         }
@@ -88,6 +89,10 @@ void * find_contiguous_mem(uint32_t req_blocks, uint32_t * index) {
         mm.current = (mm.current + 1) % mm.qty_blocks;
 
         if (mm.current == start) {
+            if(cont_blocks == req_blocks)
+            {
+                return (void *)(mm.start + (*index) * BLOCK_SIZE);
+            }
             return NULL; 
         }
     }
