@@ -76,3 +76,17 @@ void remove(pid_t pid, linked_list_ADT list) {
     return;
 }
 
+PCB * find(pid_t pid, linked_list_ADT list) {
+    if (list->size == 0) {
+        return NULL;
+    }
+    node_t * aux = list->current;
+    do {
+        if (aux->data->process->pid == pid) {
+            return aux->data;
+        }
+        aux = aux->next;
+    }while (aux != list->current);
+    return NULL;
+}
+

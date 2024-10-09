@@ -27,4 +27,6 @@ void insert(PCB * data, linked_list_ADT list);
 
 void remove(pid_t pid, linked_list_ADT list);
 
+PCB * find(pid_t pid, linked_list_ADT list);
+
 #endif

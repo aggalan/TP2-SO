@@ -15,5 +15,8 @@ void remove_process(pid_t pid);
 
 pid_t running_process();
 
+PCB * find_process(pid_t pid);
+
+PCB * get_current();
 
 #endif

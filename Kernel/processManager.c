@@ -45,7 +45,15 @@ PCB * create_idle_process(){
 }
 
 void kill_process_pid(pid_t pid) {
-    remove_process(pid); //aca faltaria todo
+    PCB * pcb = find_process(pid);
+    if (pcb == NULL) {
+        return;
+    }
+    int state = pcb->process->state;
+    pcb->process->state = KILLED;
+    if (state == RUNNING) {
+        //llamar a timer tick
+    }
 }
 
 PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
@@ -75,7 +83,9 @@ PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
 
     p->pid = pid++;
 
-    p->parent_pid = running_process();
+//    p->parent_pid = running_process();
+
+    p->parent_pid = 0;
 
     p->heap = (p_memory_block *)mm_malloc(sizeof(p_memory_block));
     if (p->heap == NULL) {

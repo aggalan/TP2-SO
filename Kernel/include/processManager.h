@@ -10,7 +10,7 @@
 #define RUNNING 2
 #define READY 1
 #define ZOMBIE 3
-//#define DEAD 4
+#define KILLED 4
 #define STACK 4096
 #define MAX_PROCESSES 64
 
