@@ -18,8 +18,6 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
   uint64_t max_processes;
   char *argvAux[] = {0};
 
-  drawWord("Starting\n");
-
   if (argc != 1)
     return -1;
 
