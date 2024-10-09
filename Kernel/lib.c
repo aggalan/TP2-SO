@@ -68,3 +68,22 @@ void nanoms(int ns) {
 	int startTime = ticks_elapsed();
 	while (ns > ticks_elapsed()*18000 - startTime*18000)_hlt();
 };
+
+int strlen(char * str){
+    int i = 0;
+    while(str[i] != '\0'){
+        i++;
+    }
+    return i;
+};
+
+int strcpy(char * dest, const char * src){
+    int i = 0;
+    while (src[i])
+    {
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = 0;
+    return i;
+}

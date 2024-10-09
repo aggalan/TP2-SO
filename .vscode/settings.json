@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "shell.h": "c",
-        "keyboarddriver.h": "c"
+        "keyboarddriver.h": "c",
+        "cstring": "c",
+        "locale": "c"
     }
 }

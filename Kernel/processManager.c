@@ -4,6 +4,7 @@
 #include "collections.h"
 #include "memoryManager.h"
 #include "scheduler.h"
+#include "lib.h"
 
 static pid_t pid = 0;
 
@@ -14,41 +15,84 @@ pid_t create_process(void * fn, uint64_t argc, char ** argv) {
     if (pcb == NULL) {
         return -1;
     }
+
     pcb->priority = 1;
+
     process * p = (process *)mm_malloc(sizeof(process));
     if (p == NULL) {
         return -1;
     }
-    p->name = argv[0];
+
+    //Por ahora todos hijos del proceso init hasta que implemetemos fork
+    p->parent_pid = 0;
+
+
+    //Implementar strlen y strcpy
+
+    p->name = mm_malloc((size_t)strlen(argv[0]) + 1);
+    if (p->name == NULL) {
+        free(p);
+        return -1;
+    }
+    
+    strcpy(p->name, argv[0]);
+
     p->state = READY;
+
     p->pid = pid++;
+
     p->parent_pid = running_process();
 
-    p_memory_block * heap = (p_memory_block *)mm_malloc(sizeof(p_memory_block));
-    if (heap == NULL) {
+    p->heap = (p_memory_block *)mm_malloc(sizeof(p_memory_block));
+    if (p->heap == NULL) {
+        free(p->name);
+        free(p);
         return -1;
     }
-    heap->base_ptr = fn;
 
-    p->heap = heap;
-
-    p_memory_block * stack = (p_memory_block *)mm_malloc(sizeof(p_memory_block));
-    if (stack == NULL) {
-        return -1;
-
-    return p->pid;
-    }
-
-    void * stack_base = mm_malloc(STACK);
-    if (stack_base == NULL) {
+    p->heap->base_ptr = mm_malloc(HEAP_SIZE);
+    if (p->heap->base_ptr == NULL) {
+        free(p->heap);
+        free(p->name);
+        free(p);
         return -1;
     }
-    stack_base += STACK - 1;
-    stack->base_ptr = stack_base;
-    stack->current = create_context(stack->base_ptr, heap->base_ptr); // aca se va a mover el rsp asi q me devuelve el current
 
-    p->stack = stack;
+    p->heap->base_ptr = fn;
 
+    p->heap->current = (uintptr_t *) p->heap->base_ptr;
+    if(p->heap->current == NULL) {
+        free(p->heap->base_ptr);
+        free(p->heap);
+        free(p->name);
+        free(p);
+        return -1;
+    }
+
+    p->stack = (p_memory_block *)mm_malloc(sizeof(p_memory_block));
+    if (p->stack == NULL) {
+        free(p->heap->base_ptr);
+        free(p->heap);
+        free(p->name);
+        free(p);
+        return -1;
+
+    return -1;
+    }
+
+    p->stack->base_ptr = mm_malloc(STACK);
+    if (p->stack->base_ptr == NULL) {
+        free(p->stack);
+        free(p->heap->base_ptr);
+        free(p->heap);
+        free(p->name);
+        free(p);
+        return -1;
+    }
+
+    p->stack->base_ptr += STACK - 1;
+
+    p->stack->current = create_context(p->stack->base_ptr, p->heap->base_ptr); // aca se va a mover el rsp asi q me devuelve el current
 
     pcb->process = p;
 
