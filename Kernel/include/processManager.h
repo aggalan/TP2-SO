@@ -41,6 +41,7 @@ typedef struct PCB{
 
 
 pid_t create_process(void * fn, uint64_t argc, char ** argv);
+PCB * create_idle_process();
 
 void kill_process_pid(pid_t pid);
 

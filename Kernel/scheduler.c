@@ -11,12 +11,6 @@ linked_list_ADT processes;
 PCB * idle_p;
 int idle_has_run = 1;
 
-void idle() {
-    while(1) {
-        _hlt();
-    }
-}
-
 void scheduler_init() {
 
     processes = ll_init();

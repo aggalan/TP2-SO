@@ -69,7 +69,7 @@ void nanoms(int ns) {
 	while (ns > ticks_elapsed()*18000 - startTime*18000)_hlt();
 };
 
-int strlen(char * str){
+int str_len(char * str){
     int i = 0;
     while(str[i] != '\0'){
         i++;
@@ -77,7 +77,7 @@ int strlen(char * str){
     return i;
 };
 
-int strcpy(char * dest, const char * src){
+int str_cpy(char * dest, const char * src){
     int i = 0;
     while (src[i])
     {
@@ -86,4 +86,10 @@ int strcpy(char * dest, const char * src){
     }
     dest[i] = 0;
     return i;
+}
+
+void idle(){
+	while(1){
+		_hlt();
+	}
 }

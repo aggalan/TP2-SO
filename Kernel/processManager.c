@@ -5,15 +5,54 @@
 #include "memoryManager.h"
 #include "scheduler.h"
 #include "lib.h"
+#include "interrupts.h"
 
 static pid_t pid = 0;
+
+PCB * create_pcb(void * fn, uint64_t argc, char ** argv);
+pid_t create_process(void * fn, uint64_t argc, char ** argv);
+PCB * create_idle_process();
 
 
 pid_t create_process(void * fn, uint64_t argc, char ** argv) {
 
-    PCB * pcb = (PCB *)mm_malloc(sizeof(PCB));
+    PCB * pcb = create_pcb(fn, argc, argv);
     if (pcb == NULL) {
         return -1;
+    }
+
+    add_process(pcb);
+
+    return pcb->process->pid;
+}
+
+PCB * create_idle_process(){
+
+    char ** argv = (char **)mm_malloc(sizeof(char *));
+    if (argv == NULL) {
+        return NULL;
+    }
+
+    argv[0] = (char *)mm_malloc(5* sizeof(char));
+    if (argv[0] == NULL) {
+        mm_free(argv);
+        return NULL;
+    }
+
+    str_cpy(argv[0], "idle");
+
+    return create_pcb(idle, 0, argv);
+}
+
+void kill_process_pid(pid_t pid) {
+    remove_process(pid); //aca faltaria todo
+}
+
+PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
+
+    PCB * pcb = (PCB *)mm_malloc(sizeof(PCB));
+    if (pcb == NULL) {
+        return NULL;
     }
 
     pcb->priority = 1;
@@ -21,22 +60,16 @@ pid_t create_process(void * fn, uint64_t argc, char ** argv) {
     process * p = (process *)mm_malloc(sizeof(process));
     if (p == NULL) {
         mm_free(pcb);
-        return -1;
+        return NULL;
     }
 
-    //Por ahora todos hijos del proceso init hasta que implemetemos fork
-    p->parent_pid = running_process();
-
-
-    //Implementar strlen y strcpy
-
-    p->name = mm_malloc((size_t)strlen(argv[0]) + 1);
+    p->name = mm_malloc((size_t)str_len(argv[0]) + 1);
     if (p->name == NULL) {
         mm_free(p);
-        return -1;
+        return NULL;
     }
 
-    strcpy(p->name, argv[0]);
+    str_cpy(p->name, argv[0]);
 
     p->state = READY;
 
@@ -48,7 +81,7 @@ pid_t create_process(void * fn, uint64_t argc, char ** argv) {
     if (p->heap == NULL) {
         mm_free(p->name);
         mm_free(p);
-        return -1;
+        return NULL;
     }
 
     p->heap->base_ptr = mm_malloc(HEAP_SIZE);
@@ -56,7 +89,7 @@ pid_t create_process(void * fn, uint64_t argc, char ** argv) {
         mm_free(p->heap);
         mm_free(p->name);
         mm_free(p);
-        return -1;
+        return NULL;
     }
 
     p->heap->base_ptr = fn;
@@ -67,7 +100,7 @@ pid_t create_process(void * fn, uint64_t argc, char ** argv) {
         mm_free(p->heap);
         mm_free(p->name);
         mm_free(p);
-        return -1;
+        return NULL;
     }
 
     p->stack = (p_memory_block *)mm_malloc(sizeof(p_memory_block));
@@ -76,9 +109,7 @@ pid_t create_process(void * fn, uint64_t argc, char ** argv) {
         mm_free(p->heap);
         mm_free(p->name);
         mm_free(p);
-        return -1;
-
-    return -1;
+        return NULL;
     }
 
     p->stack->base_ptr = mm_malloc(STACK);
@@ -88,7 +119,7 @@ pid_t create_process(void * fn, uint64_t argc, char ** argv) {
         mm_free(p->heap);
         mm_free(p->name);
         mm_free(p);
-        return -1;
+        return NULL;
     }
 
     p->stack->base_ptr += STACK - 1;
@@ -97,12 +128,6 @@ pid_t create_process(void * fn, uint64_t argc, char ** argv) {
 
     pcb->process = p;
 
-    add_process(pcb);
-
-    return p->pid;
-}
-
-void kill_process_pid(pid_t pid) {
-    remove_process(pid); //aca faltaria todo
+    return pcb;
 }
 

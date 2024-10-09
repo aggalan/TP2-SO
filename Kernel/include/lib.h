@@ -19,6 +19,7 @@ char * TimeClock(char * buffer);
 void sleepms(int ms);
 void sleeps(int sec);
 void nanosleep(int ns); 
-int strlen(char * str);
-int strcpy(char * dest, char * src);
+int str_len(char * str);
+int str_cpy(char * dest, char * src);
+void idle();
 #endif
