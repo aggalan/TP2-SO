@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include "interrupts.h"
 #include "scheduler.h"
+#include "lib.h"
 
 
 linked_list_ADT processes;
