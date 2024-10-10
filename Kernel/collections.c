@@ -8,7 +8,6 @@
 linked_list_ADT ll_init() {
     linked_list_ADT list_ptr =(linked_list_ADT)mm_malloc(sizeof(linked_list));
     if (list_ptr == NULL) {
-        //insertar mensaje de error
         return NULL;
     }
 
@@ -23,7 +22,6 @@ linked_list_ADT ll_init() {
 void insert(PCB * data, linked_list_ADT list) {
     node_t * node = (node_t *)mm_malloc(sizeof(node_t));
     if (node == NULL) {
-        //msg error
         return;
     }
     node->data = data;
@@ -39,6 +37,7 @@ void insert(PCB * data, linked_list_ADT list) {
         node->next = list->first;
     }
     list->size++;
+
     return;
 }
 

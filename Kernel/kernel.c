@@ -8,6 +8,7 @@
 #include "idtLoader.h"
 #include "test_util.h"
 #include "memoryManager.h"
+#include "processManager.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -56,15 +57,20 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
+void shell(){
+	char * argv[] = {"shell"};
+	create_process(sampleCodeModuleAddress, 1, argv);
+	sleeps(2);
+	return 1;
+}
+
+
 int main()
 {
 	load_idt();
 	mm_init((void *)0x600000, 0x1000000);
-	// mm_status();
-	// char * argv[] = {"266240"};
-	// test_mm(1, argv);
-	((EntryPoint)sampleCodeModuleAddress)();
-
+	scheduler_init();
+	shell();
 	while(1);
 	return 0;
 }

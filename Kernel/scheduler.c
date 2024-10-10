@@ -6,6 +6,7 @@
 #include "scheduler.h"
 #include "lib.h"
 #include "memoryManager.h"
+#include "videoDriver.h"
 
 
 linked_list_ADT processes;
@@ -61,7 +62,15 @@ void * schedule(void * current_stack_ptr) {
         idle_p->process->stack->current = current_stack_ptr;
     }
 
+    if(processes->size == 1) {
+        idle_has_run = 0;
+        processes->current->data->process->state = RUNNING;
+    drawWord(processes->current->data->process->state);
+    return processes->current->data->process->stack->current;
+    }
+
     node_t * aux = processes->current;
+    drawWord(processes->current->data->process->name);
     do {
         processes->current = processes->current->next;
         if (processes->current->data->process->state == KILLED) {
@@ -79,6 +88,7 @@ void * schedule(void * current_stack_ptr) {
 
     idle_has_run = 0;
     processes->current->data->process->state = RUNNING;
+    drawWord(processes->current->data->process->state);
     return processes->current->data->process->stack->current;
 }
 

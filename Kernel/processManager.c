@@ -74,8 +74,6 @@ PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
 
     p->pid = pid++;
 
-//    p->parent_pid = running_process();
-
     p->parent_pid = 0;
 
     p->heap = (p_memory_block *)mm_malloc(sizeof(p_memory_block));
@@ -86,22 +84,10 @@ PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
         return NULL;
     }
 
-//    p->heap->base_ptr = mm_malloc(4096);
-//    if (p->heap->base_ptr == NULL) {
-//        drawWord("5");
-//
-//        mm_free(p->heap);
-//        mm_free(p->name);
-//        mm_free(p);
-//        mm_free(pcb);
-//        return NULL;
-//    }
-
     p->heap->base_ptr = fn;
 
     p->heap->current = p->heap->base_ptr;
     if(p->heap->current == NULL) {
-//        mm_free(p->heap->base_ptr);
         mm_free(p->heap);
         mm_free(p->name);
         mm_free(p);
@@ -111,7 +97,6 @@ PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
 
     p->stack = (p_memory_block *)mm_malloc(sizeof(p_memory_block));
     if (p->stack == NULL) {
-//        mm_free(p->heap->base_ptr);
         mm_free(p->heap);
         mm_free(p->name);
         mm_free(p);
@@ -122,7 +107,6 @@ PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
     p->stack->base_ptr = mm_malloc(STACK);
     if (p->stack->base_ptr == NULL) {
         mm_free(p->stack);
-//        mm_free(p->heap->base_ptr);
         mm_free(p->heap);
         mm_free(p->name);
         mm_free(p);
@@ -132,7 +116,7 @@ PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
 
     p->stack->base_ptr += STACK - 1;
 
-    p->stack->current = create_context(p->stack->base_ptr, p->heap->base_ptr); // aca se va a mover el rsp asi q me devuelve el current
+    p->stack->current = create_context(p->stack->base_ptr, p->heap->base_ptr); 
 
     pcb->process = p;
 

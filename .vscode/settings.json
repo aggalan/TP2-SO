@@ -4,6 +4,9 @@
         "keyboarddriver.h": "c",
         "cstring": "c",
         "locale": "c",
-        "usersyscalls.h": "c"
+        "usersyscalls.h": "c",
+        "naiveconsole.h": "c",
+        "lib.h": "c",
+        "stdint.h": "c"
     }
 }
