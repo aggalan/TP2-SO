@@ -56,7 +56,7 @@ void mm_init(void * mem_start, uint64_t mem_size) {
     total_size += mm.bitmap_size * BLOCK_SIZE;
 
     mm.size = total_size;
-    mm.start = mem_start +  mm.bitmap_size * BLOCK_SIZE;
+    mm.start = mem_start +  mm.bitmap_size * BLOCK_SIZE * sizeof(uint32_t);
     mm.used_blocks = 0;
     mm.bitmap = mem_start;
     mm.current = 0;
