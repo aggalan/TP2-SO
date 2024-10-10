@@ -122,7 +122,7 @@ uint64_t int_80(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t
 				mm_status();
 				break;
 		case 26:
-				char * argv2[] = {"1"};
+				char * argv2[] = {"20"};
 				test_processes(1, argv2);
 				break;
 		default:

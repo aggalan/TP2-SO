@@ -18,6 +18,8 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
   uint64_t max_processes;
   char *argvAux[] = {0};
 
+  int debug = 0;
+
   if (argc != 1)
     return -1;
 
@@ -34,12 +36,15 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
 
       if (p_rqs[rq].pid == -1) {
         drawWord("test_processes: ERROR creating process\n");
+        drawWord("   debug:  ");
+        drawNumber(debug);
         return -1;
       } else {
         p_rqs[rq].state = RUNNING;
         alive++;
       }
     }
+      debug++;
 
     // Randomly kills, blocks or unblocks processes until every one has been killed
     while (alive > 0) {

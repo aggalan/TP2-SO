@@ -93,16 +93,16 @@ PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
         return NULL;
     }
 
-    p->heap->base_ptr = mm_malloc(4096);
-    if (p->heap->base_ptr == NULL) {
-        drawWord("5");
-
-        mm_free(p->heap);
-        mm_free(p->name);
-        mm_free(p);
-        mm_free(pcb);
-        return NULL;
-    }
+//    p->heap->base_ptr = mm_malloc(4096);
+//    if (p->heap->base_ptr == NULL) {
+//        drawWord("5");
+//
+//        mm_free(p->heap);
+//        mm_free(p->name);
+//        mm_free(p);
+//        mm_free(pcb);
+//        return NULL;
+//    }
 
     p->heap->base_ptr = fn;
 
@@ -110,7 +110,7 @@ PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
     if(p->heap->current == NULL) {
         drawWord("6");
 
-        mm_free(p->heap->base_ptr);
+//        mm_free(p->heap->base_ptr);
         mm_free(p->heap);
         mm_free(p->name);
         mm_free(p);
@@ -122,7 +122,7 @@ PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
     if (p->stack == NULL) {
         drawWord("7");
 
-        mm_free(p->heap->base_ptr);
+//        mm_free(p->heap->base_ptr);
         mm_free(p->heap);
         mm_free(p->name);
         mm_free(p);
@@ -136,7 +136,7 @@ PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
 
         mm_free(p->stack);
         drawWord("1");
-        mm_free(p->heap->base_ptr);
+//        mm_free(p->heap->base_ptr);
         drawWord("2");
         mm_free(p->heap);
         drawWord("3");
