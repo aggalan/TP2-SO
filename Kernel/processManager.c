@@ -99,7 +99,7 @@ PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
 
     p->heap->base_ptr = fn;
 
-    p->heap->current = (uintptr_t *) p->heap->base_ptr;
+    p->heap->current = p->heap->base_ptr;
     if(p->heap->current == NULL) {
 //        mm_free(p->heap->base_ptr);
         mm_free(p->heap);

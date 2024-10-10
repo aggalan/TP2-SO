@@ -395,6 +395,29 @@ void intToStr(int value, char* str, int base) {
     }
 }
 
+void ptr_to_string_and_print(void *ptr) {
+    uintptr_t addr = (uintptr_t)ptr;  // Treat the pointer as an unsigned integer (64 bits)
+    char buffer[19];                  // Buffer for 16 hex digits + "0x" prefix + null terminator
+    int i;
+    char hex_chars[] = "0123456789ABCDEF";  // Hexadecimal characters
+
+    // Start with "0x" to indicate hexadecimal representation
+    buffer[0] = '0';
+    buffer[1] = 'x';
+
+    // Convert the 64-bit address into 16 hex digits
+    for (i = 17; i >= 2; i--) {        // We need 16 hex digits for a 64-bit address
+        buffer[i] = hex_chars[addr & 0xF];  // Extract the last 4 bits (1 hex digit)
+        addr >>= 4;                    // Shift right by 4 bits to process the next hex digit
+    }
+
+    // Null-terminate the string
+    buffer[18] = '\0';  // 16 hex digits + "0x" = 18 characters total, plus null terminator
+
+    // Now, print the result using your custom print function
+    drawWord(buffer);  // Use your own function to print the buffer
+}
+
 void cursorOff() {
     if (cursor_flag == 0) {
         return;

@@ -38,7 +38,8 @@ void moveScreenRight();
 void moveScreen();
 void setCursorFlag(int i);
 void printImage();
-void backspaceMove(); 
+void backspaceMove();
+void ptr_to_string_and_print(void *ptr);
 
 #define RED 0xFF0000
 #define WHITE 0xFFFFFF
