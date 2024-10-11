@@ -9,6 +9,7 @@
 #include "videoDriver.h"
 
 
+
 linked_list_ADT processes;
 PCB * idle_p;
 int idle_has_run = 1;
@@ -47,48 +48,51 @@ pid_t running_process() {
 
 void * schedule(void * current_stack_ptr) {
 
+//    drawWord(" I HAVE ENTERED THE SCHEDULER ");
+
     if (processes->size == 0) {
+        drawWord(" FOR SOME MAGICAL REASON THERE ARE NO PROCESSES ");
         idle_has_run = 1;
         idle_p->process->state = RUNNING;
-        idle_p->process->stack->current = current_stack_ptr;
+//        idle_p->process->stack->current = current_stack_ptr;
         return idle_p->process->stack->current;
     }
+
+    drawWordColor(" THERE ARE PROCESSES!!! ", WHITE,RED);
 
     if (!idle_has_run) {
         processes->current->data->process->state = READY;
         processes->current->data->process->stack->current = current_stack_ptr;
     } else {
         idle_p->process->state = READY;
-        idle_p->process->stack->current = current_stack_ptr;
-    }
-
-    if(processes->size == 1) {
-        idle_has_run = 0;
-        processes->current->data->process->state = RUNNING;
-    drawWord(processes->current->data->process->state);
-    return processes->current->data->process->stack->current;
+//        idle_p->process->stack->current = current_stack_ptr;
     }
 
     node_t * aux = processes->current;
-    drawWord(processes->current->data->process->name);
-    do {
-        processes->current = processes->current->next;
+    processes->current = processes->current->next;
+
+
+    while(processes->current->data->process->state != READY) {
+        drawWord(" while loop shenanigans ");
+
         if (processes->current->data->process->state == KILLED) {
             node_t * aux = processes->current;
             processes->current = processes->current->next;
             remove_process(aux->data->process->pid);
             free_node(aux);
         }
-    }while(processes->current->next->data->process->state != READY && processes->current != aux);
-    if (processes->current == aux) {
-        idle_has_run = 1;
-        idle_p->process->state = RUNNING;
-        return idle_p->process->stack->current;
+
+        if (processes->current == aux && processes->current->data->process->state != READY) {
+            idle_has_run = 1;
+            idle_p->process->state = RUNNING;
+            return idle_p->process->stack->current;
+        }
+
+        processes->current = processes->current->next;
     }
 
     idle_has_run = 0;
     processes->current->data->process->state = RUNNING;
-    drawWord(processes->current->data->process->state);
     return processes->current->data->process->stack->current;
 }
 
