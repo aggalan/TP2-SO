@@ -123,21 +123,26 @@ PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
     return pcb;
 }
 
+pid_t kill_process() {
+    int pid = running_process();
+    return kill_process_pid(pid);
+}
+
 pid_t kill_process_pid(pid_t pid) {
 
     return pid;
 
-    // PCB * pcb = find_process(pid);
-    // if (pcb == NULL) {
-    //     return -1;
-    // }
-    // int state = pcb->process->state;
-    // pcb->process->state = KILLED;
-    // if (state == RUNNING) {
-    //     int_20();
-    // }
+    PCB * pcb = find_process(pid);
+    if (pcb == NULL) {
+        return -1;
+    }
+    int state = pcb->process->state;
+    pcb->process->state = KILLED;
+    if (state == RUNNING) {
+        int_20();
+    }
 
-    // return pcb->process->pid;
+    return pcb->process->pid;
 }
 
 pid_t block_process(pid_t pid){

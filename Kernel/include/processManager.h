@@ -51,7 +51,7 @@ PCB * create_idle_process();
 
 pid_t kill_process_pid(pid_t pid);
 
-void kill_process();
+pid_t kill_process();
 
 void list_processes();
 

@@ -9,6 +9,7 @@
 #include "test_util.h"
 #include "memoryManager.h"
 #include "processManager.h"
+#include "scheduler.h"
 
 extern uint8_t text;
 extern uint8_t rodata;

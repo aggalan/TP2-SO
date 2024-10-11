@@ -121,6 +121,9 @@ uint64_t int_80(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t
 		case 24:
 				mm_status();
 				break;
+		case 25:
+				kill_process();
+				break;
 		case 26:
 				char * argv2[] = {"20"};
 				test_processes(1, argv2);
