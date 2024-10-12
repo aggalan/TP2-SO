@@ -139,7 +139,7 @@ pid_t kill_process_pid(pid_t pid) {
     int state = pcb->process->state;
     pcb->process->state = KILLED;
     if (state == RUNNING) {
-        int_20();
+        irq00Handler();
     }
 
     return pcb->process->pid;
@@ -153,7 +153,10 @@ pid_t block_process(pid_t pid){
     // if (pcb == NULL) {
     //     return -1;
     // }
-    // if(pcb->process->state == RUNNING || pcb->process->state == READY){
+    // if(pcb->process->state == RUNNING){
+    //     pcb->process->state = BLOCKED;
+    //      irq00Handler();
+    // }else if(pcb->process->state == READY){
     //     pcb->process->state = BLOCKED;
     // }
     // return pcb->process->pid;

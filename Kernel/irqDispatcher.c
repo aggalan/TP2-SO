@@ -16,35 +16,41 @@
 #include <stddef.h>
 
 
-void int_20();
-static void int_21();
+
 static uint64_t int_80(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10);
 typedef void (*InterruptHandler)(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10);
 
 void irqDispatcher(uint64_t irq, uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10) {
-	InterruptHandler interruptions[256] = {0};
-	interruptions[0] = &int_20;
-	interruptions[1] = &int_21;
-	interruptions[96] = (InterruptHandler)int_80;
-
-	if(irq >= 0 && irq < 256 && interruptions[irq] != 0 ){
-		InterruptHandler handler = interruptions[irq];
-		handler(rax, rdi, rsi, rdx, r10);
+	switch(irq){
+		case 0:
+			timer_handler();
+			if(ticks_elapsed() % 21 <= 10){
+				cursorOn();
+			}else{
+				cursorOff();
+			}
+			break;
+		case 1:
+			keyboardHandler();
+			break;
+		case 80:
+			int_80(rax, rdi, rsi, rdx, r10);
+			break;
+		default:
+			break;
 	}
+	return;
+	// InterruptHandler interruptions[256] = {0};
+	// interruptions[0] = &int_20;
+	// interruptions[1] = &int_21;
+	// interruptions[96] = (InterruptHandler)int_80;
+
+	// if(irq >= 0 && irq < 256 && interruptions[irq] != 0 ){
+	// 	InterruptHandler handler = interruptions[irq];
+	// 	handler(rax, rdi, rsi, rdx, r10);
+	// }
 }
 
-void int_20() {
-	timer_handler();
-    if (ticks_elapsed() % 21 <= 10) {
-        cursorOn();
-    } else {
-        cursorOff();
-    }
-
-}
-void int_21(){
-	keyboardHandler();
-}
 
 uint64_t int_80(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10){
 	switch(rax){
