@@ -67,7 +67,7 @@ void * schedule(void * current_stack_ptr) {
         idle_has_run = 1;
         idle_p->process->state = RUNNING;
         drawWord(" running niggers: ");
-//        idle_p->process->stack->current = current_stack_ptr;
+        idle_p->process->stack->current = current_stack_ptr;
         return idle_p->process->stack->current;
     }
 
@@ -81,7 +81,7 @@ void * schedule(void * current_stack_ptr) {
     } else {
         drawWord(" 2 ");
         idle_p->process->state = READY;
-//        idle_p->process->stack->current = current_stack_ptr;
+        idle_p->process->stack->current = current_stack_ptr;
     }
 
     node_t * aux = processes->current;
