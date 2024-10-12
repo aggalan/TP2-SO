@@ -61,15 +61,13 @@ void * initializeKernelBinary()
 void shell(){
 	char * argv[] = {"shell"};
 	create_process(sampleCodeModuleAddress, 1, argv);
-//	sleeps(2);
-//	return 1;
 }
 
 
 int main()
 {
 	load_idt();
-	mm_init((void *)0x600000, 0x1000000);
+	mm_init((void *)0x600000, 0x2700000);
 	scheduler_init();
 	shell();
 	while(1);

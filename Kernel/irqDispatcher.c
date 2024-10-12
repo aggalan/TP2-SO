@@ -15,8 +15,6 @@
 #include "test_processes.h"
 #include <stddef.h>
 
-
-
 static uint64_t int_80(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10);
 typedef void (*InterruptHandler)(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10);
 
@@ -33,24 +31,13 @@ void irqDispatcher(uint64_t irq, uint64_t rax, uint64_t rdi, uint64_t rsi, uint6
 		case 1:
 			keyboardHandler();
 			break;
-		case 80:
+		case 96:
 			int_80(rax, rdi, rsi, rdx, r10);
-			break;
-		default:
 			break;
 	}
 	return;
-	// InterruptHandler interruptions[256] = {0};
-	// interruptions[0] = &int_20;
-	// interruptions[1] = &int_21;
-	// interruptions[96] = (InterruptHandler)int_80;
 
-	// if(irq >= 0 && irq < 256 && interruptions[irq] != 0 ){
-	// 	InterruptHandler handler = interruptions[irq];
-	// 	handler(rax, rdi, rsi, rdx, r10);
-	// }
 }
-
 
 uint64_t int_80(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10){
 	switch(rax){
