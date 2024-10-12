@@ -59,10 +59,10 @@ void * initializeKernelBinary()
 }
 
 void shell(){
-	char * argv[] = {"shell"};
-	create_process(sampleCodeModuleAddress, 1, argv);
-	sleeps(2);
-	return 1;
+//	char * argv[] = {"shell"};
+//	create_process(sampleCodeModuleAddress, 1, argv);
+//	sleeps(2);
+//	return 1;
 }
 
 

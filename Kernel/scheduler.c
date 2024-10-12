@@ -13,6 +13,7 @@
 linked_list_ADT processes;
 PCB * idle_p;
 int idle_has_run = 1;
+int scheduler_initialized = 0;
 
 void free_node(node_t * node);
 
@@ -21,6 +22,8 @@ void scheduler_init() {
     processes = ll_init();
 
     idle_p = create_idle_process();
+
+    scheduler_initialized = 1;
 }
 
 void add_process(PCB * pcb) { //ver bien y tema idle
@@ -47,23 +50,36 @@ pid_t running_process() {
 }
 
 void * schedule(void * current_stack_ptr) {
-
+//    ptr_to_string_and_print(current_stack_ptr);
 //    drawWord(" I HAVE ENTERED THE SCHEDULER ");
 
+
+
+    if (!scheduler_initialized) {
+        return current_stack_ptr;
+    }
+
+//    drawWord(" I HAVE REALLY ENTERED THE SCHEDULER ");
+
     if (processes->size == 0) {
-        drawWord(" FOR SOME MAGICAL REASON THERE ARE NO PROCESSES ");
+
+//        drawWord(" FOR SOME MAGICAL REASON THERE ARE NO PROCESSES ");
         idle_has_run = 1;
         idle_p->process->state = RUNNING;
+        drawWord(" running niggers: ");
 //        idle_p->process->stack->current = current_stack_ptr;
         return idle_p->process->stack->current;
     }
 
-    drawWordColor(" THERE ARE PROCESSES!!! ", WHITE,RED);
+    drawWord(" i have reached this point ");
 
     if (!idle_has_run) {
+        drawWord(" 1 ");
+        drawNumber(processes->current->data->process->state);
         processes->current->data->process->state = READY;
         processes->current->data->process->stack->current = current_stack_ptr;
     } else {
+        drawWord(" 2 ");
         idle_p->process->state = READY;
 //        idle_p->process->stack->current = current_stack_ptr;
     }
@@ -83,6 +99,7 @@ void * schedule(void * current_stack_ptr) {
         }
 
         if (processes->current == aux && processes->current->data->process->state != READY) {
+            drawWord(" 3 ");
             idle_has_run = 1;
             idle_p->process->state = RUNNING;
             return idle_p->process->stack->current;
@@ -93,6 +110,7 @@ void * schedule(void * current_stack_ptr) {
 
     idle_has_run = 0;
     processes->current->data->process->state = RUNNING;
+    drawWord(" end ");
     return processes->current->data->process->stack->current;
 }
 
