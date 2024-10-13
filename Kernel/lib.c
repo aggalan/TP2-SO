@@ -95,3 +95,10 @@ void idle(){
 		_hlt();
 	}
 }
+
+void idle1(){
+	while(1){
+        drawWord(".");
+		_hlt();
+	}
+}

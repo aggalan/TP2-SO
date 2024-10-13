@@ -90,13 +90,10 @@ PCB * find(pid_t pid, linked_list_ADT list) {
 }
 
 void free_node(node_t * node) { //revisar
-    mm_free(node->data->process->stack->base_ptr);
-    mm_free(node->data->process->stack->current);
-    mm_free(node->data->process->heap->base_ptr);
-    mm_free(node->data->process->heap->current);
+    mm_free(node->data->process->name);
+    mm_free(node->data->process->stack->base);
     mm_free(node->data->process->stack);
     mm_free(node->data->process->heap);
-    mm_free(node->data->process->name);
     mm_free(node->data->process);
     mm_free(node->data);
     mm_free(node);

@@ -85,7 +85,7 @@ void * schedule(void * current_stack_ptr) {
             node_t * aux = processes->current;
             processes->current = processes->current->next;
             remove_process(aux->data->process->pid);
-            free_node(aux);
+            // free_node(aux);
         }
 
         if (processes->current == aux && processes->current->data->process->state != READY) {

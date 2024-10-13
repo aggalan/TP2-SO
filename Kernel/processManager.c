@@ -114,7 +114,9 @@ PCB * create_pcb(void * fn, uint64_t argc, char ** argv) {
         return NULL;
     }
 
-    p->stack->base_ptr += STACK - 1;
+    p->stack->base = p->stack->base_ptr;
+
+    p->stack->base_ptr += STACK;
 
     p->stack->current = create_context(p->stack->base_ptr, p->heap->base_ptr); 
 
@@ -129,8 +131,6 @@ pid_t kill_process() {
 }
 
 pid_t kill_process_pid(pid_t pid) {
-
-    return pid;
 
     PCB * pcb = find_process(pid);
     if (pcb == NULL) {
@@ -149,17 +149,17 @@ pid_t block_process(pid_t pid){
 
     return pid;
 
-    // PCB * pcb = find_process(pid);
-    // if (pcb == NULL) {
-    //     return -1;
-    // }
-    // if(pcb->process->state == RUNNING){
-    //     pcb->process->state = BLOCKED;
-    //      _irq00Handler();
-    // }else if(pcb->process->state == READY){
-    //     pcb->process->state = BLOCKED;
-    // }
-    // return pcb->process->pid;
+    PCB * pcb = find_process(pid);
+    if (pcb == NULL) {
+        return -1;
+    }
+    if(pcb->process->state == RUNNING){
+        pcb->process->state = BLOCKED;
+         _irq00Handler();
+    }else if(pcb->process->state == READY){
+        pcb->process->state = BLOCKED;
+    }
+    return pcb->process->pid;
 }
 
 pid_t unblock_process(pid_t pid){

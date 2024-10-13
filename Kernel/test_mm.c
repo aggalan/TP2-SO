@@ -65,7 +65,6 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
       if (mm_rqs[i].address)
         mm_free(mm_rqs[i].address);
     
-    drawWord("Test OK");
-    // mm_status();
+    drawWord(" OK ");   // mm_status();
   }
 }

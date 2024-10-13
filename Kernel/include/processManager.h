@@ -24,6 +24,7 @@ typedef struct p_memory_block {
     void * base_ptr;
 //    uint64_t size;
     void * current;
+    void * base;
 }p_memory_block;
 
 typedef struct process {
