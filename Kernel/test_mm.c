@@ -42,28 +42,30 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
       }
     }
 
-    // mm_status();
+    //mm_status();
 
     // Set
     uint32_t i;
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address){
-        memset(mm_rqs[i].address, 2 * i, mm_rqs[i].size);
+        memset(mm_rqs[i].address, i, mm_rqs[i].size);
       }
 
     // Check
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address){
-        if (!memcheck(mm_rqs[i].address, 2*i, mm_rqs[i].size)) {
+        if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size)) {
           drawWordColor("test_mm ERROR", WHITE, WHITE);
           return -1;
         }
       }
 
     // Free
-    for (i = 0; i < rq; i++)
-      if (mm_rqs[i].address)
+    for (i = 0; i < rq; i++){
+      if (mm_rqs[i].address){
         mm_free(mm_rqs[i].address);
+      }
+    }
     
     drawWord(" OK ");   // mm_status();
   }

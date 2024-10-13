@@ -110,26 +110,43 @@ pid_t get_active_pid() {
 
 void my_nice(pid_t pid, int priority) {
     PCB * pcb = find_process(pid);
-    
 
     if (pcb == NULL) {
         return;
     }
 
-    if(pcb->priority > priority){
-        while(pcb->priority - priority != 0){
+    if (pcb->priority > priority) {
+        while (pcb->priority - priority != 0) {
             pcb->priority--;
+            //remove_process(pcb->process->pid);
         }
-    }else{
-        while(priority - pcb->priority != 0){
-            //add_process(pcb);
+    } else {
+        while (priority - pcb->priority != 0) {
             pcb->priority++;
+            //add_process(pcb);
+
         }
     }
-return;
-
+    return;
 }
 
+
+void print_processes(){
+    node_t * aux = processes->first;
+    while(aux != processes->last){
+        drawWord("PID: ");
+        drawNumber(aux->data->process->pid);
+        drawWord(" PRIORITY: ");
+        drawNumber(aux->data->priority);
+        newline();
+        aux = aux->next;
+    }
+    drawWord("PID: ");
+    drawNumber(aux->data->process->pid);
+    drawWord(" PRIORITY: ");
+    drawNumber(aux->data->priority);
+    newline();
+}
 
 
 

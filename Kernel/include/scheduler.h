@@ -21,4 +21,6 @@ PCB * get_current();
 
 pid_t get_active_pid();
 
+void print_processes();
+
 #endif
