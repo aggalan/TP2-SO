@@ -23,9 +23,11 @@ typedef struct linked_list * linked_list_ADT;
 
 linked_list_ADT ll_init();
 
-void insert(PCB * data, linked_list_ADT list);
+void insert(PCB * data, uint8_t priority,linked_list_ADT list);
 
 void remove(pid_t pid, linked_list_ADT list);
+
+void modify_priority(pid_t pid, uint8_t new_priority, linked_list_ADT list);
 
 PCB * find(pid_t pid, linked_list_ADT list);
 

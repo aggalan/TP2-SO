@@ -9,7 +9,7 @@ void my_nice(pid_t pid, int priority);
 
 void  scheduler_init();
 
-void add_process(PCB * pcb);
+void add_process(PCB * pcb, uint8_t priority);
 
 void remove_process(pid_t pid);
 

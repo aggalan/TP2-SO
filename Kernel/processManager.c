@@ -26,8 +26,7 @@ pid_t create_process(void * fn, int prio, uint64_t argc, char ** argv) {
     //     add_process(pcb);
     //     prio--;
     // }
-    add_process(pcb);
-
+    add_process(pcb, prio);
 
     return pcb->process->pid;
 }
@@ -160,7 +159,7 @@ pid_t kill_process_pid(pid_t pid) {
 
 pid_t block_process(pid_t pid){
 
-    return pid;
+//    return pid;
 
     PCB * pcb = find_process(pid);
     if (pcb == NULL) {
@@ -177,7 +176,7 @@ pid_t block_process(pid_t pid){
 
 pid_t unblock_process(pid_t pid){
 
-    return pid;
+//    return pid;
     PCB * pcb = find_process(pid);
     if (pcb == NULL) {
         return -1;

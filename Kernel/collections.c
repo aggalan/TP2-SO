@@ -19,35 +19,75 @@ linked_list_ADT ll_init() {
 }
 
 
-void insert(PCB * data, linked_list_ADT list) {
-    node_t * node = (node_t *)mm_malloc(sizeof(node_t));
-    if (node == NULL) {
-        return;
-    }
-    node->data = data;
+void insert(PCB * data, uint8_t priority,linked_list_ADT list) {
+
 
     if (list->first == NULL) {
-        node->next = node;
-        list->first = node;
-        list->last = node;
-        list->current = node;
-    } else {
-        list->last->next = node;
-        list->last = node;
-        node->next = list->first;
+        node_t * new_node = (node_t *)mm_malloc(sizeof(node_t));
+        if (new_node == NULL) {
+            return;
+        }
+        new_node->next = new_node;
+        list->first = new_node;
+        list->last = new_node;
+        list->current = new_node;
+        priority--;
+    }
+
+    uint8_t interval = list->size/priority;
+
+    if (interval == 0) {
+        interval = 1;
+    }
+
+    node_t * aux = list->first;
+
+    for (int i = 0; i < priority; i++) {
+        for (int j = 0; j < interval; j++) {
+            aux = aux->next;
+        }
+        node_t * new_node = (node_t *)mm_malloc(sizeof(node_t));
+        if (new_node == NULL) {
+            return;
+        }
+        new_node->data = data;
+
+        new_node->next = aux->next;
+        aux->next = new_node;
+
+        aux = new_node;
+
     }
     list->size++;
 
-    return;
+//    if (list->first == NULL) {
+//        node->next = node;
+//        list->first = node;
+//        list->last = node;
+//        list->current = node;
+//    } else {
+//        list->last->next = node;
+//        list->last = node;
+//        node->next = list->first;
+//    }
+//    list->size++;
+//
+//    return;
 }
 
 void remove(pid_t pid, linked_list_ADT list) {
     if (list->first == NULL) {
         return;
     }
+    PCB * pcb = find(pid, list);
+    if (pcb == NULL) {
+        return;
+    }
+    uint8_t priority = pcb->priority;
+
     node_t * aux = list->first;
 
-    if (list->size == 1 && aux->data->process->pid == pid) { //revisar pero creo que deberiamos buscar por pid
+    if (list->size == 1 && aux->data->process->pid == pid) {
         free_node(list->first);
         list->first = NULL;
         list->last = NULL;
@@ -66,12 +106,15 @@ void remove(pid_t pid, linked_list_ADT list) {
             if (list->last == to_remove) {
                 list->last = aux; // y ya en la linea anterior nos encargamos de que siga siendo circular la lista
             }
-            free_node(to_remove);
-            list->size--;
-            return;
+            if (priority == 1) {
+                free_node(to_remove); // libero todoooo
+                return;
+            }
+            mm_free(to_remove); //solo libero nodo porq no es el ultimo
         }
         aux = aux->next;
     }
+    list->size--;
     return;
 }
 

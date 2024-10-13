@@ -8,11 +8,14 @@
 #include "memoryManager.h"
 #include "videoDriver.h"
 
-
+#define KERNEL 0
+#define IDLE 1
+#define PROCESS 2
 
 linked_list_ADT processes;
 PCB * idle_p;
 int idle_has_run = 1;
+int process_has_run = KERNEL;
 int scheduler_initialized = 0;
 
 void free_node(node_t * node);
@@ -26,8 +29,8 @@ void scheduler_init() {
     scheduler_initialized = 1;
 }
 
-void add_process(PCB * pcb) { //ver bien y tema idle
-    insert(pcb, processes);
+void add_process(PCB * pcb, uint8_t priority) { //ver bien y tema idle
+    insert(pcb, priority, processes);
 }
 
 void remove_process(pid_t pid) { //ver bien y tema idle
@@ -50,6 +53,58 @@ pid_t running_process() {
 }
 
 void * schedule(void * current_stack_ptr) {
+
+//    if (!scheduler_initialized) {
+//        return current_stack_ptr;
+//    }
+//
+//
+//    if (process_has_run == KERNEL) {
+//        if(processes->size == 0) {
+//            idle_p->process->state = RUNNING;
+//            process_has_run = IDLE;
+//            return idle_p->process->stack->current;
+//        } else {
+//            processes->current->data->process->state = RUNNING;
+//            process_has_run = PROCESS;
+//            return processes->current->data->process->stack->current
+//        }
+//    }
+//
+//    if (process_has_run == IDLE) {
+//        idle_p->process->stack->current = current_stack_ptr;
+//        idle_p->process->state = READY;
+//    } else {
+//        processes->current->data->process->stack->current = current_stack_ptr;
+//        processes->current->data->process->state = READY;
+//    }
+//
+//    node_t * aux = processes->current;
+//    processes->current = processes->current->next;
+//
+//    while(processes->current->data->process->state != READY) {
+//
+//
+//        if (processes->current->data->process->state == KILLED) {
+//            node_t * aux = processes->current;
+//            processes->current = processes->current->next;
+//            remove_process(aux->data->process->pid);
+//            free_node(aux);
+//        }
+//
+//        if (processes->current == aux && processes->current->data->process->state != READY) {
+//
+//            idle_has_run = 1;
+//            idle_p->process->state = RUNNING;
+//            return idle_p->process->stack->current;
+//        }
+//
+//        processes->current = processes->current->next;
+//    }
+
+
+
+
 
     if (!scheduler_initialized) {
         return current_stack_ptr;
@@ -110,24 +165,11 @@ pid_t get_active_pid() {
 
 void my_nice(pid_t pid, int priority) {
     PCB * pcb = find_process(pid);
-
     if (pcb == NULL) {
         return;
     }
-
-    if (pcb->priority > priority) {
-        while (pcb->priority - priority != 0) {
-            pcb->priority--;
-            //remove_process(pcb->process->pid);
-        }
-    } else {
-        while (priority - pcb->priority != 0) {
-            pcb->priority++;
-            //add_process(pcb);
-
-        }
-    }
-    return;
+    remove_process(pid);
+    add_process(pcb, priority);
 }
 
 
