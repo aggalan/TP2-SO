@@ -6,7 +6,7 @@
 #include "invalidOp.h"
 #include "eliminator.h"
 
-static char commands[COMMANDS_SIZE][14] = {"HELP", "TIME", "REGSTATE", "DIVZERO", "INVALIDOP", "ELIMINATOR", "INCFONT", "DECFONT","FONTSIZE", "CLEAR", "TEST", "STATUS", "PROCESS" };
+static char commands[COMMANDS_SIZE][14] = {"HELP", "TIME", "REGSTATE", "DIVZERO", "INVALIDOP", "ELIMINATOR", "INCFONT", "DECFONT","FONTSIZE", "CLEAR", "TEST", "STATUS", "PROCESS", "PRIORITY" };
 
 void seekCommand(char * buff){
     for(int i = 0; i < COMMANDS_SIZE; i++){
@@ -60,6 +60,9 @@ void callCommand(int i, char * command){
             return;
         case PROCESS:;
             call_test_processes();
+            return;
+        case PRIORITY:;
+            call_test_prio();
             return;
         default:
             call_sys_write("ERROR - Command not found",30,2);

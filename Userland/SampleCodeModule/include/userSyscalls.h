@@ -34,4 +34,5 @@ void call_eliminator_flag_off();
 void call_test_mm();
 void call_status_mm();
 void call_test_processes();
+void call_test_prio();
 #endif

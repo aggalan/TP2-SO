@@ -1,8 +1,7 @@
 #ifndef _COMMANDS_H_
 #define _COMMANDS_H_
 
-#define COMMANDS_SIZE 13
-
+#define COMMANDS_SIZE 14
 void seekCommand(char * buff);
 void callCommand(int i, char * command);
 void help();
@@ -24,7 +23,8 @@ enum Commands {
     CLEAR,
     TEST,
     STATUS,
-    PROCESS
+    PROCESS,
+    PRIORITY
 };
 
 

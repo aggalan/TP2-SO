@@ -54,11 +54,11 @@ int64_t satoi(char *str) {
 }
 
 // // Dummies
-// void bussy_wait(uint64_t n) {
-//   uint64_t i;
-//   for (i = 0; i < n; i++)
-//     ;
-// }
+void bussy_wait(uint64_t n) {
+  uint64_t i;
+  for (i = 0; i < n; i++)
+    ;
+}
 
 // void endless_loop() {
 //   while (1)

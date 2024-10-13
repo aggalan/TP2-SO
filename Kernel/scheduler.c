@@ -104,7 +104,31 @@ void * schedule(void * current_stack_ptr) {
     return processes->current->data->process->stack->current;
 }
 
+pid_t get_active_pid() {
+    return processes->current->data->process->pid;
+}
 
+void my_nice(pid_t pid, int priority) {
+    PCB * pcb = find_process(pid);
+    
+
+    if (pcb == NULL) {
+        return;
+    }
+
+    if(pcb->priority > priority){
+        while(pcb->priority - priority != 0){
+            pcb->priority--;
+        }
+    }else{
+        while(priority - pcb->priority != 0){
+            //add_process(pcb);
+            pcb->priority++;
+        }
+    }
+return;
+
+}
 
 
 

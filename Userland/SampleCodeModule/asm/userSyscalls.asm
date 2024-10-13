@@ -24,7 +24,7 @@ GLOBAL call_print_image
 GLOBAL call_test_mm
 GLOBAL call_status_mm
 GLOBAL call_test_processes
-
+GLOBAL call_test_prio
 section .text
 
 %macro call_handler 1
@@ -90,3 +90,5 @@ call_status_mm:
     call_handler 24
 call_test_processes:
     call_handler 26
+call_test_prio:
+    call_handler 27

@@ -19,4 +19,6 @@ PCB * find_process(pid_t pid);
 
 PCB * get_current();
 
+pid_t get_active_pid();
+
 #endif

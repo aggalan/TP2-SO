@@ -121,6 +121,9 @@ uint64_t int_80(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t
 				char * argv2[] = {"20"};
 				test_processes(1, argv2);
 				break;
+		case 27:
+				test_prio();
+				break;
 		default:
 				return 0;
 				
