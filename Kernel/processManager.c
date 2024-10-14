@@ -46,7 +46,7 @@ PCB * create_idle_process(){
 
     str_cpy(argv[0], "idle");
 
-    return create_pcb(idle, 1, 1, argv);
+    return create_pcb(idle, 3, 1, argv);
 }
 
 
@@ -148,15 +148,12 @@ pid_t kill_process_pid(pid_t pid_to_free) {
         return -1;
     }
     int state = pcb->process->state;
-    drawWord(" PID KILLED: ");
-    drawNumber(pid_to_free);
-    newline();
+//    drawWord(" PID KILLED: ");
+//    drawNumber(pid_to_free);
+//    newline();
 //    remove_process(pid_to_free); //sino el test de proceso se queda sin memoria porque reserva mas rapido de lo que libera
     pcb->process->state = KILLED;
     if (state == RUNNING) {
-        drawWord(" i was running: ");
-        drawNumber(pid_to_free);
-        newline();
         _irq00Handler();
     }
 

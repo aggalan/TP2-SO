@@ -108,8 +108,14 @@ uint64_t int_80(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t
                 printImage();
                 break;
 		case 23:
-				char * argv[] = {"266240"};
-				test_mm(1, argv);
+
+                char ** argv=mm_malloc(2*sizeof(char));
+                argv[1]="266240";
+                argv[0]="mem test";
+                create_process(test_mm,1,1,argv);
+
+//				char * argv[] = {"266240"};
+//				test_mm(1, argv);
 				break;
 		case 24:
 				mm_status();
@@ -118,8 +124,14 @@ uint64_t int_80(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t
 				kill_process();
 				break;
 		case 26:
-				char * argv2[] = {"20"};
-				test_processes(1, argv2);
+                char ** argv2=mm_malloc(2*sizeof(char));
+                argv2[1]="10";
+                argv2[0]="processtest";
+                create_process(test_processes,1,1,argv2);
+
+//				char * argv2[] = {"process", "20"};
+//                create_process(test_processes, 1, 1, argv2);
+//				test_processes(1, argv2);
 				break;
 		case 27:
                 char * argv3[] = {"prio"};

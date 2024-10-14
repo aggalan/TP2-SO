@@ -28,7 +28,7 @@ void test_prio()
     uint64_t i;
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-        pids[i] = create_process(endless_loop_print, 1, 1, argv);
+        pids[i] = create_process(endless_loop_print, 2, 1, argv);
 
     bussy_wait(WAIT);
     newline();
@@ -36,7 +36,7 @@ void test_prio()
     newline();
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-        my_nice(pids[i],3);
+        my_nice(pids[i],HIGHEST);
 
     bussy_wait(WAIT);
     newline();
@@ -50,7 +50,7 @@ void test_prio()
     drawWord("CHANGING PRIORITIES WHILE BLOCKED...\n");
     newline();
     for (i = 0; i < TOTAL_PROCESSES; i++)
-        my_nice(pids[i], MEDIUM);
+        my_nice(pids[i], LOWEST);
 
     newline();
     drawWord("UNBLOCKING...\n");
@@ -69,9 +69,13 @@ void test_prio()
     for (i = 0; i < TOTAL_PROCESSES; i++)
         kill_process_pid(pids[i]);
 
-    drawWord("i have killed them all");
-    print_processes();
-    newline();
+//    print_processes();
+//    drawWord(" AAAAAAAAAAAAAAAAAAA ");
+//    newline();
+
+//    while(1) {
+//        ;
+//    }
 }
 
 static void endless_loop_print(uint64_t wait)

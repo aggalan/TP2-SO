@@ -29,15 +29,29 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
   uint8_t rq;
   uint8_t alive = 0;
   uint8_t action;
-  uint64_t max_processes;
+  uint64_t max_processes = 64;
   
 
-  if (argc != 1)
-    return -1;
+  if (argc != 1) {
+      drawWord(" argc wrong nigger ");
+      return -1;
+  }
+
+
+  if ((max_processes = satoi(argv[1])) <= 0) {
+      drawWord(" satoi wrong nigga ");
+      drawWord(argv[0]);
+      drawWord(" ");
+      drawWord(argv[1]);
+
+      return -1;
+  }
+
 
   p_rq p_rqs[max_processes];
 
     while(1){
+        drawWord(" ok ");
 
     // Create max_processes processes
     for (rq = 0; rq < max_processes; rq++) {
