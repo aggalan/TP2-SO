@@ -16,6 +16,7 @@ linked_list_ADT ll_init() {
     list_ptr->first = NULL;
     list_ptr->last = NULL;
     list_ptr->current = NULL;
+    list_ptr->total_size = 0;
     return list_ptr;
 }
 
@@ -40,7 +41,7 @@ void insert(PCB * data, uint8_t priority, linked_list_ADT list) {
         return;
     }
 
-    uint8_t interval = list->size/priority;
+    uint8_t interval = list->total_size/priority;
 
     if (interval == 0) {
         interval = 1;
@@ -69,6 +70,7 @@ void insert(PCB * data, uint8_t priority, linked_list_ADT list) {
         aux = new_node;
     }
     list->size++;
+    list->total_size += priority;
 }
 
 void remove(pid_t pid_remove, linked_list_ADT list, int nice) {
@@ -117,6 +119,7 @@ void remove(pid_t pid_remove, linked_list_ADT list, int nice) {
         node = node->next;
     } while (priority > 0);
     list->size--;
+    list->total_size -= priority;
 }
 
 node_t * find(pid_t pid_find, linked_list_ADT list) {

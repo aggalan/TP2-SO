@@ -16,6 +16,7 @@ typedef struct linked_list{ //es circular que last apunte a first
     node_t * last;
     node_t * current;
     uint64_t size;
+    uint64_t total_size;
 }linked_list;
 
 typedef struct linked_list * linked_list_ADT;

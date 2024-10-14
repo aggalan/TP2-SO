@@ -39,7 +39,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
     while(1){
     // Create max_processes processes
     for (rq = 0; rq < max_processes; rq++) {
-      p_rqs[rq].pid = create_process(idle, 2, 1, argvAux);
+      p_rqs[rq].pid = create_process(idle, 1, 1, argvAux);
 
       if (p_rqs[rq].pid == -1) {
         mm_status();
