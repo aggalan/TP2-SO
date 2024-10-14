@@ -11,9 +11,7 @@ void  scheduler_init();
 
 void add_process(PCB * pcb, uint8_t priority);
 
-void remove_process(pid_t pid_to_remove);
-
-void remove_process_for_nice(pid_t pid_to_remove);
+void remove_process(pid_t pid_to_remove, int nice);
 
 pid_t running_process();
 

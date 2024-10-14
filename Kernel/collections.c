@@ -72,7 +72,7 @@ void insert(PCB * data, uint8_t priority, linked_list_ADT list) {
     list->size++;
 }
 
-void remove(pid_t pid_remove, linked_list_ADT list) {
+void remove(pid_t pid_remove, linked_list_ADT list, int nice) {
     if (list->first == NULL) {
         return;
     }
@@ -107,53 +107,9 @@ void remove(pid_t pid_remove, linked_list_ADT list) {
             if (list->last == to_remove) {
                 list->last = aux; // y ya en la linea anterior nos encargamos de que siga siendo circular la lista
             }
-            if (priority == 1) {
+            if (priority == 1 && !nice) {
                 free_node(to_remove); // libero todoooo
-                list->size--;
-                return;
-            }
-            mm_free(to_remove); //solo libero nodo porq no es el ultimo
-            priority--;
-        }
-        aux = aux->next;
-    } while (priority > 0);
-
-}
-
-void remove_nice(pid_t pid_remove_nice, linked_list_ADT list) {
-    if (list->first == NULL) {
-        return;
-    }
-    PCB * pcb = find(pid_remove_nice, list);
-    if (pcb == NULL) {
-        return;
-    }
-    uint8_t priority = pcb->priority;
-
-    node_t * aux = list->last;
-
-    if (list->size == 1 && aux->data->process->pid == pid_remove_nice) {
-        free_node(list->first);
-        list->first = NULL;
-        list->last = NULL;
-        list->current = NULL;
-        list->size = 0;
-        return;
-    }
-
-    do  {
-        if (aux->next->data->process->pid == pid_remove_nice) {
-            if (aux->next == list->current) {
-                list->current = list->current->next;
-            }
-
-            node_t *to_remove = aux->next;
-            aux->next = aux->next->next;
-            if (list->first == to_remove) {
-                list->first = aux->next;
-            }
-            if (list->last == to_remove) {
-                list->last = aux; // y ya en la linea anterior nos encargamos de que siga siendo circular la lista
+                break;
             }
             mm_free(to_remove); //solo libero nodo porq no es el ultimo
             priority--;
