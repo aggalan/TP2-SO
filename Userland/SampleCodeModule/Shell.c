@@ -122,6 +122,10 @@ void lineRead(char *buffer) {
     }else if(strcmp(buffer,"testprio")==0){
         call_prio_test();
         return;
+    }else if(strcmp(cutString(buffer),"kill")==0){
+
+        call_kill(1);
+        return;
     }else if(strcmp(buffer,"ps")==0){
         call_ps();
         return;

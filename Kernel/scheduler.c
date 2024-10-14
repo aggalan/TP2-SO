@@ -105,10 +105,10 @@ void * schedule(void * current_stack_ptr) {
     while(processes->current->data->process->state != READY) {
 
 
-        if (processes->current->data->process->state == KILLED) {
-            node_t * aux = processes->current;
-            remove_process(aux->data->process->pid, 0);
-        }
+//        if (processes->current->data->process->state == KILLED) {
+//            node_t * aux = processes->current;
+//            remove_process(aux->data->process->pid, 0);
+//        }
 
         if (processes->current == aux && processes->current->data->process->state != READY) {
             process_has_run = IDLE;

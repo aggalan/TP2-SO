@@ -144,10 +144,10 @@ pid_t kill_process_pid(pid_t pid_to_free) {
         return -1;
     }
     int state = pcb->process->state;
-//    remove_process(pid_to_free, 0); //sino el test de proceso se queda sin memoria porque reserva mas rapido de lo que libera
-    pcb->process->state = KILLED;
+    remove_process(pid_to_free, 0); //sino el test de proceso se queda sin memoria porque reserva mas rapido de lo que libera
+//    pcb->process->state = KILLED;
     if (state == RUNNING) {
-//        killed();
+        killed();
         _irq00Handler();
     }
 

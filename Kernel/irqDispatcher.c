@@ -93,17 +93,20 @@ static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
             argv[1]="266240";
             argv[0]="mem test";
             create_process(test_mm,1,1,argv);
+            mm_free(argv);
             return 0;
         case 17:
             char ** argv2=mm_malloc(2*sizeof(char));
             argv2[1]="10";
             argv2[0]="process test";
             create_process(test_processes,1,1,argv2);
+            mm_free(argv2);
             return 0;
         case 18:
             char ** argv3=mm_malloc(sizeof(char));
             argv3[0]="prio test";
             create_process(test_prio,1,1,argv3);
+            mm_free(argv3);
             break;
         case 19:
             return block_process((pid_t)rsi);
