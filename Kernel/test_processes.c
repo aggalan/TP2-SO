@@ -1,4 +1,4 @@
-#include "videoDriver.h"
+#include "../Drivers/include/videoDriver.h"
 #include "syscalls.h"
 #include "test_util.h"
 #include "processManager.h"
@@ -33,16 +33,16 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
   
 
   if (argc != 1) {
-      drawWord(" argc wrong nigger ");
+      drawWord1(" argc wrong nigger ");
       return -1;
   }
 
 
   if ((max_processes = satoi(argv[1])) <= 0) {
-      drawWord(" satoi wrong nigga ");
-      drawWord(argv[0]);
-      drawWord(" ");
-      drawWord(argv[1]);
+      drawWord1(" satoi wrong nigga ");
+      drawWord1(argv[0]);
+      drawWord1(" ");
+      drawWord1(argv[1]);
 
       return -1;
   }
@@ -51,7 +51,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
   p_rq p_rqs[max_processes];
 
     while(1){
-        drawWord(" ok ");
+        drawWord1(" ok ");
 
     // Create max_processes processes
     for (rq = 0; rq < max_processes; rq++) {
@@ -59,7 +59,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
 
       if (p_rqs[rq].pid == -1) {
         mm_status();
-        drawWord("test_processes: ERROR creating process\n");
+        drawWord1("test_processes: ERROR creating process\n");
         return -1;
       } else {
         p_rqs[rq].state = RUNNING;
@@ -77,7 +77,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
           case 0:
             if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == BLOCKED) {
               if (kill_process_pid(p_rqs[rq].pid) == -1) {
-                drawWord("test_processes: ERROR killing process\n");
+                drawWord1("test_processes: ERROR killing process\n");
                 return -1;
               }
               p_rqs[rq].state = KILLED;
@@ -88,7 +88,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
           case 1:
             if (p_rqs[rq].state == RUNNING) {
               if (block_process(p_rqs[rq].pid) == -1) {
-                drawWord("test_processes: ERROR blocking process\n");
+                drawWord1("test_processes: ERROR blocking process\n");
                 return -1;
               }
               p_rqs[rq].state = BLOCKED;
@@ -101,7 +101,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
       for (rq = 0; rq < max_processes; rq++)
         if (p_rqs[rq].state == BLOCKED && GetUniform(100) % 2) {
           if (unblock_process(p_rqs[rq].pid) == -1) {
-            drawWord("test_processes: ERROR unblocking process\n");
+            drawWord1("test_processes: ERROR unblocking process\n");
             return -1;
           }
           p_rqs[rq].state = RUNNING;

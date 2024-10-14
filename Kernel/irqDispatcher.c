@@ -1,146 +1,111 @@
 #include <time.h>
 #include <stdint.h>
+#include "Drivers/include/keyboardDriver.h"
+#include "Drivers/include/videoDriver.h"
+#include "Drivers/include/SoundDriver.h"
+#include "include/libasm.h"
+#include <syscalls.h>
 #include <naiveConsole.h>
-#include "videoDriver.h"
-#include "registers.h"
-#include "interrupts.h"
-#include "soundDriver.h"
-#include "keyboardBuffer.h"
-#include "syscalls.h"
-#include "keyboardDriver.h"
-#include <stdbool.h>
-#include "test_util.h"
-#include "memoryManager.h"
-#include "processManager.h"
-#include "test_processes.h"
-#include <stddef.h>
-
-static uint64_t int_80(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10);
-typedef void (*InterruptHandler)(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10);
-
-void irqDispatcher(uint64_t irq, uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10) {
-	switch(irq){
+#include "include/interrupts.h"
+#include "include/lib.h"
+#include "include/registerHandling.h"
+#include "include/memoryManager.h"
+#include "include/processManager.h"
+#include "include/test_util.h"
+#include "include/test_processes.h"
+static void int_20();
+static void int_21();
+static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
+void irqDispatcher(uint64_t irq,uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+	switch (irq) {
 		case 0:
-			timer_handler();
-			if(ticks_elapsed() % 21 <= 10){
-				cursorOn();
-			}else{
-				cursorOff();
-			}
+			int_20();
 			break;
 		case 1:
-			keyboardHandler();
+			int_21();
 			break;
-		case 96:
-			int_80(rax, rdi, rsi, rdx, r10);
-			break;
-	}
+        case 0x80:
+            int_80(rdi, rsi,  rdx, rcx, r8, r9);
+            break;
+        }
 	return;
-
 }
 
-uint64_t int_80(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10){
-	switch(rax){
-		case 1: 
-				sys_write((char *)rdi, rsi, rdx);
-				break;
-		case 2:
-				sys_read((char *)rdi, rsi, rdx);
-				break;
-		case 3: 
-				TimeClock((char *)rdi); 
-				break;
-		case 4:
-				printRegistersASM(); 
-				break;
-		case 5: 
-				sizeUp();
-				break;
-		case 6: 
-				sizeDown();
-				break;
-		case 7: 
-				clear();
-				break;
-		case 8:
-				fontSize();
-				break;
-		case 9:
-				beep(rdi, rsi);
-				break;
-		case 10:
-				clearColor(rdi);
-				break;
-		case 11:
-				drawWordColorAt((char *)rdi, rsi, rdx, r10);
-				break;
-		case 12:
-				putSquare(rdi, rsi, rdx, r10);
-				break;
-		case 13:
-				sleepms(rdi);
-				break;
-		case 14:
-				sleeps(rdi);
-				break;
-		case 15:
-				pixelColorAt(rdi, rsi);
-				break;
-		case 16:
-				return getPos();
-				break;
-		case 17:
-				return getBuffCharAt(rdi);
-				break;
-		case 18:
-				bufferClearAll();
-				break;
-        case 19:
-                moveScreenRight();
-                break;
-		case 20:
-                setCursorFlag(1);
-				break;
-		case 21:
-                setCursorFlag(0);
-				break;
-        case 22:
-                printImage();
-                break;
-		case 23:
-
-                char ** argv=mm_malloc(2*sizeof(char));
-                argv[1]="266240";
-                argv[0]="mem test";
-                create_process(test_mm,1,1,argv);
-
-//				char * argv[] = {"266240"};
-//				test_mm(1, argv);
-				break;
-		case 24:
-				mm_status();
-				break;
-		case 25:
-				kill_process();
-				break;
-		case 26:
-                char ** argv2=mm_malloc(2*sizeof(char));
-                argv2[1]="10";
-                argv2[0]="processtest";
-                create_process(test_processes,1,1,argv2);
-
-//				char * argv2[] = {"process", "20"};
-//                create_process(test_processes, 1, 1, argv2);
-//				test_processes(1, argv2);
-				break;
-		case 27:
-                char * argv3[] = {"prio"};
-                create_process(test_prio, 1, 1, argv3);
-//				test_prio();
-				break;
-		default:
-				return 0;
-				
-	}
-	return 0;
+void int_20() {
+	timer_handler();
 }
+void int_21() {
+	keyboard_handler();
+}
+static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9){
+    switch(rdi) {
+        case 1:
+            sys_write(rsi, (char *)rdx, rcx,r8);
+            return 0;
+        case 2:
+            return sys_read(rsi,(char *) rdx, rcx);
+        case 3:
+            clock((char *) rsi);
+            return 0;
+        case 4:
+            if(getFlag() || rsi == 1){
+                if(getFlag()==0){
+                    drawWord(0x00FF0000,"You must take a screenshot first, press : and try again.\n");
+                    return 0;
+                }
+                printRegisters(getRegisters(), 0x00ffffff);
+            }
+            //la idea faltaria que se prenda al pedir registros
+            return 0;
+        case 5:
+            clear();
+            return 0;
+        case 6:
+            return ticks_elapsed();
+        case 7:
+           return (getHeight());
+        case 8:
+           return (getWidth());
+        case 9:
+            moveCursorX((uint16_t)rsi);
+            return 0;
+        case 10:
+            moveCursorY((uint16_t)rsi);
+            return 0;
+        case 11:
+            drawRectangle(rsi, rdx, rcx, r8, r9);
+            return 0;
+        case 12:
+            sleepms(rsi);
+            return 0;
+        case 13:
+            return (int) setFontSize(rsi);
+        case 14:
+            beep();
+            return 0;
+        case 15:
+            mm_status();
+            return 0;
+        case 16:
+            char ** argv=mm_malloc(2*sizeof(char));
+            argv[1]="266240";
+            argv[0]="mem test";
+            create_process(test_mm,1,1,argv);
+            //test_mm();
+            return 0;
+        case 17:
+            char ** argv2=mm_malloc(2*sizeof(char));
+            argv2[1]="10";
+            argv2[0]="process test";
+            create_process(test_processes,1,1,argv2);
+            return 0;
+        case 18:
+            char ** argv3=mm_malloc(sizeof(char));
+            argv3[0]="prio test";
+            create_process(test_prio,1,1,argv3);
+        default:
+            return 0;
+    }
+}
+
+

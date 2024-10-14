@@ -6,7 +6,7 @@
 #include "scheduler.h"
 #include "lib.h"
 #include "interrupts.h"
-#include "videoDriver.h"
+#include "../Drivers/include/videoDriver.h"
 
 static pid_t pid = 0;
 

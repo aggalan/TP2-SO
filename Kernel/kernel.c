@@ -4,7 +4,7 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <syscalls.h>
-#include <videoDriver.h>
+#include "../Drivers/include/videoDriver.h"
 #include "idtLoader.h"
 #include "test_util.h"
 #include "memoryManager.h"
@@ -73,6 +73,7 @@ int main()
 	mm_init((void *)0x600000, 0x2700000);
 	scheduler_init();
 	shell();
+	
 	while(1);
 	return 0;
 }

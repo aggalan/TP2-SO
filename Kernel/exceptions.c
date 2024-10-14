@@ -1,37 +1,42 @@
-#include "exceptions.h" 
-#include "registers.h"
-#include "syscalls.h"
-#include "videoDriver.h"
-#include "keyboardBuffer.h"
+
 #define ZERO_EXCEPTION_ID 0
- 
+#define INVALID_OPCODE_ID 6
+#include "Drivers/include/videoDriver.h"
+#include "include/registerHandling.h"
+#include "include/syscalls.h"
+#include "include/interrupts.h"
+static void zero_division();
+static void invalid_opcode();
 
+void exceptionDispatcher(int exception) {
+	if (exception == ZERO_EXCEPTION_ID){
+		zero_division();
+	}else{
+		invalid_opcode();
+		}
+    printRegisters(getRegisters(), 0x00ff0000);
+    drawWord(0x00ff0000,"Press any key to continue");
+    while(1) {
+        char c;
+        _hlt();
+        sys_read(STDIN, &c, 1); // no se si esta bien usarlo asi
+        if (c != 0) {
+            clear();
+            return;
+        }
+    }
 
-
-void exceptionDispatcher(int exception, registerStruct * registers) {
-    setCursorFlag(0);
-    if (exception == ZERO_EXCEPTION_ID)
-		zeroDivision();
-	else {
-		invalidOp();
-	}
-	printRegisters(registers);
-	drawWordColor("Press a key to continue",WHITE, RED);
-	char c;
-	sys_read(&c, 1, 0);
-    bufferClear();
-    setCursorFlag(1);
 }
 
- void zeroDivision() {
-	register_snapshot_taken = 1;
-	drawWordColor("ERROR: CANNOT DIVIDE BY ZERO", WHITE, RED);
-	newline();
+static void zero_division() {
+	drawWord(0x00FF0000, "Cannot divide by 0");
+	newLine();
+    return;
 }
 
- void invalidOp(){
-	register_snapshot_taken = 1;
-	drawWordColor("ERROR: INVALID OPCODE", WHITE, RED);
-	newline();
-}
+static void invalid_opcode(){
 
+	drawWord(0x00FF0000, "Error:Invalid opcode");
+	newLine();
+
+}

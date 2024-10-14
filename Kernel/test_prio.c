@@ -5,7 +5,7 @@
 #include "processManager.h"
 #include "lib.h"
 #include "test_processes.h"
-#include "videoDriver.h"
+#include "../Drivers/include/videoDriver.h"
 #include "scheduler.h"
 
 #define MINOR_WAIT 1000000 // TODO: Change this value to prevent a process from flooding the screen
@@ -31,38 +31,38 @@ void test_prio()
         pids[i] = create_process(endless_loop_print, 2, 1, argv);
 
     bussy_wait(WAIT);
-    newline();
-    drawWord("\nCHANGING PRIORITIES...\n");
-    newline();
+    newLine();
+    drawWord1("\nCHANGING PRIORITIES...\n");
+    newLine();
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
         my_nice(pids[i],HIGHEST);
 
     bussy_wait(WAIT);
-    newline();
-    drawWord("\nBLOCKING...\n");
-    newline();
+    newLine();
+    drawWord1("\nBLOCKING...\n");
+    newLine();
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
         block_process(pids[i]);
 
-    newline();
-    drawWord("CHANGING PRIORITIES WHILE BLOCKED...\n");
-    newline();
+    newLine();
+    drawWord1("CHANGING PRIORITIES WHILE BLOCKED...\n");
+    newLine();
     for (i = 0; i < TOTAL_PROCESSES; i++)
         my_nice(pids[i], LOWEST);
 
-    newline();
-    drawWord("UNBLOCKING...\n");
-    newline();
+    newLine();
+    drawWord1("UNBLOCKING...\n");
+    newLine();
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
         unblock_process(pids[i]);
 
     bussy_wait(WAIT);
-    newline();
-    drawWord("\nKILLING...\n");
-    newline();
+    newLine();
+    drawWord1("\nKILLING...\n");
+    newLine();
 
 
 
@@ -70,8 +70,8 @@ void test_prio()
         kill_process_pid(pids[i]);
 
 //    print_processes();
-//    drawWord(" AAAAAAAAAAAAAAAAAAA ");
-//    newline();
+//    drawWord1(" AAAAAAAAAAAAAAAAAAA ");
+//    newLine();
 
 //    while(1) {
 //        ;
@@ -82,9 +82,9 @@ static void endless_loop_print(uint64_t wait)
 {
     while (1)
     {
-//        drawWord("PID: ");
+//        drawWord1("PID: ");
 //        drawNumber(get_active_pid());
-//        newline();
+//        newLine();
         bussy_wait(wait);
     }
 }

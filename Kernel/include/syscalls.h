@@ -1,14 +1,18 @@
-#ifndef _SYSCALLS_H
-#define _SYSCALLS_H
+//
+// Created by nicol on 5/22/2024.
+//
 
-void sys_write(char * buffer, int len, int fd);
-void sys_read(char * buff, int len, int fds);
-void setShift(int i);
-int getShiftVal();
-
-
+#ifndef TPE_SYSCALLS_H
+#define TPE_SYSCALLS_H
 #define STDIN 0
 #define STDOUT 1
-#define STDERR 2
+#define ERROUT 2
 
-#endif
+// writes in the file descriptor received the string, of length len in a color of HexColor
+void sys_write(int descriptor, const char * str, int len, uint32_t hexColor);
+
+//reads from the character buffer until reaching the amount of characters len or emptying the buffer and saves the chars at save
+int sys_read(int descriptor, char * save,int len);
+
+
+#endif //TPE_SYSCALLS_H

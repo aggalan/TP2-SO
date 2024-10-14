@@ -1,28 +1,22 @@
-#ifndef _KEYBOARD_BUFFER_
-#define _KEYBOARD_BUFFER_
+#ifndef keyboardBuffer_h
+#define keyboardBuffer_h
 #include <stdint.h>
+#define BUFF_SIZE 4096
+typedef struct keyboard_buffer* buff_ptr; 
 
-#define BUFFER_LIMIT 256
-
-
-struct kbuff {
-    int pos;
-    int len;
-    uint16_t buffer[BUFFER_LIMIT];
+struct keyboard_buffer { 
+    int bufferPos;
+    int bufferLen;
+    char buffer[BUFF_SIZE];
 };
 
-typedef struct kbuff * buffer_ptr;
+int getBufferPosition();            //Returns the current position of the buffer
+void setPos(int newPosition);       //Set the buffer position to a new position 
+char * getBufferAddress();          //Get the buffer address
+char getCharAt(int position);       //Return the char located at buffer[position]
+void consumeBufferAt(int position); //Erases the char located at position
+void cleanBuffer();                 //cleans the buffer
+int getBufferLen();                 //Returns the current size of the buffer
+void incBufferLen(int n);           //increments the current size of the buffer
 
-void bufferAppend(char c);
-void bufferClear();
-void bufferBackspace();
-int getPos();
-uint16_t * getBuff();
-char getBuffAtCurrent();
-void consumeChar();
-int bufferLen();
-void setPos(int newPos);
-uint16_t getBuffCharAt(int pos);
-void bufferClearAll();
-void consume();
 #endif
