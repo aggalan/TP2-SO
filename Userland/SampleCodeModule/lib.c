@@ -48,12 +48,12 @@ void print(uint32_t hexColor,const char * str, ...){
 
             switch(*str){
                 case 'c': {
-                    char c = va_arg(args, char*);
-                    putC(c,hexColor);
+                    char * c = va_arg(args, char*);
+                    putC(*c,hexColor);
                     break;
                 }
                 case 'd': {
-                    int d = va_arg(args, int*);
+                    int * d = va_arg(args, int*);
                     putInt(d,hexColor);
                     break;
                 }

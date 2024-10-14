@@ -20,7 +20,7 @@ GLOBAL getRegisters
 GLOBAL printRegistersAsm
 GLOBAL getFlag
 GLOBAL saveRegisters
-GLOBAL yield
+GLOBAL nice
 
 EXTERN schedule
 EXTERN irqDispatcher
@@ -131,7 +131,7 @@ getRegisters:
 
     ret
 
-yield:
+nice:
 	int 0x20
 
 getFlag:

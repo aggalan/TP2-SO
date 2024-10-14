@@ -36,7 +36,7 @@ void test_prio()
     newLine();
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-//        my_nice(pids[i],HIGHEST);
+       change_priority(pids[i],HIGHEST);
 
     bussy_wait(WAIT);
     newLine();
@@ -44,20 +44,20 @@ void test_prio()
     newLine();
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-//        block_process(pids[i]);
+       block_process(pids[i]);
 
     newLine();
     drawWord1("CHANGING PRIORITIES WHILE BLOCKED...\n");
     newLine();
     for (i = 0; i < TOTAL_PROCESSES; i++)
-//        my_nice(pids[i], LOWEST);
+       change_priority(pids[i], LOWEST);
 
     newLine();
     drawWord1("UNBLOCKING...\n");
     newLine();
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-//        unblock_process(pids[i]);
+       unblock_process(pids[i]);
 
     bussy_wait(WAIT);
     newLine();

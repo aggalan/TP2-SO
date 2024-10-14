@@ -111,12 +111,12 @@ static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
         case 21:
             return kill_process_pid((pid_t)rsi);
         case 22:
-            yield();
+            nice();
             return 0;
         case 23:
             //return wait_pid((pid_t)rsi);
         case 24:
-            my_nice((pid_t)rsi,(int)rdx);
+            change_priority((pid_t)rsi,(int)rdx);
             return 0;
         case 25:
             //return (uint64_t) mm_malloc(rsi);

@@ -83,7 +83,7 @@ pid_t call_unblock(pid_t pid);
 
 pid_t call_kill(pid_t pid);
 
-void call_yield();
+void call_nice();
 
 size_t call_waitpid();
 
