@@ -14,7 +14,7 @@
 
 linked_list_ADT processes;
 PCB * idle_p;
-int idle_has_run = 1;
+int was_killed = 0;
 int process_has_run = KERNEL;
 int scheduler_initialized = 0;
 
@@ -49,6 +49,14 @@ PCB * get_current() {
     return processes->current->data;
 }
 
+pid_t get_current_pid() {
+    PCB * pcb = get_current();
+    if (pcb == NULL) {
+        return -1;
+    }
+    return pcb->process->pid;
+}
+
 pid_t running_process() {
     return processes->current->data->process->pid; // ver si pasamos el parent_pid como argumento o hacemos esto. ver si no se caga en ningun caso
 }
@@ -80,7 +88,10 @@ void * schedule(void * current_stack_ptr) {
         if (processes->current->data->process->state == RUNNING) {
             processes->current->data->process->state = READY;
         }
-        processes->current->data->process->stack->current = current_stack_ptr;
+        if (!was_killed) {
+            processes->current->data->process->stack->current = current_stack_ptr;
+        }
+        was_killed = 0;
     }
 
     node_t * aux = processes->current;
@@ -118,7 +129,7 @@ pid_t get_active_pid() {
     return processes->current->data->process->pid;
 }
 
-void my_nice(pid_t pid_to_nice, uint8_t priority) {
+void change_priority(pid_t pid_to_nice, uint8_t priority) {
     PCB * pcb = find_process(pid_to_nice);
     if (pcb == NULL) {
         return;
@@ -149,6 +160,10 @@ void print_processes() {
     drawNumber(processes->last->data->process->pid);
     newLine();
 
+}
+
+void killed() {
+    was_killed = 1;
 }
 
 

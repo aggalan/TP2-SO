@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include "processManager.h"
 
-void my_nice(pid_t pid_to_nice, uint8_t priority);
+void change_priority(pid_t pid_to_nice, uint8_t priority);
 
 void  scheduler_init();
 
@@ -19,8 +19,12 @@ PCB * find_process(pid_t pid_find);
 
 PCB * get_current();
 
+pid_t get_current_pid();
+
 pid_t get_active_pid();
 
 void print_processes();
+
+void killed();
 
 #endif

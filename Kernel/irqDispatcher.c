@@ -104,6 +104,7 @@ static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
             char ** argv3=mm_malloc(sizeof(char));
             argv3[0]="prio test";
             create_process(test_prio,1,1,argv3);
+            break;
         case 19:
             return block_process((pid_t)rsi);
         case 20:
