@@ -82,11 +82,11 @@ void * mm_malloc(size_t size){
 
     uintptr_t first = mm_find(required, manager.current);
 
-    if(first == -1){
+    if(first == NULL){
         first = mm_find(required, 0);
     }
 
-    if(first == -1){
+    if(first == NULL){
         return NULL;
     }
 
@@ -123,13 +123,13 @@ uintptr_t mm_find(size_t required, size_t start){
         return (uintptr_t)(manager.start + first * BLOCK_SIZE);
     }
 
-    return -1;
+    return NULL;
 }
 
 
 void mm_fill(size_t required, size_t first){
     manager.bitmap[first] = START;
-    for(size_t i = first + 1; i < required; i++){
+    for(size_t i = first + 1; i < first + required; i++){
         manager.bitmap[i] = ALLOCATED;
     }
 }
@@ -143,7 +143,7 @@ void mm_free(void * ptr){
 
     size_t index = ((uintptr_t) ptr - (uintptr_t) manager.start) / BLOCK_SIZE;
     
-    if(manager.bitmap[index] != START || index > manager.blocks){
+    if(manager.bitmap[index] != START || index >= manager.blocks){
         drawWordColor("INVALID FREE", WHITE, RED );
         return;
     }
