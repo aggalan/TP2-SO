@@ -60,7 +60,7 @@ void * initializeKernelBinary()
 
 void shell(){
 	char * argv[] = {"shell"};
-	create_process(sampleCodeModuleAddress, 3, 1, argv);
+	create_process(sampleCodeModuleAddress, 5, 1, argv);
 }
 
 
@@ -68,13 +68,7 @@ int main()
 {
 	load_idt();
 	mm_init((void *)0x600000, 0x2700000);
-//    drawWord(" mm init: ");
-//    newline();
-//    mm_status();
     scheduler_init();
-//    drawWord(" sched init: ");
-//    newline();
-//    mm_status();
 	shell();
 	
 	while(1);

@@ -123,8 +123,11 @@ void lineRead(char *buffer) {
         call_prio_test();
         return;
     }else if(strcmp(cutString(buffer),"kill")==0){
-
-        call_kill(1);
+        char * init = buffer + strlen("kill ");
+        if (!strlen(init)) {
+            return;
+        }
+        call_kill(strToInt(init));
         return;
     }else if(strcmp(buffer,"ps")==0){
         call_ps();
