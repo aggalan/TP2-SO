@@ -20,7 +20,7 @@ GLOBAL call_prio_test
 GLOBAL call_block
 GLOBAL call_unblock
 GLOBAL call_kill
-GLOBAL call_nice
+GLOBAL call_change_priority
 GLOBAL call_waitpid
 GLOBAL call_nice
 GLOBAL call_malloc
@@ -93,7 +93,7 @@ call_nice:
     call_to_handler 22
 call_waitpid:
     call_to_handler 23
-call_nice:
+call_change_priority:
     call_to_handler 24
 call_malloc:
     call_to_handler 25
