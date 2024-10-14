@@ -1,6 +1,7 @@
 #include "memoryManager.h"
 #include "../Drivers/include/videoDriver.h"
 #include <stdio.h>
+#include "scheduler.h"
 
 typedef struct memory_manager {
     void * start;
@@ -17,6 +18,8 @@ typedef struct memory_manager {
 #define START 2
 
 memory_manager mm;
+
+static void full_memory_status();
 
 
 void allocate_heap() {
@@ -155,28 +158,36 @@ void mm_status() {
     drawWord1("Total Free: ");
     drawNumber((mm.qty_blocks - mm.used_blocks)*BLOCK_SIZE);
     newLine();
+    //full_memory_status();
 
-     uint64_t total = 0;
-     uint64_t total2 = 0;
 
-     for (uint32_t i = 0; i < mm.qty_blocks; i++) {
+}
 
-         if (mm.bitmap[i] != FREE && mm.bitmap[i] != ALLOCATED  && mm.bitmap[i] != START) {
-             total++;
-         }
-         if (mm.bitmap[i] == FREE ) {
-             total2++;
-         }
-     }
-     drawWord1("total memory free : ");
-     drawNumber(total2);
-     newLine();
-     drawWord1("total memory with garbage : ");
-     drawNumber(total);
-     newLine();
-     drawWord1("en pos 0 hay: ");
-     drawNumber(mm.bitmap[0]);
-     newLine();
-     print_processes();
 
+void full_memory_status(){
+    uint64_t total = 0;
+    uint64_t total2 = 0;
+
+    for (uint32_t i = 0; i < mm.qty_blocks; i++)
+    {
+
+         if (mm.bitmap[i] != FREE && mm.bitmap[i] != ALLOCATED && mm.bitmap[i] != START)
+        {
+            total++;
+        }
+        if (mm.bitmap[i] == FREE)
+        {
+            total2++;
+        }
+    }
+    drawWord1("total memory free : ");
+    drawNumber(total2);
+    newLine();
+    drawWord1("total memory with garbage : ");
+    drawNumber(total);
+    newLine();
+    drawWord1("en pos 0 hay: ");
+    drawNumber(mm.bitmap[0]);
+    newLine();
+    print_processes();
 }

@@ -14,7 +14,6 @@ typedef struct MM_rq {
 } mm_rq;
 
 uint64_t test_mm(uint64_t argc, char *argv[]) {
-//  drawWord1("test_mm");
 
   mm_rq mm_rqs[MAX_BLOCKS];
   uint8_t rq;
@@ -42,7 +41,6 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
       }
     }
 
-    //mm_status();
 
     // Set
     uint32_t i;
@@ -64,10 +62,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     for (i = 0; i < rq; i++){
       if (mm_rqs[i].address){
         mm_free(mm_rqs[i].address);
-        // drawWord1("free");
       }
     }
-    
-//    drawWord1(" OK ");   // mm_status();
   }
 }

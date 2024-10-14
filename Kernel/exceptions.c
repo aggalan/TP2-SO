@@ -19,7 +19,7 @@ void exceptionDispatcher(int exception) {
     while(1) {
         char c;
         _hlt();
-        sys_read(STDIN, &c, 1); // no se si esta bien usarlo asi
+        sys_read(STDIN, &c, 1);
         if (c != 0) {
             clear();
             return;

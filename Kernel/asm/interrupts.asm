@@ -194,18 +194,11 @@ picSlaveMask:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-		;irqHandlerMaster 0
 
-	;esto va a decir push registros, cambio de rsp, pop registros
 	pushState
 	mov rdi, 0
 	call irqDispatcher
 
-    ; levantar procesos que esta esperando el timer
-
-    ;call wakeUpProcesses
-
-	; llamar al scheduler para que me devuelva un rsp
 	mov rdi, rsp
 	call schedule
 	mov rsp, rax
@@ -213,7 +206,7 @@ _irq00Handler:
 	mov al, 20h
 	out 20h, al
 
-	popState ; (aca ya estoy en el stack del otro proceso)
+	popState 
 	iretq
 
 ;Keyboard

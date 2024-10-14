@@ -11,7 +11,6 @@
 static pid_t pid = 0;
 
 PCB * create_pcb(void * fn, uint8_t prio, uint64_t argc, char ** argv);
-//pid_t create_process(void * fn, int prio, uint64_t argc, char ** argv);
 PCB * create_idle_process();
 
 

@@ -54,7 +54,7 @@ void print(uint32_t hexColor,const char * str, ...){
                 }
                 case 'd': {
                     int * d = va_arg(args, int*);
-                    putInt(d,hexColor);
+                    putInt(*d,hexColor);
                     break;
                 }
                 case 's': {

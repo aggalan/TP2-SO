@@ -29,11 +29,11 @@ void scheduler_init() {
     scheduler_initialized = 1;
 }
 
-void add_process(PCB * pcb, uint8_t priority) { //ver bien y tema idle
+void add_process(PCB * pcb, uint8_t priority) {
     insert(pcb, priority, processes);
 }
 
-void remove_process(pid_t pid_to_remove, int nice) { //ver bien y tema idle
+void remove_process(pid_t pid_to_remove, int nice) { 
     remove(pid_to_remove, processes, nice);
 }
 
@@ -58,7 +58,7 @@ pid_t get_current_pid() {
 }
 
 pid_t running_process() {
-    return processes->current->data->process->pid; // ver si pasamos el parent_pid como argumento o hacemos esto. ver si no se caga en ningun caso
+    return processes->current->data->process->pid; 
 }
 
 void * schedule(void * current_stack_ptr) {
@@ -104,7 +104,6 @@ void * schedule(void * current_stack_ptr) {
 
     while(processes->current->data->process->state != READY) {
 
-
 //        if (processes->current->data->process->state == KILLED) {
 //            node_t * aux = processes->current;
 //            remove_process(aux->data->process->pid, 0);
@@ -142,10 +141,9 @@ void change_priority(pid_t pid_to_nice, uint8_t priority) {
 
 
 void print_processes() {
-    drawWord1(" processes running: ");
+    drawWord1("There are ");
     drawNumber(processes->size);
-    newLine();
-    drawWord1("i am going to print the processes now: ");
+    drawWord1(" processes in the system");
     newLine();
     node_t *aux = processes->first;
     do  {
@@ -156,9 +154,7 @@ void print_processes() {
         newLine();
         aux = aux->next;
     } while(aux != processes->first);
-    drawWord1(" list last PID: ");
-    drawNumber(processes->last->data->process->pid);
-    newLine();
+
 
 }
 

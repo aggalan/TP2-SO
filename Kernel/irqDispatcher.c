@@ -57,7 +57,7 @@ static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
                 }
                 printRegisters(getRegisters(), 0x00ffffff);
             }
-            //la idea faltaria que se prenda al pedir registros
+
             return 0;
         case 5:
             clear();
@@ -107,7 +107,7 @@ static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
             argv3[0]="prio test";
             create_process(test_prio,1,1,argv3);
             mm_free(argv3);
-            break;
+            return 0;
         case 19:
             return block_process((pid_t)rsi);
         case 20:
@@ -130,6 +130,8 @@ static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
         case 27:
             return create_process((void *)rsi,rdx,rcx,(char **)r8);
         case 28:
+            print_processes();
+            return 0;
             //return processes_info();
         case 29:
             //return get_current_pid();

@@ -10,7 +10,7 @@ callWrapper:
 create_context:
     push rbp
     mov rbp, rsp
-    mov rsp, rdi ; stack base
+    mov rsp, rdi
     and rsp, -16
     push 0x0
     push rdi

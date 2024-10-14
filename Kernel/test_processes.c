@@ -18,12 +18,6 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
 
     char *argvAux[] = {0};
 
-    // int32_t pid = create_process(idle1, 1, argvAux);
-
-    // kill_process_pid(pid);
-
-    // return 0;
-
   uint8_t rq;
   uint8_t alive = 0;
   uint8_t action;
@@ -43,9 +37,6 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
   p_rq p_rqs[max_processes];
 
     while(1){
-//        drawWord(" ok ");
-
-
     // Create max_processes processes
     for (rq = 0; rq < max_processes; rq++) {
       p_rqs[rq].pid = create_process(idle, 2, 1, argvAux);

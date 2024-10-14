@@ -21,6 +21,8 @@ enum State { BLOCKED,
             ZOMBIE,
              KILLED };
 
+//State usado en test_processes, no deberia ser un enum
+
 typedef struct p_memory_block {
     void * base_ptr;
 //    uint64_t size;
