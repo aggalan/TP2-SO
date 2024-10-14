@@ -38,7 +38,8 @@ void remove_process(pid_t pid_to_remove, int nice) { //ver bien y tema idle
 }
 
 PCB * find_process(pid_t pid_find) {
-    return find(pid_find, processes);
+    node_t * aux = find(pid_find, processes);
+    return aux->next->data;
 }
 
 PCB * get_current() {
@@ -63,10 +64,12 @@ void * schedule(void * current_stack_ptr) {
             idle_p->process->state = RUNNING;
             process_has_run = IDLE;
             return idle_p->process->stack->current;
-        } else if (processes->current->data->process->state == READY){
-            processes->current->data->process->state = RUNNING;
-            process_has_run = PROCESS;
-            return processes->current->data->process->stack->current;
+        } else {
+            if (processes->current->data->process->state == READY) {
+                processes->current->data->process->state = RUNNING;
+                process_has_run = PROCESS;
+                return processes->current->data->process->stack->current;
+            }
         }
     }
 
@@ -74,7 +77,7 @@ void * schedule(void * current_stack_ptr) {
         idle_p->process->stack->current = current_stack_ptr;
         idle_p->process->state = READY;
     } else {
-        if (processes->current->data->process->state != KILLED) {
+        if (processes->current->data->process->state == RUNNING) {
             processes->current->data->process->state = READY;
         }
         processes->current->data->process->stack->current = current_stack_ptr;

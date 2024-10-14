@@ -29,7 +29,7 @@ void remove(pid_t pid_remove, linked_list_ADT list, int nice);
 
 void modify_priority(pid_t pid, uint8_t new_priority, linked_list_ADT list);
 
-PCB * find(pid_t pid_find, linked_list_ADT list);
+node_t * find(pid_t pid_find, linked_list_ADT list); // returns pointer to previous node
 
 void free_node(node_t * node);
 

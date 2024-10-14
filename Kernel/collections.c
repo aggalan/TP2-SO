@@ -54,7 +54,8 @@ void insert(PCB * data, uint8_t priority, linked_list_ADT list) {
         }
         node_t * new_node = (node_t *)mm_malloc(sizeof(node_t));
         if (new_node == NULL) {
-            return; //HAY QUE VER ESTO ALTA PAJA
+            remove(data->process->pid, list, 0);
+            return;
         }
         new_node->data = data;
 
@@ -66,26 +67,23 @@ void insert(PCB * data, uint8_t priority, linked_list_ADT list) {
         aux->next = new_node;
 
         aux = new_node;
-
     }
-
     list->size++;
 }
 
 void remove(pid_t pid_remove, linked_list_ADT list, int nice) {
-    if (list->first == NULL) {
+
+    node_t * node = find(pid_remove, list);
+    if (node == NULL) {
         return;
     }
-    PCB * pcb = find(pid_remove, list);
-    if (pcb == NULL) {
-        return;
-    }
-    uint8_t priority = pcb->priority;
 
-    node_t * aux = list->last;
-
-    if (list->size == 1 && aux->data->process->pid == pid_remove) {
-        free_node(list->first);
+    if (list->size == 1) {
+        if (nice) {
+            mm_free(list->first);
+        } else {
+            free_node(list->first);
+        }
         list->first = NULL;
         list->last = NULL;
         list->current = NULL;
@@ -93,19 +91,21 @@ void remove(pid_t pid_remove, linked_list_ADT list, int nice) {
         return;
     }
 
+    uint8_t priority = node->next->data->priority;
+
     do  {
-        if (aux->next->data->process->pid == pid_remove) {
-            if (aux->next == list->current) {
+        if (node->next->data->process->pid == pid_remove) {
+            if (node->next == list->current) {
                 list->current = list->current->next;
             }
 
-            node_t *to_remove = aux->next;
-            aux->next = aux->next->next;
+            node_t *to_remove = node->next;
+            node->next = node->next->next;
             if (list->first == to_remove) {
-                list->first = aux->next;
+                list->first = node->next;
             }
             if (list->last == to_remove) {
-                list->last = aux; // y ya en la linea anterior nos encargamos de que siga siendo circular la lista
+                list->last = node; // y ya en la linea anterior nos encargamos de que siga siendo circular la lista
             }
             if (priority == 1 && !nice) {
                 free_node(to_remove); // libero todoooo
@@ -114,22 +114,22 @@ void remove(pid_t pid_remove, linked_list_ADT list, int nice) {
             mm_free(to_remove); //solo libero nodo porq no es el ultimo
             priority--;
         }
-        aux = aux->next;
+        node = node->next;
     } while (priority > 0);
     list->size--;
 }
 
-PCB * find(pid_t pid_find, linked_list_ADT list) {
+node_t * find(pid_t pid_find, linked_list_ADT list) {
     if (list->size == 0) {
         return NULL;
     }
-    node_t * aux = list->current;
+    node_t * aux = list->last;
     do {
-        if (aux->data->process->pid == pid_find) {
-            return aux->data;
+        if (aux->next->data->process->pid == pid_find) {
+            return aux;
         }
         aux = aux->next;
-    }while (aux != list->current);
+    }while (aux != list->last);
     return NULL;
 }
 
