@@ -134,10 +134,17 @@ uint64_t int_80(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t
 //				test_processes(1, argv2);
 				break;
 		case 27:
-                char * argv3[] = {"prio"};
+                char ** argv3=mm_malloc(2*sizeof(char));
+                argv3[0] = "prio";
                 create_process(test_prio, 1, 1, argv3);
 //				test_prio();
 				break;
+//        case 28:
+//                return mm_malloc(rdi);
+//                break;
+//        case 29:
+//                mm_free((void *)rdi);
+//                break;
 		default:
 				return 0;
 				

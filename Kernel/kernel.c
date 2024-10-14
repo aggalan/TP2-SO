@@ -71,7 +71,13 @@ int main()
 {
 	load_idt();
 	mm_init((void *)0x600000, 0x2700000);
-	scheduler_init();
+//    drawWord(" mm init: ");
+//    newline();
+//    mm_status();
+    scheduler_init();
+//    drawWord(" sched init: ");
+//    newline();
+//    mm_status();
 	shell();
 	while(1);
 	return 0;

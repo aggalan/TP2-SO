@@ -57,126 +57,56 @@ pid_t running_process() {
 
 void * schedule(void * current_stack_ptr) {
 
-//    if (!scheduler_initialized) {
-//        return current_stack_ptr;
-//    }
-//
-//
-//    if (process_has_run == KERNEL) {
-//        if(processes->size == 0) {
-//            idle_p->process->state = RUNNING;
-//            process_has_run = IDLE;
-////            idle_p->process->stack->current = current_stack_ptr;
-//            return idle_p->process->stack->current;
-//        } else {
-//            processes->current->data->process->state = RUNNING;
-//            process_has_run = PROCESS;
-//            return processes->current->data->process->stack->current;
-//        }
-//    }
-//
-//    if (process_has_run == IDLE) {
-//        idle_p->process->stack->current = current_stack_ptr;
-//        idle_p->process->state = READY;
-//    } else {
-//        processes->current->data->process->stack->current = current_stack_ptr;
-//        processes->current->data->process->state = READY;
-//    }
-//
-//    node_t * aux = processes->current;
-//    if (aux == NULL) {
-//        process_has_run = IDLE;
-//        idle_p->process->state = RUNNING;
-//        return idle_p->process->stack->current;
-//    }
-//    processes->current = processes->current->next;
-//
-//    while(processes->current->data->process->state != READY) {
-//
-//
-//        if (processes->current->data->process->state == KILLED) {
-//            node_t * aux = processes->current;
-//            processes->current = processes->current->next;
-//            remove_process(aux->data->process->pid);
-//            free_node(aux);
-//        }
-//
-//        if (processes->current == aux && processes->current->data->process->state != READY) {
-//            process_has_run = IDLE;
-//            idle_p->process->state = RUNNING;
-//            return idle_p->process->stack->current;
-//        }
-//
-//        processes->current = processes->current->next;
-//    }
-//
-//
-//    process_has_run = PROCESS;
-//    processes->current->data->process->state = RUNNING;
-//    return processes->current->data->process->stack->current;
-
-
     if (!scheduler_initialized) {
         return current_stack_ptr;
     }
 
-    if (processes->size == 0) {
-        idle_has_run = 1;
-        idle_p->process->state = RUNNING;
-        idle_p->process->stack->current = current_stack_ptr;
-        return idle_p->process->stack->current;
+
+    if (process_has_run == KERNEL) {
+        if(processes->size == 0) {
+            idle_p->process->state = RUNNING;
+            process_has_run = IDLE;
+//            idle_p->process->stack->current = current_stack_ptr;
+            return idle_p->process->stack->current;
+        } else {
+            if (processes->current->data->process->state == READY){
+                processes->current->data->process->state = RUNNING;
+                process_has_run = PROCESS;
+                return processes->current->data->process->stack->current;
+            }
+        }
     }
 
-
-
-    if (!idle_has_run) {
-//        drawWord(" PID: ");
-//        drawNumber(processes->current->data->process->pid);
-//        drawWord(" STATE: ");
-//        drawNumber(processes->current->data->process->state);
+    if (process_has_run == IDLE) {
+        idle_p->process->stack->current = current_stack_ptr;
+        idle_p->process->state = READY;
+    } else {
         if (processes->current->data->process->state != KILLED) {
             processes->current->data->process->state = READY;
-            processes->current->data->process->stack->current = current_stack_ptr;
         }
-    } else {
-        idle_p->process->state = READY;
-        idle_p->process->stack->current = current_stack_ptr;
+        processes->current->data->process->stack->current = current_stack_ptr;
     }
 
     node_t * aux = processes->current;
-
-//    newline();
-//    drawWord(" PID: ");
-//    drawNumber(aux->data->process->pid);
-//    newline();
-
+    if (aux == NULL) {
+        process_has_run = IDLE;
+        idle_p->process->state = RUNNING;
+        return idle_p->process->stack->current;
+    }
     processes->current = processes->current->next;
 
+    while(processes->current->data->process->state != READY) {
 
-    while(processes->current->data->process->state != READY && processes->current->data->process->pid != 1) {
 
-
-        if (processes->current->data->process->state == KILLED && processes->current->data->process->pid != 1) {
-            node_t * aux2 = processes->current;
-//            int auxiliary_pid = processes->current->data->process->pid;
-            remove_process(processes->current->data->process->pid);
-
-//            drawWord(" i killed ");
-//            drawNumber(auxiliary_pid);
-//            newline();
-//            drawWord(" STATE: ");
-//            drawNumber(processes->current->data->process->state);
-//            newline();
-//            print_processes();
-
-            continue;
+        if (processes->current->data->process->state == KILLED) {
+            node_t * aux = processes->current;
+//            processes->current = processes->current->next;
+            remove_process(aux->data->process->pid);
+//            free_node(aux);
         }
 
-
-
         if (processes->current == aux && processes->current->data->process->state != READY) {
-            drawWord("entre");
-            idle_has_run = 1;
+            process_has_run = IDLE;
             idle_p->process->state = RUNNING;
             return idle_p->process->stack->current;
         }
@@ -184,12 +114,86 @@ void * schedule(void * current_stack_ptr) {
         processes->current = processes->current->next;
     }
 
-    idle_has_run = 0;
+
+    process_has_run = PROCESS;
     processes->current->data->process->state = RUNNING;
-
-//    drawWord("  do i finish?  ");
-
     return processes->current->data->process->stack->current;
+
+
+//    if (!scheduler_initialized) {
+//        return current_stack_ptr;
+//    }
+//
+//    if (processes->size == 0) {
+//        idle_has_run = 1;
+//        idle_p->process->state = RUNNING;
+//        idle_p->process->stack->current = current_stack_ptr;
+//        return idle_p->process->stack->current;
+//    }
+//
+//
+//
+//    if (!idle_has_run) {
+////        drawWord(" PID: ");
+////        drawNumber(processes->current->data->process->pid);
+////        drawWord(" STATE: ");
+////        drawNumber(processes->current->data->process->state);
+//        if (processes->current->data->process->state == RUNNING) {
+//            processes->current->data->process->state = READY;
+//            processes->current->data->process->stack->current = current_stack_ptr;
+//        }
+//    } else {
+//        idle_p->process->state = READY;
+//        idle_p->process->stack->current = current_stack_ptr;
+//    }
+//
+//    node_t * aux = processes->current;
+//
+////    newline();
+////    drawWord(" PID: ");
+////    drawNumber(aux->data->process->pid);
+////    newline();
+//
+//    processes->current = processes->current->next;
+//
+//
+//    while(processes->current->data->process->state != READY && processes->current->data->process->pid != 1) {
+//
+//
+//        if (processes->current->data->process->state == KILLED && processes->current->data->process->pid != 1) {
+//            node_t * aux2 = processes->current;
+////            int auxiliary_pid = processes->current->data->process->pid;
+//            remove_process(processes->current->data->process->pid);
+//
+////            drawWord(" i killed ");
+////            drawNumber(auxiliary_pid);
+////            newline();
+////            drawWord(" STATE: ");
+////            drawNumber(processes->current->data->process->state);
+////            newline();
+////            print_processes();
+//
+//            continue;
+//        }
+//
+//
+//
+//        if (processes->current == aux && processes->current->data->process->state != READY) {
+//            drawWord("entre");
+//            idle_has_run = 1;
+//            idle_p->process->state = RUNNING;
+//            return idle_p->process->stack->current;
+//        }
+//
+//        processes->current = processes->current->next;
+//    }
+//
+//    idle_has_run = 0;
+//    processes->current->data->process->state = RUNNING;
+//
+////    drawWord("  do i finish?  ");
+//
+//    return processes->current->data->process->stack->current;
 }
 
 pid_t get_active_pid() {

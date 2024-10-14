@@ -22,11 +22,22 @@ pid_t create_process(void * fn, uint8_t prio, uint64_t argc, char ** argv) {
         return -1;
     }
 
+//    drawWord(" before add: ");
+//    newline();
+//
+//    mm_status();
+//    newline();
+
     // while(prio > 0){
     //     add_process(pcb);
     //     prio--;
     // }
     add_process(pcb, prio);
+
+//    drawWord(" after add: ");
+//    newline();
+//    mm_status();
+//    newline();
 
     return pcb->process->pid;
 }
@@ -127,11 +138,21 @@ PCB * create_pcb(void * fn, uint8_t prio, uint64_t argc, char ** argv) {
 
     p->stack->base = p->stack->base_ptr;
 
-    p->stack->base_ptr += STACK-1;
+    p->stack->base_ptr += STACK - 1;
+
+    if (pid < 3 || p->stack->base_ptr < 0xAE21DF) {
+        drawWord(" CURRENT FOR PID: ");
+        drawNumber(p->pid);
+        drawWord(" is:");
+        ptr_to_string_and_print(p->stack->base_ptr);
+        newline();
+    }
 
     p->stack->current = create_context(p->stack->base_ptr, fn, argc, argv);
 
     pcb->process = p;
+
+//    if (pcb-process->stack->current )
 
     return pcb;
 }
