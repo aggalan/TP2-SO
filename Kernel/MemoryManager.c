@@ -170,6 +170,21 @@ void mm_status(){
     drawWord("TOTAL FREE: ");
     drawNumber(manager.blocks * BLOCK_SIZE - manager.used * BLOCK_SIZE);
     newline();
+
+    drawWord("TOTAL TRASH: ");
+    drawNumber(trash());
+    newline();
+}
+
+
+int trash(){
+    int cant = 0;
+    for(int i = 0; i < manager.blocks; i++){
+        if(!(manager.bitmap[i] == FREE || manager.bitmap[i] == ALLOCATED || manager.bitmap[i] == START )){
+            cant++;
+        }
+    }
+    return cant;
 }
 
 

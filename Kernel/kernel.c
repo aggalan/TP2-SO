@@ -71,9 +71,11 @@ int main()
 {
 	load_idt();
 	mm_init((void *)0x600000, 0x2700000);
- 
-	char * argv[]= {"266240"};
-	test_mm(1, argv);
+
+	//char * argv[]= {"266240"};
+	//test_mm(1, argv);
+
+	((EntryPoint)sampleCodeModuleAddress)();
 
 	//scheduler_init();
 	//shell();
