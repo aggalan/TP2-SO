@@ -211,9 +211,9 @@ _irq00Handler:
     	mov rdi, 0 ;llamo a timer tick (interrupcion 0)
     	call irqDispatcher
 
-    	;mov rdi, rsp ;estas lineas son sacadas directamente de la presentacion de aGODio
-    	;call schedule ;deberia devolver el proximo stack a donde quiero ir en posicion en la que quedo antes
-    	;mov rsp, rax
+    	mov rdi, rsp ;estas lineas son sacadas directamente de la presentacion de aGODio
+    	call schedule ;deberia devolver el proximo stack a donde quiero ir en posicion en la que quedo antes
+    	mov rsp, rax
 
     	; signal pic EOI (End of Interrupt)
     	mov al, 20h

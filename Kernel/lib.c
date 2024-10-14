@@ -93,14 +93,15 @@ int str_cpy(char * dest, const char * src){
 
 void idle(){
 	while(1){
+		drawWord(".");
 		_hlt();
 	}
 }
 
 void exit_process() {
-    PCB * pcb = get_current();
+    PCB * pcb = running_process();
 //    pcb->process->state = KILLED;
-    kill_process_pid(pcb->process->pid);
+    kill_process_pid(pcb->pid);
 //    _irq00Handler();
 }
 

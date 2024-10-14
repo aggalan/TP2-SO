@@ -10,12 +10,18 @@
 
 static pid_t pids = 0;
 
+PCB * idle_proc = NULL;
+
 PCB * create_pcb(void * fn, uint8_t prio, uint64_t argc, char ** argv);
-pid_t create_process(uint64_t fn, int priority, int argc, char *argv);
-PCB * create_idle_process();
+pid_t create_process(uint64_t fn, int priority, int argc, char **argv);
+PCB * get_idle();
 
 
-pid_t create_process(uint64_t fn, int priority, int argc, char *argv){
+PCB * get_idle(){
+    return idle_proc;
+}
+
+pid_t create_process(uint64_t fn, int priority, int argc, char **argv){
 
     PCB * pcb = (PCB *) mm_malloc(sizeof(PCB));
     if(pcb == NULL){
@@ -34,15 +40,22 @@ pid_t create_process(uint64_t fn, int priority, int argc, char *argv){
 
     pcb->rsp = create_context(pcb->base, pcb->rip, argc, argv);
 
-    add_process(pcb, priority);
+    if(pcb->pid == 0){
+        idle_proc = pcb;
+    }else{
+        drawWord("pid: ");
+        drawNumber(pcb->pid);
+        newline();
+        add_process(pcb, priority);
+    }
 
     return pcb->pid;
 }
 
 
 pid_t kill_process() {
-    int pid = running_process();
-    return kill_process_pid(pid);
+    PCB * process = running_process();
+    return kill_process_pid(process->pid);
 }
 
 pid_t kill_process_pid(pid_t pid) {
@@ -71,7 +84,8 @@ pid_t block_process(pid_t pid){
     }
 
     pcb->state = BLOCKED;
-    if(pcb->pid == running_process()){
+    PCB * process = running_process();
+    if(pcb->pid == process->pid){
         _irq00Handler();
     }
     return pcb->pid;
@@ -100,7 +114,7 @@ pid_t change_priority(pid_t pid, int priority){
 void free_pcb(pid_t pid){
     PCB * pcb = find_process(pid);
     if(pcb == NULL){
-        return -1;
+        return;
     }
    mm_free(pcb->base - STACK + 1);
    mm_free(pcb);

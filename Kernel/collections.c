@@ -3,6 +3,7 @@
 #include "memoryManager.h"
 #include <sys/types.h>
 #include "processManager.h"
+#include "videoDriver.h"
 
 
 ll_ADT ll_init() {
@@ -14,7 +15,6 @@ ll_ADT ll_init() {
     list->size = 0;
     list->first = NULL;
     list->current = NULL;
-    list->iter= NULL;
 
     return list;
 }
@@ -32,18 +32,44 @@ node_t * new_node(void * data){
 }
 
 
+PCB * next(ll_ADT list){
+    if(list->size == 0 || list->current == NULL){
+        return NULL;
+    }
+
+    // if(list->size == 1)
+    //     return list->current;
+
+    PCB * to_return = list->current->data;
+
+    if(list->current->next == NULL){
+        list->current = list->first;
+    }else{
+        list->current = list->current->next;
+    }
+
+    return to_return;
+}
+
+
 
 int insert(PCB * pcb, ll_ADT list){
-
     node_t * node = new_node(pcb);
     if(node == NULL)
         return 0;
 
-    if(list->first == NULL)
+    if(list->first == NULL){
         list->first = node;
+        list->current = node; 
+    }
 
-    list->current = node;
-    list->current->next = node;
+    node_t * aux = list->first;
+
+    while(aux->next != NULL){
+        aux = aux->next;
+    }
+
+    aux->next = node;
     list->size++;
 
     return 1;
@@ -81,6 +107,23 @@ void free_node(node_t * node){
     mm_free(node);
 }
 
+
+PCB * find(pid_t pid, ll_ADT list) {
+    if (list->size == 0) {
+        return NULL;
+    }
+
+    node_t * aux = list->first;
+
+    while(aux != NULL){
+        if(aux->data->pid == pid){
+            return aux->data;
+        }
+        aux = aux->next;
+    }
+
+    return NULL;
+}
 
 
 

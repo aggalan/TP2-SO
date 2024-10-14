@@ -11,6 +11,8 @@ int main() {
 	// *v = 'X';
 	// *(v+1) = 0x74;
 
+	print("sexo");
+
 	shellStart();
 
 	// if (var1 == 0 && var2 == 0)

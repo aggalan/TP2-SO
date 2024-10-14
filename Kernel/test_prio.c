@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
-#include "syscall.h"
+#include "syscalls.h"
 #include "test_util.h"
 #include "processManager.h"
 #include "lib.h"
@@ -70,7 +70,7 @@ void test_prio()
         kill_process_pid(pids[i]);
 
     drawWord("i have killed them all");
-    print_processes();
+    // print_processes();
     newline();
 }
 

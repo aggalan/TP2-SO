@@ -14,7 +14,6 @@ typedef struct node_t {
 typedef struct ll{ //es circular que last apunte a first
     node_t * first;
     node_t * current;
-    node_t * iter;
     size_t size;
 }ll;
 
@@ -24,12 +23,17 @@ ll_ADT ll_init();
 
 node_t * new_node(void * data);
 
+PCB * next(ll_ADT list);
+
 int insert(PCB * pcb, ll_ADT list);
 
 int remove(pid_t pid, ll_ADT list);
 
-
 void free_node(node_t * node);
+
+PCB * find(pid_t pid, ll_ADT list);
+
+
 
 
 // void insert(PCB * data, uint8_t priority,ll_ADT list);

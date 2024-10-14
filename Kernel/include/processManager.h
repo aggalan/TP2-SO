@@ -36,7 +36,7 @@ typedef struct PCB{
 }PCB;
 
 
-pid_t create_process(uint64_t fn, int priority, int arc, char *argv);
+pid_t create_process(uint64_t fn, int priority, int arc, char **argv);
 
 pid_t kill_process();
 
@@ -47,6 +47,8 @@ pid_t block_process(pid_t pid);
 pid_t unblock_process(pid_t pid);
 
 pid_t change_priority(pid_t pid, int priority);
+
+PCB * get_idle();
 
 
 

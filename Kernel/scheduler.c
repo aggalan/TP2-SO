@@ -15,22 +15,120 @@
 
 int status = KERNEL;
 
-PCB * running;
+PCB * running = NULL;
 
-PCB * idle_process;
+PCB * idle_process = NULL;
 
-ll_ADT scheduler;
+ll_ADT scheduler = NULL;
+
+int executions = 0;
 
 
 void scheduler_init(){
 
     scheduler = ll_init();
 
-    status = STARTED;
+    create_process(idle, 1, 0, NULL);
 
-    idle_process = create_process(idle, 1, 0, NULL);
+    idle_process = get_idle();
+
+    status = STARTED;
 }
 
+PCB * running_process(){
+    return running;
+}
+
+PCB * find_process(pid_t pid){
+    return find(pid, scheduler);
+}
+
+
+uint64_t schedule(uint64_t rsp){
+
+    if(status == KERNEL){
+        return rsp;
+    }
+
+    if(running == NULL){
+        running = idle_process;
+        running->state = RUNNING;
+        return running->rsp;
+    }
+
+    running->rsp = rsp;
+
+    executions++;
+
+    if(running->priority > executions){
+        if(running->state != BLOCKED && running->state != KILLED){
+            return running->rsp;
+        }
+    }
+
+    if(scheduler->size == 1){
+        PCB * aux = next(scheduler);
+        running->state = READY;
+        running = aux;
+        running->state = RUNNING;
+        return running->rsp;
+    }
+
+    if(scheduler->size > 1){
+        drawNumber(scheduler->size);
+        drawWord("PUTAAAAAAAAA");
+    }
+
+    if(scheduler->size >0){
+         
+    PCB * aux = next(scheduler);
+
+    ptr_to_string_and_print(aux->rip);
+
+    while(aux->pid != running->pid){
+
+        if(aux->state == READY){
+            drawWord("ready");
+            running->state = READY;
+            running = aux;
+            executions = 0;
+            break;
+        }
+
+        if(aux->state == BLOCKED){
+            drawWord("block");
+            aux = next(scheduler);
+        }
+
+        if(aux->state == KILLED){
+            remove_process(aux->pid);
+        }
+    }
+    }else{
+        running->state = READY;
+        running = idle_process;
+    }
+    drawNumber(running->pid);
+    running->state = RUNNING;
+    return running->rsp;
+
+}
+
+void add_process(PCB * pcb, int priority) { //ver bien y tema idle
+    insert(pcb, scheduler);
+}
+
+void remove_process(pid_t pid) { //ver bien y tema idle
+    remove(pid, scheduler);
+}
+
+void my_nice(pid_t pid, int priority) {
+    PCB * pcb = find(pid, scheduler);
+    if (pcb == NULL) {
+        return;
+    }
+    pcb->priority = priority;
+}
 
 
 
