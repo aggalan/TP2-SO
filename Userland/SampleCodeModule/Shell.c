@@ -65,10 +65,11 @@ const char *commands[] = {
     "exit:         Kills the terminal.",
     "div0:         Test the exception of the cero division.",
     "invalidOp:    Test the exception of an invalid operand.",
-    "Status:      Shows the status of the memory.",
-    "test mm:     Test the memory manager.",
-    "test process: Test the process creation.",
-    "test priority: Test the scheduler.",
+    "status:       Shows the status of the memory.",
+    "testmm:       Test the memory management.",
+    "testprocess:  Test the process creation.",
+    "testprio:     Test the priority of the process.",
+    "ps:           Shows the live processes.",
 };
 
 void lineRead(char *buffer) {
@@ -112,14 +113,17 @@ void lineRead(char *buffer) {
     }else if(strcmp(buffer,"status")==0){
         call_status();
         return;
-    }else if(strcmp(buffer,"test mm")==0){
+    }else if(strcmp(buffer,"testmm")==0){
         call_test_mm();
         return;
-    }else if(strcmp(buffer,"test process")==0){
+    }else if(strcmp(buffer,"testprocess")==0){
         call_process_test();
         return;
-    }else if(strcmp(buffer,"test priority")==0){
+    }else if(strcmp(buffer,"testprio")==0){
         call_prio_test();
+        return;
+    }else if(strcmp(buffer,"ps")==0){
+        call_ps();
         return;
     }else{
         putString(buffer,WHITE);

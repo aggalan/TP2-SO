@@ -1,6 +1,33 @@
 #ifndef TPE_LIB_H
 #define TPE_LIB_H
 #include <stdint.h>
+#include "sys/types.h"
+
+typedef struct p_memory_block {
+    void * base_ptr;
+//    uint64_t size;
+    void * current;
+    void * base;
+}p_memory_block;
+
+typedef struct process {
+    p_memory_block * heap;
+    p_memory_block * stack;
+    char * name;
+//    char is_foreground;
+    uint8_t state;
+    pid_t pid;
+    pid_t parent_pid;
+}process;
+
+typedef struct PCB{
+    uint64_t ticks;
+    process * process;
+    uint8_t priority;
+}PCB;
+
+typedef struct PCB * PCB_t;
+
 
 // Reads a character from input and saves it in the pointer c. 
 // Returns the number of characters saved.

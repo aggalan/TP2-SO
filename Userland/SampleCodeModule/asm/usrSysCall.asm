@@ -17,6 +17,17 @@ GLOBAL call_status
 GLOBAL call_test_mm
 GLOBAL call_process_test
 GLOBAL call_prio_test
+GLOBAL call_block
+GLOBAL call_unblock
+GLOBAL call_kill
+GLOBAL call_yield
+GLOBAL call_waitpid
+GLOBAL call_nice
+GLOBAL call_malloc
+GLOBAL call_free
+GLOBAL call_create_process
+GLOBAL call_ps
+GLOBAL call_kill_process
 
 
 section .text
@@ -72,6 +83,30 @@ call_process_test:
     call_to_handler 17
 call_prio_test:
     call_to_handler 18
+call_block:
+    call_to_handler 19
+call_unblock:
+    call_to_handler 20
+call_kill:
+    call_to_handler 21
+call_yield:
+    call_to_handler 22
+call_waitpid:
+    call_to_handler 23
+call_nice:
+    call_to_handler 24
+call_malloc:
+    call_to_handler 25
+call_free:
+    call_to_handler 26
+call_create_process:
+    call_to_handler 27
+call_ps:
+    call_to_handler 28
+call_get_running_pid:
+    call_to_handler 29
+call_kill_process:
+    call_to_handler 30
 
 
 InvalidOpasm:

@@ -1,4 +1,6 @@
 #include "stdint.h"
+#include "sys/types.h"
+#include "lib.h"
 
 #ifndef USERSYSCALLS_H
 #define USERSYSCALLS_H
@@ -74,5 +76,31 @@ void call_test_mm();
 void call_process_test();
 
 void call_prio_test();
+
+pid_t call_block(pid_t pid);
+
+pid_t call_unblock(pid_t pid);
+
+pid_t call_kill(pid_t pid);
+
+void call_yield();
+
+size_t call_waitpid();
+
+void call_nice(int pid, int newPrio);
+
+void * call_malloc(uint64_t size);
+
+void call_free(void * ptr);
+
+pid_t call_create_process(void * entryPoint, int prio, int argc, char * argv[]);
+
+PCB_t * call_ps();
+
+pid_t call_get_pid();
+
+pid_t call_kill_process();
+
+
 
 #endif /* USERSYSCALLS_H */

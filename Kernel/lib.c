@@ -2,7 +2,7 @@
 #include <time.h>
 #include "include/interrupts.h"
 #include "include/processManager.h"
-
+#include "include/scheduler.h"
 void * memset(void * destination, int32_t c, uint64_t length)
 {
 	uint8_t chr = (uint8_t)c;
