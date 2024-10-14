@@ -1,69 +1,36 @@
-#include <stdint.h>
 #include <keyboardBuffer.h>
-#include <videoDriver.h>
-#include "keyboardBuffer.h"
+static struct keyboard_buffer buff = { 0, 0, {0} };
 
-static struct kbuff buff = {0, 0, {'\0'}};
-static buffer_ptr ptr = &buff;
+static buff_ptr ptr = &buff;
 
-int buffer_pos = 0;
-
-void bufferAppend(char c) {
-    if (ptr->pos < BUFFER_LIMIT-1) {
-        ptr->buffer[ptr->pos] = c;
-        ptr->pos += 1;
-        ptr->buffer[ptr->pos] = 0;
-    }
-    else{
-        ptr->pos = 0;
-        ptr->buffer[ptr->pos] = 0;
-    }
+void incBufferLen(int n){
+    ptr->bufferLen +=n;
 }
 
-int bufferLen(){
-    return ptr->len;
+int getBufferPosition(){
+return ptr->bufferPos;
 }
-
-void setPos(int newPos){
-    ptr->pos = newPos;
+void setPos(int newPosition){
+    ptr->bufferPos= newPosition % BUFF_SIZE;
 }
-
-void bufferClear() {
-    ptr->len = 0;
-}
-
-void bufferClearAll(){
-    ptr->pos = 0;
-    ptr->len = 0;
-    for (int i = 0; i < BUFFER_LIMIT; i++) {
-        ptr->buffer[i] = 0;
-    }
-
-}
-
-int getPos() {
-    return ptr->pos;
-}
-
-uint16_t * getBuff() {
+char * getBufferAddress(){
     return ptr->buffer;
 }
-
-char getBuffAtCurrent() {
-    if (ptr->pos != 0) {
-        return ptr->buffer[buff.pos - 1];
-    }
-    return ptr->buffer[BUFFER_LIMIT-1];
+char getCharAt(int position){
+    return ptr->buffer[position % BUFF_SIZE];
 }
-
-uint16_t getBuffCharAt(int pos){
-    return ptr->buffer[pos];
-}
-
-void consume() {
-    if (ptr->pos < BUFFER_LIMIT-1) {
-        ptr->pos += 1;
-    } else {
-        ptr->pos = 0;
+ void consumeBufferAt(int pos){
+     ptr->buffer[pos] = 0;
+    incBufferLen(-1);
+    setPos(pos + 1);
+ }
+void cleanBuffer(){
+    char * bufferAux=ptr->buffer; 
+    for(int i=0;i<ptr->bufferLen;i++){
+        bufferAux[i]='\0';
     }
 }
+int getBufferLen(){
+    return ptr->bufferLen;
+}
+

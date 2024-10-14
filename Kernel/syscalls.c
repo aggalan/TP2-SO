@@ -1,58 +1,50 @@
+#include "Drivers/include/videoDriver.h"
+#include "include/syscalls.h"
+#include "include/keyboardBuffer.h"
+#include "include/libasm.h"
 #include <naiveConsole.h>
-#include <syscalls.h>
-#include <keyboardBuffer.h>
-#include <videoDriver.h>
-#include "keyboardDriver.h"
-#include <interrupts.h>
-#include "keyboardDriver.h"
+#include <stdio.h>
+#define MIN(x,y) x < y ? x : y
 
-static int shift = 0;
-
-void setShift(int i) {
-    shift = i;
-}
-
-int getShiftVal() {
-    return shift;
-}
-
-void sys_write(char * buff, int len, int fd){
-
-    if(fd == STDOUT){
-        drawWordLen(buff, len);
-        
-    } else if(fd == STDERR){
-        drawWordColorLen(buff, WHITE, RED, len);
-    }else
-    invalidFD();
-
-}
-
-void sys_read(char * c, int len, int fd){
-
-    int i;
-
-    if (fd == STDIN) {
-        char aux = 0;
-        for (i = 0; i < len;) {
-            _hlt();
-            aux = getBuffAtCurrent();
-            if (aux > 0 && aux <= 256) {
-                if ( shift != 0 && ScanCodes[(int)aux].make >= 'a' && ScanCodes[(int)aux].make <= 'z') {
-                    c[i++] = ScanCodes[(int)aux].make - 32;
-                } else {
-                    c[i++] = ScanCodes[(int)aux].make;
-                }
-
-
-                consume();
-            }
-
-        }
+void sys_write(int descriptor, const char * str, int len,uint32_t hexColor){
+    switch(descriptor){
+        case STDOUT:
+            drawWordLen(hexColor, str, len);
+            return;
+        case ERROUT:
+            drawWordLen(0x00ff0000, str, len);
+        default:
+            drawWord(0x00ff0000, "no such descriptor");
         return;
     }
-    else{
-        invalidFD();
-    }
+
 }
 
+int sys_read(int descriptor, char * save, int len){
+    
+    if(descriptor != STDIN){
+        drawWord(0x00ff0000, "no such descriptor");
+    }
+   
+    int n=getBufferPosition();
+ 
+    if(getCharAt(n)==0){
+        *save=0;
+        return 0;
+    }
+    
+    int length = MIN(len, getBufferLen());
+
+    for(int i=0; i< length; i++){
+        n=getBufferPosition();
+        save[i] = getCharAt(n);
+        consumeBufferAt(n);
+    }
+    return length;
+}
+
+void twoChars(char * first,int j, char * app){
+    for(int i = 0; i < 2;i++){
+        first[j+i] = app[i];
+    }
+}

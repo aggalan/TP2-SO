@@ -1,40 +1,11 @@
 GLOBAL cpuVendor
-GLOBAL get_seconds
-GLOBAL get_minutes
-GLOBAL get_wday
-GLOBAL get_mday
-GLOBAL get_month
-GLOBAL get_year
-GLOBAL get_hours
-GLOBAL get_key
+GLOBAL getKey
+GLOBAL getHours
+GLOBAL getMinutes
+GLOBAL getSeconds
 GLOBAL inb
 GLOBAL outb
-
 section .text
-
-%macro SFI 0
-	push rbp
-	mov rbp, rsp
-%endmacro
-
-%macro SFO 0
-	mov rsp, rbp
-	pop rbp
-%endmacro
-
-%macro RTC 1
-	xor rax, rax
- 	xor rdi, rdi
-  	mov al, 0x0B
-  	out 70h, al
-  	in al, 71h 
-  	or al, 0x04 
-  	out 71h, al
-  	mov al, %1
-  	out 70h, al
-  	in al, 71h
-  	mov rdi, rax
-%endmacro
 	
 cpuVendor:
 	push rbp
@@ -60,66 +31,91 @@ cpuVendor:
 	pop rbp
 	ret
 
-get_seconds: 
-	SFI
-	RTC 0
-	SFO
+getKey:
+  push rbp
+  mov rbp, rsp
+  mov rax, 0
+  in al, 0x60       ; lee la TECLA PRESIONADA desde el puerto 60h
+_good:  
+  mov rsp, rbp 
+  pop rbp
+  ret
+
+ getHours:
+  	push rbp
+  	mov rbp, rsp
+      xor rax, rax
+        xor rdi, rdi
+        mov al, 0x0B
+        out 70h, al
+        in al, 71h
+        or al, 0x04
+        out 71h, al
+  	mov al, 4
+  	out 0x70, al
+  	in al, 0x71
+
+  	mov rsp, rbp
+  	pop rbp
+  	ret
+
+  getMinutes:
+  	push rbp
+  	mov rbp, rsp
+     xor rax, rax
+       xor rdi, rdi
+       mov al, 0x0B
+       out 70h, al
+       in al, 71h
+       or al, 0x04
+       out 71h, al
+  	mov al, 2
+  	out 0x70, al
+  	in al, 0x71
+
+  	mov rsp, rbp
+  	pop rbp
+  	ret
+
+  getSeconds:
+  	push rbp
+  	mov rbp, rsp
+    xor rax, rax
+      xor rdi, rdi
+      mov al, 0x0B
+      out 70h, al
+      in al, 71h
+      or al, 0x04
+      out 71h, al
+  	mov al, 0
+  	out 0x70, al
+  	in al, 0x71
+
+  	mov rsp, rbp
+  	pop rbp
+  	ret
+
+
+inb:				; Funciones para el correcto funcionamiento del soundDriver
+	push rbp
+	mov rbp, rsp
+
+    mov rdx,rdi
+    in al,dx		; pasaje en 8 bits
+
+	mov rsp, rbp
+	pop rbp
 	ret
-
-get_minutes:
-        SFI
-        RTC 2
-        SFO
-        ret
-
-get_hours:
-        SFI
-        RTC 4
-        SFO
-        ret
-
-get_wday:
-        SFI
-        RTC 6
-        SFO
-        ret
-
-get_mday:
-        SFI
-        RTC 7
-        SFO
-        ret
-
-get_month:
-        SFI
-        RTC 8
-        SFO
-        ret
-
-get_year:
-        SFI
-        RTC 9
-        SFO
-        ret
-
-get_key:
-	SFI
-	xor rax, rax
-
-	mov al, 0x47
-	out 0x64, al
-
-	in al, 0x60
-	SFO
-	ret
-
-inb:
-    mov rdx, rdi
-    in al, dx
-    ret
 
 outb:
-    mov rax, rsi
+	push rbp
+	mov rbp, rsp
+
+    mov rax, rsi    
     mov rdx, rdi
-    out dx, al
-    ret
+	out dx, al		; pasaje en 8 bits
+
+	mov rsp, rbp
+	pop rbp
+	ret
+

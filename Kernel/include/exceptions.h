@@ -1,10 +1,6 @@
-#ifndef _EXCEPTIONS_H_
-#define _EXCEPTIONS_H_
-#include "registers.h"
-#include <stdint.h>
+#ifndef EXCEPTIONS_H
+#define EXCEPTIONS_H
 
-void exceptionDispatcher(int exception, registerStruct * registers);
-void zeroDivision();
-void invalidOp();
-
-#endif
+//handles exceptions
+void exceptionDispatcher(int exception);
+#endif //EXCEPTIONS_H

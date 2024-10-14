@@ -6,7 +6,7 @@
 #include "scheduler.h"
 #include "lib.h"
 #include "interrupts.h"
-#include "videoDriver.h"
+#include "../Drivers/include/videoDriver.h"
 
 static pid_t pid = 0;
 
@@ -22,22 +22,7 @@ pid_t create_process(void * fn, uint8_t prio, uint64_t argc, char ** argv) {
         return -1;
     }
 
-//    drawWord(" before add: ");
-//    newline();
-//
-//    mm_status();
-//    newline();
-
-    // while(prio > 0){
-    //     add_process(pcb);
-    //     prio--;
-    // }
     add_process(pcb, prio);
-
-//    drawWord(" after add: ");
-//    newline();
-//    mm_status();
-//    newline();
 
     return pcb->process->pid;
 }
@@ -169,9 +154,6 @@ pid_t kill_process_pid(pid_t pid_to_free) {
         return -1;
     }
     int state = pcb->process->state;
-//    drawWord(" PID KILLED: ");
-//    drawNumber(pid_to_free);
-//    newline();
 //    remove_process(pid_to_free); //sino el test de proceso se queda sin memoria porque reserva mas rapido de lo que libera
     pcb->process->state = KILLED;
     if (state == RUNNING) {
@@ -182,9 +164,6 @@ pid_t kill_process_pid(pid_t pid_to_free) {
 }
 
 pid_t block_process(pid_t pid_to_block){
-
-//    return pid;
-
     PCB * pcb = find_process(pid_to_block);
     if (pcb == NULL) {
         return -1;
@@ -199,8 +178,6 @@ pid_t block_process(pid_t pid_to_block){
 }
 
 pid_t unblock_process(pid_t pid_to_unblock){
-
-//    return pid;
     PCB * pcb = find_process(pid_to_unblock);
     if (pcb == NULL) {
         return -1;

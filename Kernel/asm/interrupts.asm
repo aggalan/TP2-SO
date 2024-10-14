@@ -12,43 +12,73 @@ GLOBAL _irq02Handler
 GLOBAL _irq03Handler
 GLOBAL _irq04Handler
 GLOBAL _irq05Handler
-GLOBAL _irq60Handler
+GLOBAL _irq80Handler
 
 GLOBAL _exception0Handler
 GLOBAL _exception6Handler
-GLOBAL saveRegState
-GLOBAL printRegistersASM
+GLOBAL getRegisters
+GLOBAL printRegistersAsm
+GLOBAL getFlag
+GLOBAL saveRegisters
 
+EXTERN schedule
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
-EXTERN retUserLand
-EXTERN printRegisters
-EXTERN clear
-EXTERN clearColor
+EXTERN retUserland
 EXTERN getStackBase
-EXTERN schedule
-
+EXTERN clear
+EXTERN printRegisters
 SECTION .text
 
 
-%macro SFI 0
-        push rbp
-        mov rbp, rsp
+%macro saveRegistersState 0
+    mov rax, [rsp]
+	mov [registers],rax ;r15
+	mov rax , [rsp + 8]
+	mov [registers+8], rax ;r14
+	mov rax, [rsp+16]
+	mov [registers+16],rax ;r13
+	mov rax, [rsp+24]
+	mov [registers+24],rax ;r12
+	mov rax, [rsp+32]
+	mov [registers+32],rax ;r11
+	mov rax, [rsp + 40]
+	mov [registers+40],rax ;r10
+	mov rax, [rsp + 48]
+	mov [registers+48],rax ;r9
+	mov rax, [rsp + 56]
+	mov [registers+56],rax ;r8
+	mov rax, [rsp + 64]
+	mov [registers+64],rax ; rsi
+	mov rax, [rsp + 72]
+	mov [registers+72],rax ;rdi
+	mov rax, [rsp + 80]
+	mov [registers+80],rax ;rdx
+	mov rax, [rsp + 88]
+	mov [registers+88],rax ;rcx
+	mov rax, [rsp + 96]
+	mov [registers+ 96],rax;rbx
+	mov rax, [rsp + 104]
+	mov [registers+ 104],rax ;rax
+	mov rax, [rsp + 112]
+	mov [registers+112],rax ;rbp
+
+	mov rax, [rsp + 120]
+	mov [registers+120],rax ;rip
+	mov rax, [rsp + 128]
+	mov [registers+128],rax ;rsp
+
+	mov rax, [rsp + 152]
+	mov [registers + 136], rax ; rflags
+
 %endmacro
-
-%macro SFO 0
-        mov rsp, rbp
-        pop rbp
-%endmacro
-
-
 
 %macro pushState 0
+    push rbp
 	push rax
 	push rbx
 	push rcx
 	push rdx
-	push rbp
 	push rdi
 	push rsi
 	push r8
@@ -72,11 +102,11 @@ SECTION .text
 	pop r8
 	pop rsi
 	pop rdi
-	pop rbp
 	pop rdx
 	pop rcx
 	pop rbx
 	pop rax
+	pop rbp
 %endmacro
 
 %macro irqHandlerMaster 1
@@ -93,83 +123,37 @@ SECTION .text
 	iretq
 %endmacro
 
-%macro dState 0
-	mov [registers.drbp], rbp
-	mov rbp, [rsp]
-	mov [registers.dr15], rbp
-	mov rbp, [rsp+8]
-	mov [registers.dr14], rbp
-	mov rbp, [rsp+16]
-	mov [registers.dr13], rbp
-	mov rbp, [rsp+24]
-	mov [registers.dr12], rbp
-	mov rbp, [rsp+32]
-	mov [registers.dr11], rbp
-	mov rbp, [rsp+40]
-	mov [registers.dr10], rbp
-	mov rbp, [rsp+48]
-	mov [registers.dr9], rbp
-	mov rbp, [rsp+56]
-	mov [registers.dr8], rbp
-	mov rbp, [rsp+64]
-	mov [registers.drsi], rbp
-	mov rbp, [rsp+72]
-	mov [registers.drdi], rbp
-	mov rbp, [rsp+88]
-	mov [registers.drdx], rbp
-	mov rbp, [rsp+96]
-	mov [registers.drcx], rbp
-	mov rbp, [rsp+104]
-	mov [registers.drbx], rbp
-	mov rbp, [rsp+112]
-	mov [registers.drax], rbp
-	mov rbp, [rsp+120]
-	mov [registers.drip], rbp
-	mov rbp, [rsp+128]
-	mov [registers.dcs], rbp
-	mov rbp, [rsp+136]
-	mov [registers.drfl], rbp
-	mov rbp, [rsp+144]
-	mov [registers.drsp], rbp
-	mov rbp, [rsp+152]
-	mov [registers.dss], rbp
-	mov rbp, [registers.drbp]
-%endmacro
 
+getRegisters:
+    mov rax, registers
+    mov byte[flag],0
 
+    ret
 
-
-printRegistersASM:
-	mov qword rdi, registers
-	call printRegisters
-	ret
-
-saveRegState:
-	pushState
-	dState
-	popState
+getFlag:
+	movzx rax, byte[flag]
 	ret
 
 %macro exceptionHandler 1
+    push rsp
+    push qword[rsp + 8]
 	pushState
-	dState
+	;Guardo el estado del registros
+    saveRegistersState
+    mov byte[flag],0
 
-	mov qword rdi, 0x0000FF
-	call clearColor 
-
-	mov rsi, registers
+	;llamo a funcion en c que imprime los registros
 	mov rdi, %1 ; pasaje de parametro
-
 	call exceptionDispatcher
-	call clear
-
 	popState
+	add rsp, 16
+
 	call getStackBase
-	sub rax, 18h
-	mov qword[rsp + 8 * 3], rax
-	call retUserLand
-	mov qword [rsp], rax
-	iretq
+	mov [rsp+24], rax
+    mov rax, userland
+    mov [rsp], rax
+
+   	iretq
 %endmacro
 
 
@@ -206,24 +190,47 @@ picSlaveMask:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-        pushState
+		;irqHandlerMaster 0
 
-    	mov rdi, 0 ;llamo a timer tick (interrupcion 0)
-    	call irqDispatcher
+	;esto va a decir push registros, cambio de rsp, pop registros
+	pushState
+	mov rdi, 0
+	call irqDispatcher
 
-    	mov rdi, rsp ;estas lineas son sacadas directamente de la presentacion de aGODio
-    	call schedule ;deberia devolver el proximo stack a donde quiero ir en posicion en la que quedo antes
-    	mov rsp, rax
+    ; levantar procesos que esta esperando el timer
 
-    	; signal pic EOI (End of Interrupt)
-    	mov al, 20h
-    	out 20h, al
+    ;call wakeUpProcesses
 
-    	popState
-    	iretq
+	; llamar al scheduler para que me devuelva un rsp
+	mov rdi, rsp
+	call schedule
+	mov rsp, rax
+
+	mov al, 20h
+	out 20h, al
+
+	popState ; (aca ya estoy en el stack del otro proceso)
+	iretq
 
 ;Keyboard
 _irq01Handler:
+    push rsp
+    push qword[rsp + 8]
+    pushState
+    mov rax, 0
+    in al, 60h
+    cmp al,27h
+    jne handle
+    saveRegistersState
+    mov byte[flag],1
+    mov al, 20h
+    out 20h, al
+    popState
+    add rsp, 16
+    iretq
+handle:
+    popState
+    add rsp, 16
 	irqHandlerMaster 1
 
 ;Cascade pic never called
@@ -242,74 +249,54 @@ _irq04Handler:
 _irq05Handler:
 	irqHandlerMaster 5
 
-;SYSCALLS
-_irq60Handler:
-	push rbp
-	mov rbp, rsp
-	push rbx
+
+_irq80Handler:
+
+ 	push rbx
 	push r12
 	push r13
 	push r14
 	push r15
-	
+    push rbp
+    mov rbp,rsp
 
+	push r9
 
-	mov r9, rcx
-	mov r8, rdx
-	mov rcx, rsi
-	mov rdx, rdi
-	mov rsi, rax
-	mov rdi, 60h
-	call irqDispatcher
+    mov r9, r8
+    mov r8, rcx
+    mov rcx, rdx
+    mov rdx, rsi
+    mov rsi, rdi
+    mov rdi, 0x80
 
+    call irqDispatcher
 
+    pop r9
+    mov rsp, rbp
+    pop rbp
 	pop r15
 	pop r14
 	pop r13
 	pop r12
 	pop rbx
-	mov rsp, rbp
-	pop rbp
-	iretq
+
+    iretq
+
 
 ;Zero Division Exception
 _exception0Handler:
 	exceptionHandler 0
-	jmp haltcpu
 
 _exception6Handler:
-	exceptionHandler 1
-	jmp haltcpu
-
-haltcpu:
-	cli
-	hlt
-	ret
+	exceptionHandler 6
 
 
+
+SECTION .data
+userland equ 0x400000
 
 SECTION .bss
-	aux resq 1
+   	aux resq 1
+	registers resq 20
+	flag resq 1
 
-	GLOBAL registers
-	registers:
-	.drax resq 1
-	.drbx resq 1
-	.drcx resq 1
-	.drdx resq 1
-	.drsi resq 1
-	.drdi resq 1
-	.drsp resq 1
-	.drbp resq 1
-	.dr8 resq 1
-	.dr9 resq 1
-	.dr10 resq 1
-	.dr11 resq 1
-	.dr12 resq 1
-	.dr13 resq 1
-	.dr14 resq 1
-	.dr15 resq 1
-	.dss resq 1
-	.dcs resq 1
-	.drfl resq 1
-	.drip resq 1

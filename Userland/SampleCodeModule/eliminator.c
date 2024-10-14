@@ -1,416 +1,399 @@
-#include "colors.h"
-#include "utils.h"
-#include "eliminator.h"
-#include "userSyscalls.h"
-#include <stdint.h>
-#include <stdbool.h>
-#include "sounds.h"
+#include "include/usrSysCall.h"
+#include "include/lib.h"
+#include "include/Buffer.h"
+#include "include/eliminator.h"
+#define MOVE 8
+#define RAND_SEED_DEFAULT 42 // Default seed value
+#define BUFFER 10
+#define TITLE 0  //Flags to know in which state the game is
+#define CONFIGURATION 1
+#define GAME 2
+#define MIDGAME 3
 
-uint64_t DEFAULT_BCOLOR = BLACK;
-uint64_t DEFAULT_FCOLOR = RED;
+void initializePositions();
+void title();
+void configuration();
+void game(int players);
+void midGame();
+void gameSpeed();
+void fillWithZeros();
+void checkPrevKey1();
+void initGame();
+void checkPrevKey2();
+void buffReadTitle();
+void buffReadMidGame();
+void clearBufferEliminator();
+void pcDirChange();
+void buffRead(int len, int players);
 
-uint64_t DEFAULT_PLAYER1_COLOR = RED;
-uint64_t DEFAULT_PLAYER2_COLOR = GREEN;
+int state,flag;
+int flagConfig;
+char speed, players;
+static char buffer[BUFFER] = {0};
+static uint16_t PositionMatrix[HEIGHT/MOVE][WIDTH/MOVE];
 
-uint32_t MENU_X = 100;
-uint32_t MENU_Y = 40;
+typedef struct {
+    int posX, posY, points;
+    char prevKey;
+}player;
 
-uint32_t START_X = 100;
-uint32_t START_Y = 20;
+void movePlayer(int x,int y, player * playerA);
 
-
-uint64_t player1Up = 0x11;
-uint64_t player1Down = 0x1F;
-uint64_t player1Left = 0x1E;
-uint64_t player1Right = 0x20;
-
-uint64_t player2Up = 0x17;
-uint64_t player2Down = 0x25;
-uint64_t player2Left = 0x24;
-uint64_t player2Right = 0x26;
-
-uint64_t QUIT = 0x10;
-uint64_t SPACE = 0x39;
-uint64_t ENTER = 0x1C;
-uint64_t SPEEDKEYUP = 0x20;
-uint64_t SPEEDKEYDOWN = 0x1F;
-uint64_t PLAYERSKEY = 0x19;
-uint64_t ESC = 0x01;
-uint64_t ONEPLAYER = 0x02;
-uint64_t TWOPLAYERS = 0x03;
-
-uint32_t CONFIG_X;
-uint32_t CONFIG_Y;
-unsigned int players = DEFAULT_PLAYERS;
-unsigned int speed = DEFAULT_SPEED;
-unsigned int level = DEFAULT_LEVEL;
-unsigned int player1Deaths = 0;
-unsigned int player2Deaths = 0;
+player player1, player2;
 
 
-
-
-Snake player1;
-Snake player2;
-uint64_t board[SCREEN_WIDTH][SCREEN_HEIGHT];
-int speeds[5] = {50, 35, 25, 13, 1};
-bool quit = false;
-
-
-void eliminator(){
-    speed = DEFAULT_SPEED; 
-    call_size_up();
-    printStart();
-    getCh();
-    menu();
-    call_size_down();
-    }
-
-
-void printStart(){
-    call_paint_screen(DEFAULT_BCOLOR);
-    call_drawWordColorAt("ELIMINATOR\n",DEFAULT_FCOLOR, SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 100);
-    call_drawWordColorAt("Press any key to start\n", DEFAULT_FCOLOR, SCREEN_WIDTH / 2 - 220, SCREEN_HEIGHT / 2 );
-}
-
-void printMenu(){
-    char playerStr[5], speedStr[5];
-    intToStr(players, playerStr, 10);
-    intToStr(speed, speedStr, 10);
-    call_paint_screen(BLACK);
-    call_drawWordColorAt("SPEED: ", DEFAULT_FCOLOR, MENU_X, MENU_Y);
-    call_drawWordColorAt(speedStr, DEFAULT_FCOLOR, MENU_X + 175, MENU_Y);
-    call_drawWordColorAt("[1] to begin single player game\n", DEFAULT_FCOLOR, MENU_X, MENU_Y + 256);
-    call_drawWordColorAt("[2] to begin multiplayer local game\n", DEFAULT_FCOLOR, MENU_X, MENU_Y + 320);
-    call_drawWordColorAt("[ENTER] to change settings\n", DEFAULT_FCOLOR, MENU_X, MENU_Y + 384);
-    call_drawWordColorAt("[ESC] to return to the shell\n", DEFAULT_FCOLOR, MENU_X, MENU_Y + 448);
-}
-
-void printSettings(){
-    call_paint_screen(BLACK);
-    call_drawWordColorAt("[S] to decrease game speed ", DEFAULT_FCOLOR, MENU_X, MENU_Y + 64);
-    call_drawWordColorAt("[D] to increase game speed ", DEFAULT_FCOLOR, MENU_X, MENU_Y + 128);
-    call_drawWordColorAt("[Q] to return to menu", DEFAULT_FCOLOR, MENU_X, MENU_Y + 192);
-}
-
-void menu(){
-    player1Deaths = 0;
-    player2Deaths = 0;
-    char option;
-    int posMenu;
-    printMenu();
-    while(1){
-        posMenu = call_get_pos();
-        quit = false;
-        option = call_get_charAt(posMenu-1);
-        if(option == ESC){
+//Reads the buffer int the state TITLE
+void buffReadTitle(){
+    while(1) {
+        char c;
+        getC(&c);
+        if (c == '\n') {
+            call_clear();
+            state++;
+            configuration();
             return;
-        }else if (option == ONEPLAYER){
-            if(players != 1){
-                player1Deaths = 0;
-            }
-            players = 1;
-            startGameOnePlayer();
-            printMenu();
-        }else if (option == TWOPLAYERS){
-            if(players != 2){
-                player1Deaths = 0;
-                player2Deaths = 0;
-            }
-            players = 2;
-            startGameTwoPlayers();
-            printMenu();
-        }else if(option == ENTER){
-            changeSettings();
-            printMenu();
-        }
-            }
-}
-
-void changeSettings(){
-    printSettings();
-    char settingsOption;
-    int settingsPos;
-    while(1){
-        settingsPos = call_get_pos();
-        settingsOption = call_get_charAt(settingsPos - 1);
-        if(settingsOption == SPEEDKEYUP){
-            if(speed < 5)
-                speed += 1;
+        } else if (c == 'x') {
+            call_clear();
+            call_setFontSize(1);
+            flag = 0;
             return;
         }
-        if(settingsOption == SPEEDKEYDOWN){
-            if(speed > 1)
-                speed -= 1;
-            return;
-        }
-        if(settingsOption == QUIT)
-            return;
     }
 }
 
-void startGameTwoPlayers(){
-    initializeGameTwoPlayers();
-    
-    int pos = call_get_pos();
-    char key;
-    
-    while (1) {
-        key = call_get_charAt(pos-1);  // Obtener entrada del teclado (bloqueante)
-        if(key != 0){
-            pos++;
-        }
-        handleInput(key);
-        updateGameTwoPlayers();
-        if(quit){
+//Reads the buffer int the state MIDGAME
+void buffReadMidGame(){
+    while(1) {
+        char c;
+        getC(&c);
+        if(c == 'y'){
+            state=GAME;
+            game(players);
+            return;
+        }else if(c == 'n'){
+            call_clear();
+            call_setFontSize(1);
+            state=TITLE;
+            flag = 0;
             return;
         }
-        call_sleepms(speeds[speed-1]);
     }
+}
+
+//Starts the game in the TITLE state
+void startEliminator(){
+    state=TITLE;
+    player1.prevKey = 's';
+    player2.prevKey = 'u';
+    player1.points=player2.points=0;
+    flag=1;
+    call_clear();
+    title();
+    while(flag){
+        if(state == TITLE)
+            buffReadTitle();
+        if(state == MIDGAME)
+            buffReadMidGame();
+    }
+}
+
+//Clears the buffer
+void clearBufferEliminator(){
+    for(int i=0;i<BUFFER;i++){
+        buffer[i]=0;
+    }
+}
+
+//Reads the buffer
+void buffRead(int len, int players){
+    char c;
+    int i=len * 4000;
+    while (i > 0) {
+        getC(&c);
+        if (state == GAME) {
+            if (c == 'w' && player1.prevKey != 's') {
+                player1.prevKey = c;
+
+            } else if (c == 's' && player1.prevKey != 'w') {
+                player1.prevKey = c;
+
+
+            } else if (c == 'd' && player1.prevKey != 'a') {
+                player1.prevKey = c;
+
+
+            } else if (c == 'a' && player1.prevKey != 'd') {
+                player1.prevKey = c;
+
+            }
+            if (players == 2){
+                if (c == 'u' && player2.prevKey != 'j') {
+                    player2.prevKey = c;
+
+                } else if (c == 'j' && player2.prevKey != 'u') {
+                    player2.prevKey = c;
+
+                } else if (c == 'k' && player2.prevKey != 'h') {
+                    player2.prevKey = c;
+                } else if (c == 'h' && player2.prevKey != 'k') {
+                    player2.prevKey = c;
+
+                }
+            }
+        }
+        i--;
+    }
+}
+
+//Prints the title
+void title(){
+    call_setFontSize(2);
+    call_moveCursorX((WIDTH/2)-(strlen("ELIMINATOR")/2) *8 * 2);
+    call_moveCursorY(HEIGHT/3);
+    print(RED,"ELIMINATOR\n");
+    call_moveCursorX((WIDTH/2)-(strlen("PRESS [ENTER] TO CONTINUE")/2) *8 * 2);
+    print(RED,"PRESS [ENTER] TO CONTINUE\n");
+    call_moveCursorX((WIDTH/2)-(strlen("PRESS [X] TO EXIT")/2) *8 * 2);
+    print(RED,"PRESS [X] TO EXIT\n");
+}
+
+//Prints the configuration and starts the game
+void configuration(){
+    call_moveCursorX((WIDTH/2)-(strlen("CONFIGURATION")/2) *8 * 2);
+    print(RED,"CONFIGURATION\n");
+    call_moveCursorX((WIDTH/2)-(strlen("PLAYER 1 (RED) MOVES WITH A-W-S-D")/2) *8 * 2);
+    print(RED,"PLAYER 1 (RED) MOVES WITH A-W-S-D\n");
+    call_moveCursorX((WIDTH/2)-(strlen("PLAYER 2 (GREEN) MOVES WITH H-U-J-K")/2) *8 * 2);
+    print(RED,"PLAYER 2 (GREEN) MOVES WITH H-U-J-K\n");
+    call_moveCursorX((WIDTH/2)-(strlen("PRESS [ENTER] TO START")/2) *8 * 2);
+    print(RED,"PRESS [ENTER] TO START\n");
+    flagConfig = 0;
+    while(state == CONFIGURATION){
+        if(flagConfig == 0){
+            print(RED,"GAME SPEED (1-4): ");
+            gameSpeed();
+            if(state == CONFIGURATION && flagConfig == 0){
+                print(RED,"INVALID SPEED\n");
+            }
+        }else{
+            print(RED,"PLAYERS (1-2): ");
+            gameSpeed();
+            if(state == CONFIGURATION){
+                print(RED,"INVALID PLAYERS\n");
+            }
+        }
+    }
+    game(players);
     return;
 }
-void startGameOnePlayer(){
-    initializeGame();
-    
-    int pos = call_get_pos();
-    char key;
-    
+
+//Reads the buffer to check the game speed
+void gameSpeed(){
+    int i = 0;
+    char c;
     while (1) {
-        key = call_get_charAt(pos-1);  // Obtener entrada del teclado (bloqueante)
-        if(key != 0){
-            pos++;
+        getC(&c);
+        if(c != 0){
+            if (c == '\n'){
+                putC(c,RED);
+                if (i == 0){
+                    clearBufferEliminator();
+                    return;
+                }
+                if((buffer[0] == '1' || buffer[0] == '2' || buffer[0] == '3' || buffer[0] == '4') && i == 1 && flagConfig == 0){
+                    speed = strToInt(buffer);
+                    flagConfig++;
+                }else if((buffer[0] == '1' || buffer[0] == '2') && i == 1 && flagConfig == 1){
+                    players = strToInt(buffer);
+                    state++;
+                }
+                buffer[i]=0;
+                clearBufferEliminator();
+                return;
+            }else if (c == '\b'){
+                if (i > 0){
+                    i--;
+                    putC(c,RED);
+                }
+            }
+            else{
+                if (i < RED){
+                    buffer[i++] = c;
+                    putC(c,RED);
+                }
+            }
         }
-        handleInput(key);
-        updateGameOnePlayer();
-        if(quit){
-            //printMenu();
+    }
+}
+
+//Checks if the player has won
+int checkMat( player* playerA, player* playerB){
+    if(PositionMatrix[playerA->posY /MOVE][playerA->posX/MOVE]==1){
+        playerB->points++;
+        state++;
+        midGame();
+        return 1;
+    }
+    return 0;
+}
+
+//Sets the matrix with the player position
+void setMat(player playerA){
+    PositionMatrix[playerA.posY/MOVE][playerA.posX/MOVE]=1;
+}
+
+//Initializes the game
+void initGame(){
+    call_clear();
+    call_drawRectangle(RED,0,0,HEIGHT,WIDTH);
+    call_drawRectangle(BLACK, MOVE, MOVE, HEIGHT - (MOVE*2), WIDTH - (MOVE*2));
+    fillWithZeros();
+    initializePositions();
+    state = GAME;
+}
+
+//Starts the game
+void game(int players){
+    initGame();
+    while(state == GAME){
+        buffRead(120/(3+speed), players);
+        if(players == 1){
+            pcDirChange();
+        }
+        checkPrevKey1();
+        checkPrevKey2();
+        if(checkMat(&player1, &player2)){
+            return;
+        }else if(checkMat(&player2, &player1)){
             return;
         }
-        call_sleepms(speeds[speed-1]);
+        call_drawRectangle(RED,player1.posX,player1.posY,MOVE,MOVE);
+        call_drawRectangle(GREEN,player2.posX,player2.posY,MOVE,MOVE);
+        setMat(player2);
+        setMat(player1);
     }
+}
+
+//Moves the player
+void movePlayer(int x,int y, player * playerA){
+    playerA->posY+=y;
+    playerA->posX+=x;
+}
+
+//Checks the previous key of the player
+void checkPrevKey1(){
+    switch (player1.prevKey) {
+        case 'w':
+            movePlayer(0,-MOVE, &player1);
+            return;
+        case 's':
+            movePlayer(0,MOVE, &player1);
+            return;
+        case 'd':
+            movePlayer(MOVE,0, &player1);
+            return;
+        case 'a':
+            movePlayer(-MOVE,0, &player1);
+            return;
+    }
+}
+
+//Checks the previous key of the player
+void checkPrevKey2(){
+    switch (player2.prevKey) {
+        case 'u':
+            movePlayer(0,-MOVE,&player2);
+            return;
+        case 'j':
+            movePlayer(0,MOVE, &player2);
+            return;
+        case 'k':
+            movePlayer(MOVE,0, &player2);
+            return;
+        case 'h':
+            movePlayer(-MOVE,0,&player2);
+            return;
+    }
+
+}
+
+//Fills the matrix with zeros
+void fillWithZeros(){
+    for(int i=0;i<HEIGHT/MOVE;i++){
+        for(int j=0;j<WIDTH/MOVE;j++){
+            if(i==0 || i==HEIGHT/MOVE-1 || j==0 || j==WIDTH/MOVE-1){
+                PositionMatrix[i][j]=1;
+            }else
+                PositionMatrix[i][j]=0;
+        }
+    }
+}
+
+//Initializes the positions of the players
+void initializePositions(){
+    player1.prevKey='s';
+    player2.prevKey='u';
+    player1.posX=WIDTH/2;
+    player2.posX=WIDTH/2;
+    player1.posY=0;
+    player2.posY=HEIGHT-MOVE;
+}
+
+
+//Prints the midgame
+void midGame(){
+    call_beep();
+    call_moveCursorX((WIDTH/2)-(strlen("Player 1:")/2) *8 * 2);
+    call_moveCursorY(HEIGHT/4);
+    print(RED,"Player 1: %d\n", player1.points);
+    call_moveCursorX((WIDTH/2)-(strlen("Player 2:")/2) *8 * 2);
+    print(GREEN,"Player 2: %d\n", player2.points);
+    call_moveCursorX((WIDTH/2)-(strlen("Do you want to continue? [Y/N]")/2) *8 * 2);
+    print(RED,"Do you want to continue? [Y/N]\n");
+
     return;
-
 }
 
-void drawSegment(Segment seg, uint64_t color) {
-    call_put_square(seg.x, seg.y, PLAYER_SIZE, color);
-    for(int i = 0; i < PLAYER_SIZE; i++){
-        for(int j = 0; j < PLAYER_SIZE; j++){
-            board[seg.x + i][seg.y + j] = color;
+
+//Changes the direction of the PC (BOT)
+void pcDirChange(){
+    // Possible moves and corresponding keys
+    int possibleMoves[4][2] = {{0, -MOVE},  {MOVE, 0}, {0, MOVE}, {-MOVE, 0}};
+    char possibleKeys[4] = {'u','k','j', 'h'};
+
+    // Array to store valid moves
+    int validMoves[4] = {0, 0, 0, 0};
+    int validMoveCount = 0;
+
+    // Check each possible move for validity
+    for (int i = 0; i < 4; i++) {
+        if ((possibleKeys[i] == 'u' && player2.prevKey != 'j') ||
+            (possibleKeys[i] == 'j' && player2.prevKey != 'u') ||
+            (possibleKeys[i] == 'k' && player2.prevKey != 'h') ||
+            (possibleKeys[i] == 'h' && player2.prevKey != 'k')) {
+            int newX = player2.posX + possibleMoves[i][0];
+            int newY = player2.posY + possibleMoves[i][1];
+
+            // Check if the new position is within bounds and not colliding with Player 1
+            if (newX >= MOVE && newX < WIDTH - MOVE && newY >= MOVE && newY < HEIGHT - MOVE &&
+                PositionMatrix[newY / MOVE][newX / MOVE] == 0 &&
+                !(newX == player1.posX && newY == player1.posY)) {
+                validMoves[i] = 1;
+                validMoveCount++;
+            }
+
         }
     }
-}
-
-
-void handleInput(char key) {
-        if(key == player1Up){
-            if(player1.direction != DOWN){
-                player1.direction = UP;
-                return;
-            }
-        }
-        else if(key == player1Down){
-            if(player1.direction != UP){
-               player1.direction = DOWN; 
-               return;
-            }
-        }
-        else if(key == player1Left){
-            if(player1.direction != RIGHT){
-                player1.direction = LEFT;
-                return;
-            }
-            }
-        else if(key == player1Right){
-            if(player1.direction != LEFT){
-                player1.direction = RIGHT;
-                return;
-            }
-
-        }
-        else if(key == player2Up){
-            if(player2.direction != DOWN){
-                player2.direction = UP;
-                return;
-            }
-
-        }
-        else if(key == player2Down){
-                if(player2.direction != UP){
-                player2.direction = DOWN;
-                return;
-            }
-        }
-        else if(key == player2Left){
-            if(player2.direction != RIGHT){
-                player2.direction = LEFT;
-                return;
-            }
-        }
-        else if(key == player2Right){
-            if(player2.direction != LEFT){
-                player2.direction = RIGHT;
-                return;
-            }
-        }
-}
-
-
-void initializeGame(){
-    for(int i = 0; i < SCREEN_WIDTH; i++){
-        for(int j = 0; j < SCREEN_HEIGHT; j++){
-            board[i][j] = 0;
-        }
-    }
-
-    player1.direction = UP;
-    player1.color = RED;
-    player1.head.x = SCREEN_WIDTH / 2;
-    player1.head.y = SCREEN_HEIGHT - 25;
-
-    call_paint_screen(BLACK);
-
-    drawMargins();
-    drawSegment(player1.head, player1.color);
-
-}
-
-void initializeGameTwoPlayers() {
-
-    for(int i = 0; i < SCREEN_WIDTH; i++){
-        for(int j = 0; j < SCREEN_HEIGHT; j++){
-            board[i][j] = 0;
-        }
-    }
-
-    player1.direction = UP;
-    player1.color = RED;
-    player1.head.x = SCREEN_WIDTH / 2;
-    player1.head.y = SCREEN_HEIGHT - 25;
-
-    player2.direction = DOWN;
-    player2.color = GREEN;
-    player2.head.x = SCREEN_WIDTH / 2;
-    player2.head.y = 25;
-
-    call_paint_screen(BLACK);
-
-    drawMargins();
-
-    drawSegment(player1.head, player1.color);
-    drawSegment(player2.head, player2.color);
-}
-
-bool updateSnake(Snake *snake) {
-
-    bool collision = false;
-
-    switch (snake->direction){
-        case UP:
-            snake->head.y -= PLAYER_SIZE ;
-            break;
-        case DOWN:
-            snake->head.y += PLAYER_SIZE;
-            break;
-        case LEFT:
-            snake->head.x -= PLAYER_SIZE;
-            break;
-        case RIGHT:
-            snake->head.x += PLAYER_SIZE;
-            break;
-    }
-
-    for(int i = 0; i < PLAYER_SIZE; i++){
-        for(int j = 0; j < PLAYER_SIZE; j++){
-            if(board[snake->head.x + i][snake->head.y + j] != 0){
-                collision = true;
-            }
-        }
-    }
-    drawSegment(snake->head, snake->color);
-    return collision;
-}
-
-void updateGameOnePlayer(){
-    if(updateSnake(&player1)){
-        player1Deaths++;
-        gameOver();
-        if(quit){
+    int i =0;
+    if (validMoveCount > 0) {
+        int selectedMove;
+        if(validMoveCount == 3 ){
             return;
         }
+
+        do {
+            selectedMove = i++;
+        } while (validMoves[selectedMove] == 0 && i <4);
+        player2.prevKey = possibleKeys[selectedMove];
     }
-}
-
-void updateGameTwoPlayers() {
-    bool player1Status = updateSnake(&player1);
-    bool player2Status = updateSnake(&player2);
-        if(player1Status){
-            player1Deaths++;
-            gameOver();
-            if(quit){
-                return;
-            }
-        }
-        else if(player2Status){
-            player2Deaths++;
-            gameOver();
-            if(quit){
-
-                return;
-            }
-        }
-    }
-
-void drawDeathCounter(){
-    char deathCount1[5], deathCount2[5];
-    intToStr(player1Deaths,deathCount1, 10);
-    intToStr(player2Deaths, deathCount2, 10);
-
-    if(players == 1){ //1 jugador
-        call_drawWordColorAt("PLAYER 1 DEATHS: ", DEFAULT_FCOLOR, SCREEN_WIDTH/2 - 300, SCREEN_HEIGHT / 2 - 300);
-        call_drawWordColorAt(deathCount1, DEFAULT_FCOLOR, SCREEN_WIDTH/2 + 75, SCREEN_HEIGHT /2 - 300);
-    }else{
-        call_drawWordColorAt("PLAYER 1 DEATHS: ", DEFAULT_FCOLOR, SCREEN_WIDTH/2 - 300, SCREEN_HEIGHT / 2 - 300);
-        call_drawWordColorAt(deathCount1, DEFAULT_FCOLOR, SCREEN_WIDTH/2 + 75, SCREEN_HEIGHT / 2 - 300);
-        call_drawWordColorAt("PLAYER 2 DEATHS: ",DEFAULT_FCOLOR, SCREEN_WIDTH/2 - 300, SCREEN_HEIGHT / 2 - 200);
-        call_drawWordColorAt(deathCount2,  DEFAULT_FCOLOR, SCREEN_WIDTH/2 + 75, SCREEN_HEIGHT / 2 - 200);
-    }    
-}
-
-
-void drawMargins(){
-    for(int i = 20; i < SCREEN_WIDTH; i++){
-        for(int j = 10; j < SCREEN_HEIGHT; j++){
-            if((i == 20 && j >= 10 && j <= SCREEN_HEIGHT - 10) ||
-               (i == SCREEN_WIDTH - 20 && j >= 10 && j <= SCREEN_HEIGHT - 10) ||
-               (j == 10 && i >= 20 && i <= SCREEN_WIDTH - 20) ||
-               (j == SCREEN_HEIGHT - 10 && i >= 20 && i <= SCREEN_WIDTH - 20)){
-                board[i][j] = RED;
-                call_put_square(i, j, 5, RED);
-            }
-        }
-    }
-}
-
-
-void gameOver(){
-    collision();
-    call_paint_screen(BLACK);
-    call_drawWordColorAt("GAME OVER\n", DEFAULT_FCOLOR, SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 100);
-    call_drawWordColorAt("Press [Q] to return to menu\n", DEFAULT_FCOLOR, SCREEN_WIDTH / 2 - 300, SCREEN_HEIGHT / 2 - 50);
-    call_drawWordColorAt("Press Space to continue\n", DEFAULT_FCOLOR, SCREEN_WIDTH / 2 - 300, SCREEN_HEIGHT / 2 - 10);
-    int gameOverPos;
-    char e;
-    drawDeathCounter();
-    while(1){
-        gameOverPos = call_get_pos();
-        e = call_get_charAt(gameOverPos - 1);
-        if(e == QUIT){
-            quit = true;
-            return;
-        }else if (e == SPACE){
-            players==1? startGameOnePlayer() : startGameTwoPlayers();
-        }
-    }
-    
 }

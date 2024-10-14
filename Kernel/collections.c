@@ -3,7 +3,7 @@
 #include "memoryManager.h"
 #include <sys/types.h>
 #include "processManager.h"
-#include "videoDriver.h"
+#include "../Drivers/include/videoDriver.h"
 
 
 linked_list_ADT ll_init() {
@@ -28,6 +28,7 @@ void insert(PCB * data, uint8_t priority, linked_list_ADT list) {
         if (new_node == NULL) {
             return;
         }
+        new_node->data = data;
         new_node->next = new_node;
         list->first = new_node;
         list->last = new_node;
@@ -66,28 +67,9 @@ void insert(PCB * data, uint8_t priority, linked_list_ADT list) {
 
         aux = new_node;
 
-//        if (list->last->next != list->first) {
-//            drawWord(" change in last in insert ");
-//            list->last = new_node;
-//        }
-
     }
 
     list->size++;
-
-//    if (list->first == NULL) {
-//        node->next = node;
-//        list->first = node;
-//        list->last = node;
-//        list->current = node;
-//    } else {
-//        list->last->next = node;
-//        list->last = node;
-//        node->next = list->first;
-//    }
-//    list->size++;
-//
-//    return;
 }
 
 void remove(pid_t pid_remove, linked_list_ADT list) {
@@ -126,9 +108,8 @@ void remove(pid_t pid_remove, linked_list_ADT list) {
                 list->last = aux; // y ya en la linea anterior nos encargamos de que siga siendo circular la lista
             }
             if (priority == 1) {
-//                drawWord(" its all downhill from here: ");
-//                newline();
                 free_node(to_remove); // libero todoooo
+                list->size--;
                 return;
             }
             mm_free(to_remove); //solo libero nodo porq no es el ultimo
@@ -137,28 +118,6 @@ void remove(pid_t pid_remove, linked_list_ADT list) {
         aux = aux->next;
     } while (priority > 0);
 
-//    while (aux != list->last) {
-//        if (aux->next->data->process->pid == pid_remove) {
-//            if (aux->next == list->current) {
-//                list->current = list->current->next;
-//            }
-//            node_t *to_remove = aux->next;
-//            aux->next = aux->next->next;
-//            if (list->last == to_remove) {
-//                list->last = aux; // y ya en la linea anterior nos encargamos de que siga siendo circular la lista
-//            }
-//            if (priority == 1) {
-//                drawWord(" its all downhill from here: ");
-//                newline();
-//                free_node(to_remove); // libero todoooo
-//                return;
-//            }
-//            mm_free(to_remove); //solo libero nodo porq no es el ultimo
-//        }
-//        aux = aux->next;
-//    }
-    list->size--;
-    return;
 }
 
 void remove_nice(pid_t pid_remove_nice, linked_list_ADT list) {
@@ -202,7 +161,6 @@ void remove_nice(pid_t pid_remove_nice, linked_list_ADT list) {
         aux = aux->next;
     } while (priority > 0);
     list->size--;
-    return;
 }
 
 PCB * find(pid_t pid_find, linked_list_ADT list) {

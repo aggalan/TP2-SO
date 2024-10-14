@@ -6,7 +6,7 @@
 #include "scheduler.h"
 #include "lib.h"
 #include "memoryManager.h"
-#include "videoDriver.h"
+#include "../Drivers/include/videoDriver.h"
 
 #define KERNEL 0
 #define IDLE 1
@@ -57,16 +57,13 @@ pid_t running_process() {
 
 void * schedule(void * current_stack_ptr) {
 
-    if (!scheduler_initialized) {
+if (!scheduler_initialized) {
         return current_stack_ptr;
     }
-
-
     if (process_has_run == KERNEL) {
         if(processes->size == 0) {
             idle_p->process->state = RUNNING;
             process_has_run = IDLE;
-//            idle_p->process->stack->current = current_stack_ptr;
             return idle_p->process->stack->current;
         } else {
             if (processes->current->data->process->state == READY){
@@ -100,9 +97,7 @@ void * schedule(void * current_stack_ptr) {
 
         if (processes->current->data->process->state == KILLED) {
             node_t * aux = processes->current;
-//            processes->current = processes->current->next;
             remove_process(aux->data->process->pid);
-//            free_node(aux);
         }
 
         if (processes->current == aux && processes->current->data->process->state != READY) {
@@ -118,82 +113,6 @@ void * schedule(void * current_stack_ptr) {
     process_has_run = PROCESS;
     processes->current->data->process->state = RUNNING;
     return processes->current->data->process->stack->current;
-
-
-//    if (!scheduler_initialized) {
-//        return current_stack_ptr;
-//    }
-//
-//    if (processes->size == 0) {
-//        idle_has_run = 1;
-//        idle_p->process->state = RUNNING;
-//        idle_p->process->stack->current = current_stack_ptr;
-//        return idle_p->process->stack->current;
-//    }
-//
-//
-//
-//    if (!idle_has_run) {
-////        drawWord(" PID: ");
-////        drawNumber(processes->current->data->process->pid);
-////        drawWord(" STATE: ");
-////        drawNumber(processes->current->data->process->state);
-//        if (processes->current->data->process->state == RUNNING) {
-//            processes->current->data->process->state = READY;
-//            processes->current->data->process->stack->current = current_stack_ptr;
-//        }
-//    } else {
-//        idle_p->process->state = READY;
-//        idle_p->process->stack->current = current_stack_ptr;
-//    }
-//
-//    node_t * aux = processes->current;
-//
-////    newline();
-////    drawWord(" PID: ");
-////    drawNumber(aux->data->process->pid);
-////    newline();
-//
-//    processes->current = processes->current->next;
-//
-//
-//    while(processes->current->data->process->state != READY && processes->current->data->process->pid != 1) {
-//
-//
-//        if (processes->current->data->process->state == KILLED && processes->current->data->process->pid != 1) {
-//            node_t * aux2 = processes->current;
-////            int auxiliary_pid = processes->current->data->process->pid;
-//            remove_process(processes->current->data->process->pid);
-//
-////            drawWord(" i killed ");
-////            drawNumber(auxiliary_pid);
-////            newline();
-////            drawWord(" STATE: ");
-////            drawNumber(processes->current->data->process->state);
-////            newline();
-////            print_processes();
-//
-//            continue;
-//        }
-//
-//
-//
-//        if (processes->current == aux && processes->current->data->process->state != READY) {
-//            drawWord("entre");
-//            idle_has_run = 1;
-//            idle_p->process->state = RUNNING;
-//            return idle_p->process->stack->current;
-//        }
-//
-//        processes->current = processes->current->next;
-//    }
-//
-//    idle_has_run = 0;
-//    processes->current->data->process->state = RUNNING;
-//
-////    drawWord("  do i finish?  ");
-//
-//    return processes->current->data->process->stack->current;
 }
 
 pid_t get_active_pid() {
@@ -207,36 +126,29 @@ void my_nice(pid_t pid_to_nice, uint8_t priority) {
     }
     remove_process_for_nice(pid_to_nice);
     pcb->priority = priority;
-//    drawWord(" I am in nice between remove and add for pid: ");
-//    drawNumber(pid_to_nice);
-//    newline();
-//    print_processes();
-//    newline();
     add_process(pcb, priority);
 
 }
 
 
 void print_processes() {
+    drawWord1(" processes running: ");
+    drawNumber(processes->size);
+    newLine();
+    drawWord1("i am going to print the processes now: ");
+    newLine();
     node_t *aux = processes->first;
-    drawWord("i am going to print the processes now: ");
-    newline();
     do  {
-        drawWord("PID: ");
+        drawWord1("PID: ");
         drawNumber(aux->data->process->pid);
-        drawWord(" PRIORITY: ");
+        drawWord1(" PRIORITY: ");
         drawNumber(aux->data->priority);
-        newline();
+        newLine();
         aux = aux->next;
-    } while(aux != processes->last);
-    drawWord("PID: ");
-    drawNumber(aux->data->process->pid);
-    drawWord(" PRIORITY: ");
-    drawNumber(aux->data->priority);
-    newline();
-    drawWord(" list last PID: ");
+    } while(aux != processes->first);
+    drawWord1(" list last PID: ");
     drawNumber(processes->last->data->process->pid);
-    newline();
+    newLine();
 
 }
 

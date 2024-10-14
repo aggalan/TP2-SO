@@ -4,7 +4,7 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <syscalls.h>
-#include <videoDriver.h>
+#include "../Drivers/include/videoDriver.h"
 #include "idtLoader.h"
 #include "test_util.h"
 #include "memoryManager.h"
@@ -60,9 +60,6 @@ void * initializeKernelBinary()
 
 void shell(){
 	char * argv[] = {"shell"};
-//    char ** argv = (char **)mm_malloc(sizeof(char *)*2);
-//    argv[0] = "shell";
-
 	create_process(sampleCodeModuleAddress, 3, 1, argv);
 }
 
@@ -79,6 +76,7 @@ int main()
 //    newline();
 //    mm_status();
 	shell();
+	
 	while(1);
 	return 0;
 }

@@ -1,9 +1,7 @@
 #include <stdint.h>
-#include "time.h"
-#include "interrupts.h"
-#include "videoDriver.h"
-#include "scheduler.h"
-#include "processManager.h"
+#include <time.h>
+#include "include/interrupts.h"
+#include "include/processManager.h"
 
 void * memset(void * destination, int32_t c, uint64_t length)
 {
@@ -54,24 +52,12 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 	return destination;
 }
 
-void sleepms(int ms){
-	int startTime = ticks_elapsed();
-	while (ms > ticks_elapsed()* 18 - startTime * 18){
+void sleepms(uint32_t ms){
+    uint32_t start = ticks_elapsed();
+    while (ms > 18* (ticks_elapsed() - start)){
 		_hlt();
 	}
 }
-
-void sleeps(int sec){
-	int startTime = seconds_elapsed();
-	while(sec > seconds_elapsed() - startTime ){
-		_hlt();
-	}
-}
-void nanoms(int ns) {
-	int startTime = ticks_elapsed();
-	while (ns > ticks_elapsed()*18000 - startTime*18000)_hlt();
-};
-
 int str_len(char * str){
     int i = 0;
     while(str[i] != '\0'){
@@ -99,14 +85,5 @@ void idle(){
 
 void exit_process() {
     PCB * pcb = get_current();
-//    pcb->process->state = KILLED;
     kill_process_pid(pcb->process->pid);
-//    _irq00Handler();
-}
-
-void idle1(){
-	while(1){
-        drawWord(".");
-		_hlt();
-	}
 }
