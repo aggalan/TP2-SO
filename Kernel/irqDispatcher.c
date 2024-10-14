@@ -13,6 +13,8 @@
 #include "include/processManager.h"
 #include "include/test_util.h"
 #include "include/test_processes.h"
+#include "include/scheduler.h"
+
 static void int_20();
 static void int_21();
 static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
@@ -102,6 +104,33 @@ static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
             char ** argv3=mm_malloc(sizeof(char));
             argv3[0]="prio test";
             create_process(test_prio,1,1,argv3);
+        case 19:
+            return block_process((pid_t)rsi);
+        case 20:
+            return unblock_process((pid_t)rsi);
+        case 21:
+            return kill_process_pid((pid_t)rsi);
+        case 22:
+            yield();
+            return 0;
+        case 23:
+            //return wait_pid((pid_t)rsi);
+        case 24:
+            my_nice((pid_t)rsi,(int)rdx);
+            return 0;
+        case 25:
+            //return (uint64_t) mm_malloc(rsi);
+        case 26:
+            mm_free((void *)rsi);
+            return 0;
+        case 27:
+            return create_process((void *)rsi,rdx,rcx,(char **)r8);
+        case 28:
+            //return processes_info();
+        case 29:
+            //return get_current_pid();
+        case 30:
+            return kill_process();
         default:
             return 0;
     }

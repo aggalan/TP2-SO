@@ -20,6 +20,7 @@ GLOBAL getRegisters
 GLOBAL printRegistersAsm
 GLOBAL getFlag
 GLOBAL saveRegisters
+GLOBAL yield
 
 EXTERN schedule
 EXTERN irqDispatcher
@@ -129,6 +130,9 @@ getRegisters:
     mov byte[flag],0
 
     ret
+
+yield:
+	int 0x20
 
 getFlag:
 	movzx rax, byte[flag]
