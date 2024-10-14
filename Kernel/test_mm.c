@@ -14,7 +14,6 @@ typedef struct MM_rq {
 } mm_rq;
 
 uint64_t test_mm(uint64_t argc, char *argv[]) {
-  drawWordColor("test_mm", WHITE, BLACK);
 
   mm_rq mm_rqs[MAX_BLOCKS];
   uint8_t rq;
@@ -42,31 +41,27 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
       }
     }
 
-    //mm_status();
-
     // Set
     uint32_t i;
     for (i = 0; i < rq; i++)
-      if (mm_rqs[i].address){
+      if (mm_rqs[i].address)
         memset(mm_rqs[i].address, i, mm_rqs[i].size);
-      }
 
     // Check
     for (i = 0; i < rq; i++)
-      if (mm_rqs[i].address){
+      if (mm_rqs[i].address)
         if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size)) {
-          drawWordColor("test_mm ERROR", WHITE, WHITE);
+          drawNumber(rq);
+          newline();
+          drawNumber(i);
+          newline();
+          drawWord("test_mm ERROR\n");
           return -1;
         }
-      }
 
     // Free
-    for (i = 0; i < rq; i++){
-      if (mm_rqs[i].address){
+    for (i = 0; i < rq; i++)
+      if (mm_rqs[i].address)
         mm_free(mm_rqs[i].address);
-      }
-    }
-    
-    drawWord(" OK ");   // mm_status();
   }
 }
