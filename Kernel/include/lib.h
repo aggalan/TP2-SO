@@ -22,5 +22,6 @@ void nanosleep(int ns);
 int str_len(char * str);
 int str_cpy(char * dest, char * src);
 void idle();
+void exit_process();
 void idle1();
 #endif

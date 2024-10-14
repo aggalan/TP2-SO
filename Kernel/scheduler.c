@@ -63,11 +63,12 @@ void * schedule(void * current_stack_ptr) {
 //        if(processes->size == 0) {
 //            idle_p->process->state = RUNNING;
 //            process_has_run = IDLE;
+////            idle_p->process->stack->current = current_stack_ptr;
 //            return idle_p->process->stack->current;
 //        } else {
 //            processes->current->data->process->state = RUNNING;
 //            process_has_run = PROCESS;
-//            return processes->current->data->process->stack->current
+//            return processes->current->data->process->stack->current;
 //        }
 //    }
 //
@@ -80,6 +81,11 @@ void * schedule(void * current_stack_ptr) {
 //    }
 //
 //    node_t * aux = processes->current;
+//    if (aux == NULL) {
+//        process_has_run = IDLE;
+//        idle_p->process->state = RUNNING;
+//        return idle_p->process->stack->current;
+//    }
 //    processes->current = processes->current->next;
 //
 //    while(processes->current->data->process->state != READY) {
@@ -93,17 +99,18 @@ void * schedule(void * current_stack_ptr) {
 //        }
 //
 //        if (processes->current == aux && processes->current->data->process->state != READY) {
-//
-//            idle_has_run = 1;
+//            process_has_run = IDLE;
 //            idle_p->process->state = RUNNING;
 //            return idle_p->process->stack->current;
 //        }
 //
 //        processes->current = processes->current->next;
 //    }
-
-
-
+//
+//
+//    process_has_run = PROCESS;
+//    processes->current->data->process->state = RUNNING;
+//    return processes->current->data->process->stack->current;
 
 
     if (!scheduler_initialized) {
@@ -124,12 +131,17 @@ void * schedule(void * current_stack_ptr) {
         processes->current->data->process->state = READY;
         processes->current->data->process->stack->current = current_stack_ptr;
     } else {
-
         idle_p->process->state = READY;
         idle_p->process->stack->current = current_stack_ptr;
     }
 
     node_t * aux = processes->current;
+
+//    newline();
+//    drawWord(" PID: ");
+//    drawNumber(aux->data->process->pid);
+//    newline();
+
     processes->current = processes->current->next;
 
 
@@ -137,14 +149,18 @@ void * schedule(void * current_stack_ptr) {
 
 
         if (processes->current->data->process->state == KILLED) {
-            node_t * aux = processes->current;
-            processes->current = processes->current->next;
-            remove_process(aux->data->process->pid);
-            // free_node(aux);
+            drawWord(" i killed ");
+            drawNumber(processes->current->data->process->pid);
+            newline();
+//            print_processes();
+            node_t * aux2 = processes->current;
+//            processes->current = processes->current->next;
+            remove_process(aux2->data->process->pid);
+//            free_node(aux2);
         }
 
         if (processes->current == aux && processes->current->data->process->state != READY) {
-
+            drawWord("entre");
             idle_has_run = 1;
             idle_p->process->state = RUNNING;
             return idle_p->process->stack->current;

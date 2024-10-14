@@ -2,6 +2,8 @@
 #include "time.h"
 #include "interrupts.h"
 #include "videoDriver.h"
+#include "scheduler.h"
+#include "processManager.h"
 
 void * memset(void * destination, int32_t c, uint64_t length)
 {
@@ -91,9 +93,15 @@ int str_cpy(char * dest, const char * src){
 
 void idle(){
 	while(1){
-        drawWord(" I AM HERE ");
 		_hlt();
 	}
+}
+
+void exit_process() {
+    PCB * pcb = get_current();
+//    pcb->process->state = KILLED;
+    kill_process_pid(pcb->process->pid);
+//    _irq00Handler();
 }
 
 void idle1(){

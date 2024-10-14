@@ -11,6 +11,7 @@
 // #define READY 1
 // #define ZOMBIE 3
 // #define KILLED 4
+
 #define STACK 4096
 #define MAX_PROCESSES 64
 
@@ -47,20 +48,20 @@ typedef struct PCB{
 
 
 
-pid_t create_process(void * fn, int prio, uint64_t argc, char ** argv);
+pid_t create_process(void * fn, uint8_t prio, uint64_t argc, char ** argv);
 PCB * create_idle_process();
 
-pid_t kill_process_pid(pid_t pid);
+pid_t kill_process_pid(pid_t pid_to_free);
 
 pid_t kill_process();
 
 void list_processes();
 
-pid_t block_process(pid_t pid);
+pid_t block_process(pid_t pid_to_block);
 
-pid_t unblock_process(pid_t pid);
+pid_t unblock_process(pid_t pid_to_unblock);
 
-int wait_pid(pid_t pid);
+int wait_pid(pid_t pid_to_wait);
 
 //void * create_context(void * stack_base_ptr, void * fn_ptr, uint64_t argc, char ** argv); //esto hace colombia creo y no se para que los otros 2 argumentos
 

@@ -34,6 +34,10 @@ void insert(PCB * data, uint8_t priority,linked_list_ADT list) {
         priority--;
     }
 
+    if (priority == 0) {
+        return;
+    }
+
     uint8_t interval = list->size/priority;
 
     if (interval == 0) {
@@ -48,7 +52,7 @@ void insert(PCB * data, uint8_t priority,linked_list_ADT list) {
         }
         node_t * new_node = (node_t *)mm_malloc(sizeof(node_t));
         if (new_node == NULL) {
-            return;
+            return; //HAY QUE VER ESTO ALTA PAJA
         }
         new_node->data = data;
 
@@ -75,11 +79,11 @@ void insert(PCB * data, uint8_t priority,linked_list_ADT list) {
 //    return;
 }
 
-void remove(pid_t pid, linked_list_ADT list) {
+void remove(pid_t pid_remove, linked_list_ADT list) {
     if (list->first == NULL) {
         return;
     }
-    PCB * pcb = find(pid, list);
+    PCB * pcb = find(pid_remove, list);
     if (pcb == NULL) {
         return;
     }
@@ -87,7 +91,7 @@ void remove(pid_t pid, linked_list_ADT list) {
 
     node_t * aux = list->first;
 
-    if (list->size == 1 && aux->data->process->pid == pid) {
+    if (list->size == 1 && aux->data->process->pid == pid_remove) {
         free_node(list->first);
         list->first = NULL;
         list->last = NULL;
@@ -97,7 +101,7 @@ void remove(pid_t pid, linked_list_ADT list) {
     }
 
     while (aux != list->last) {
-        if (aux->next->data->process->pid == pid) {
+        if (aux->next->data->process->pid == pid_remove) {
             if (aux->next == list->current) {
                 list->current = list->current->next;
             }
@@ -118,13 +122,13 @@ void remove(pid_t pid, linked_list_ADT list) {
     return;
 }
 
-PCB * find(pid_t pid, linked_list_ADT list) {
+PCB * find(pid_t pid_find, linked_list_ADT list) {
     if (list->size == 0) {
         return NULL;
     }
     node_t * aux = list->current;
     do {
-        if (aux->data->process->pid == pid) {
+        if (aux->data->process->pid == pid_find) {
             return aux->data;
         }
         aux = aux->next;

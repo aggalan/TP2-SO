@@ -10,12 +10,12 @@
 
 static pid_t pid = 0;
 
-PCB * create_pcb(void * fn, int prio, uint64_t argc, char ** argv);
-pid_t create_process(void * fn, int prio, uint64_t argc, char ** argv);
+PCB * create_pcb(void * fn, uint8_t prio, uint64_t argc, char ** argv);
+//pid_t create_process(void * fn, int prio, uint64_t argc, char ** argv);
 PCB * create_idle_process();
 
 
-pid_t create_process(void * fn, int prio, uint64_t argc, char ** argv) {
+pid_t create_process(void * fn, uint8_t prio, uint64_t argc, char ** argv) {
 
     PCB * pcb = create_pcb(fn,prio, argc, argv);
     if (pcb == NULL) {
@@ -33,7 +33,7 @@ pid_t create_process(void * fn, int prio, uint64_t argc, char ** argv) {
 
 PCB * create_idle_process(){
 
-    char ** argv = (char **)mm_malloc(sizeof(char *));
+    char ** argv = (char **)mm_malloc(sizeof(char *)*2);
     if (argv == NULL) {
         return NULL;
     }
@@ -46,11 +46,11 @@ PCB * create_idle_process(){
 
     str_cpy(argv[0], "idle");
 
-    return create_pcb(idle, 1, 0, argv);
+    return create_pcb(idle, 1, 1, argv);
 }
 
 
-PCB * create_pcb(void * fn, int prio, uint64_t argc, char ** argv) {
+PCB * create_pcb(void * fn, uint8_t prio, uint64_t argc, char ** argv) {
 
     PCB * pcb = (PCB *)mm_malloc(sizeof(PCB));
     if (pcb == NULL) {
@@ -127,9 +127,9 @@ PCB * create_pcb(void * fn, int prio, uint64_t argc, char ** argv) {
 
     p->stack->base = p->stack->base_ptr;
 
-    p->stack->base_ptr += STACK;
+    p->stack->base_ptr += STACK-1;
 
-    p->stack->current = create_context(p->stack->base_ptr, p->heap->base_ptr); 
+    p->stack->current = create_context(p->stack->base_ptr, fn, argc, argv);
 
     pcb->process = p;
 
@@ -137,31 +137,37 @@ PCB * create_pcb(void * fn, int prio, uint64_t argc, char ** argv) {
 }
 
 pid_t kill_process() {
-    int pid = running_process();
-    return kill_process_pid(pid);
+    int pid_to_kill = running_process();
+    return kill_process_pid(pid_to_kill);
 }
 
-pid_t kill_process_pid(pid_t pid) {
+pid_t kill_process_pid(pid_t pid_to_free) {
 
-    PCB * pcb = find_process(pid);
+    PCB * pcb = find_process(pid_to_free);
     if (pcb == NULL) {
         return -1;
     }
     int state = pcb->process->state;
-    remove_process(pid); //sino el test de proceso se queda sin memoria porque reserva mas rapido de lo que libera
+    drawWord(" PID KILLED: ");
+    drawNumber(pid_to_free);
+    newline();
+//    remove_process(pid_to_free); //sino el test de proceso se queda sin memoria porque reserva mas rapido de lo que libera
     pcb->process->state = KILLED;
     if (state == RUNNING) {
+        drawWord(" i was running: ");
+        drawNumber(pid_to_free);
+        newline();
         _irq00Handler();
     }
 
-    return pcb->process->pid;
+    return pid_to_free;
 }
 
-pid_t block_process(pid_t pid){
+pid_t block_process(pid_t pid_to_block){
 
 //    return pid;
 
-    PCB * pcb = find_process(pid);
+    PCB * pcb = find_process(pid_to_block);
     if (pcb == NULL) {
         return -1;
     }
@@ -174,10 +180,10 @@ pid_t block_process(pid_t pid){
     return pcb->process->pid;
 }
 
-pid_t unblock_process(pid_t pid){
+pid_t unblock_process(pid_t pid_to_unblock){
 
 //    return pid;
-    PCB * pcb = find_process(pid);
+    PCB * pcb = find_process(pid_to_unblock);
     if (pcb == NULL) {
         return -1;
     }

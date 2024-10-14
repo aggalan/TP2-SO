@@ -24,11 +24,11 @@ static void endless_loop_print(uint64_t wait);
 void test_prio()
 {
     int64_t pids[TOTAL_PROCESSES];
-    char *argv[] = {0};
+    char *argv[] = {"test"};
     uint64_t i;
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-        pids[i] = create_process(endless_loop_print, 1, 0, argv);
+        pids[i] = create_process(endless_loop_print, 1, 1, argv);
 
     bussy_wait(WAIT);
     newline();
@@ -64,19 +64,23 @@ void test_prio()
     drawWord("\nKILLING...\n");
     newline();
 
-    //print_processes();
+
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
         kill_process_pid(pids[i]);
+
+    drawWord("i have killed them all");
+    print_processes();
+    newline();
 }
 
 static void endless_loop_print(uint64_t wait)
 {
     while (1)
     {
-        drawWord("PID: ");
-        drawNumber(get_active_pid());
-        newline();
+//        drawWord("PID: ");
+//        drawNumber(get_active_pid());
+//        newline();
         bussy_wait(wait);
     }
 }

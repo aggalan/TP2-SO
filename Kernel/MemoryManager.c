@@ -196,8 +196,8 @@ void mm_status() {
 //    drawNumber((mm.qty_blocks - mm.used_blocks)*BLOCK_SIZE);
 //    newline();
 
-//     uint64_t total = 0;
-//     uint64_t total2 = 0;
+     uint64_t total = 0;
+     uint64_t total2 = 0;
 //     uint64_t from = 0;
 //     uint64_t to = 0;
 
@@ -208,24 +208,25 @@ void mm_status() {
 
 //     int flag = 0;
 
-//     for (uint32_t i = 0; i < mm.qty_blocks; i++) {
+     for (uint32_t i = 0; i < mm.qty_blocks; i++) {
 // //        drawWord("bitmap position ");
 // //        drawNumber(i);
 // //        drawWord(" is: ");
 // //        drawNumber(mm.bitmap[i]);
-//         if (mm.bitmap[i] != FREE && mm.bitmap[i] != ALLOCATED  && mm.bitmap[i] != START) {
+         if (mm.bitmap[i] != FREE && mm.bitmap[i] != ALLOCATED  && mm.bitmap[i] != START) {
 // //            drawWord(" ACA HAY UN VALOR QUE NO ESTA BIEN: ");
 // //            drawNumber(mm.bitmap[i]);
 // //            drawWord(" en posicion: ");
 // //            drawNumber(i);
 // //            newline();
-//             total++;
-//         }
-//         if (mm.bitmap[i] == FREE ) {
+
+             total++;
+         }
+         if (mm.bitmap[i] == FREE ) {
 //             if (total2 == 0) {
 //                 from = i;
 //             }
-//             total2++;
+             total2++;
 // //            drawWord(" at: ");
 // //            drawNumber(i);
 // //            newline();
@@ -237,37 +238,38 @@ void mm_status() {
 // //                drawNumber(start_continous);
 //             }
 //             max_continous++;
-//         } else if (max_continous != 0){
+         }
+//         else if (max_continous != 0){
 // //            drawWord(" having ");
 // //            drawNumber(max_continous);
 // //            drawWord("            ");
 //             max_continous = 0;
 //         }
-//     }
-//     drawWord("total total : ");
-//     drawNumber(total2);
-//     newline();
+     }
+     drawWord("total total : ");
+     drawNumber(total2);
+     newline();
 //     drawWord("from: ");
 //     drawNumber(from);
 //     newline();
 //     drawWord("to: ");
 //     drawNumber(to2);
 //     newline();
-//     drawWord("total with garbage : ");
-//     drawNumber(total);
-//     newline();
-//     drawWord("en pos 0 hay!: ");
-//     drawNumber(mm.bitmap[0]);
-//     newline();
-//     drawWord(" mm start: ");
-//     ptr_to_string_and_print(mm.start);
-//     newline();
-//     drawWord(" bitmap start: ");
-//     ptr_to_string_and_print(mm.bitmap);
-//     newline();
-//     drawWord(" mm end: ");
-//     ptr_to_string_and_print(&mm.bitmap[mm.qty_blocks-1]);
-//     newline();
+     drawWord("total with garbage : ");
+     drawNumber(total);
+     newline();
+     drawWord("en pos 0 hay!: ");
+     drawNumber(mm.bitmap[0]);
+     newline();
+     drawWord(" mm start: ");
+     ptr_to_string_and_print(mm.start);
+     newline();
+     drawWord(" bitmap start: ");
+     ptr_to_string_and_print(mm.bitmap);
+     newline();
+     drawWord(" bitmap end: ");
+     ptr_to_string_and_print(&mm.bitmap[mm.qty_blocks-1]);
+     newline();
 
 
 }

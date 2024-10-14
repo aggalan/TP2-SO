@@ -1,11 +1,13 @@
 GLOBAL create_context
 
+EXTERN exit_process
 
 
 call_wrapper:
-    call rsi ;puntero a funcion que llamo (literalmente el puntero a donde corre el proceso) ver bien tema registros y orden
-    mov rdi, 0x19 ;la proxima en irqdispatcher, hay que armarla (es este registro?)
-    int 0x80
+    call rdx ;puntero a funcion que llamo (literalmente el puntero a donde corre el proceso) ver bien tema registros y orden
+    ;mov rax, 25 ;la proxima en irqdispatcher, hay que armarla (es este registro?)
+    ;int 0x80
+    call exit_process
 
 create_context:
     push rbp ;stack frame
@@ -22,11 +24,11 @@ create_context:
 
     push rax  ;el orden de pushstate
     push rbx
-    push rcx
-    push rdx
-    push rbp
     push rdi
     push rsi
+    push rbp
+    push rdx
+    push rcx
     push r8
     push r9
     push r10
