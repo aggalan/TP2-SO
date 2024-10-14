@@ -91,7 +91,6 @@ static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
             argv[1]="266240";
             argv[0]="mem test";
             create_process(test_mm,1,1,argv);
-            //test_mm();
             return 0;
         case 17:
             char ** argv2=mm_malloc(2*sizeof(char));

@@ -14,7 +14,7 @@ typedef struct MM_rq {
 } mm_rq;
 
 uint64_t test_mm(uint64_t argc, char *argv[]) {
-  drawWord1("test_mm");
+//  drawWord1("test_mm");
 
   mm_rq mm_rqs[MAX_BLOCKS];
   uint8_t rq;
@@ -68,6 +68,6 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
       }
     }
     
-    drawWord1(" OK ");   // mm_status();
+//    drawWord1(" OK ");   // mm_status();
   }
 }

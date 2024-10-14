@@ -12,12 +12,6 @@ typedef struct memory_manager {
     uint32_t current;
 } memory_manager;
 
-// typedef enum {
-//     FREE = 0,
-//     ALLOCATED = 1,
-//     START = 2
-// } block_state;
-
 #define FREE 0
 #define ALLOCATED 1
 #define START 2
@@ -161,115 +155,28 @@ void mm_status() {
     drawWord1("Total Free: ");
     drawNumber((mm.qty_blocks - mm.used_blocks)*BLOCK_SIZE);
     newLine();
-//    newLine();
-//    while(mm_malloc(4097) != NULL) {
-//        ;
-//    }
-//    drawWord1("Total Memory: ");
-//    drawNumber(mm.qty_blocks*BLOCK_SIZE);
-//    newLine();
-//    drawWord1("Total Memory In Use: ");
-//    drawNumber(mm.used_blocks*BLOCK_SIZE);
-//    newLine();
-//    drawWord1("Total Free: ");
-//    drawNumber((mm.qty_blocks - mm.used_blocks)*BLOCK_SIZE);
-//    newLine();
-
-//    mm_malloc(20);
-//    drawWord1("Total Memory: ");
-//    drawNumber(mm.qty_blocks*BLOCK_SIZE);
-//    newLine();
-//    drawWord1("Total Memory In Use: ");
-//    drawNumber(mm.used_blocks*BLOCK_SIZE);
-//    newLine();
-//    drawWord1("Total Free: ");
-//    drawNumber((mm.qty_blocks - mm.used_blocks)*BLOCK_SIZE);
-//    newLine();
-//    mm_malloc(40);
-//    drawWord1("Total Memory: ");
-//    drawNumber(mm.qty_blocks*BLOCK_SIZE);
-//    newLine();
-//    drawWord1("Total Memory In Use: ");
-//    drawNumber(mm.used_blocks*BLOCK_SIZE);
-//    newLine();
-//    drawWord1("Total Free: ");
-//    drawNumber((mm.qty_blocks - mm.used_blocks)*BLOCK_SIZE);
-//    newLine();
 
      uint64_t total = 0;
      uint64_t total2 = 0;
-//     uint64_t from = 0;
-//     uint64_t to = 0;
-
-//     uint64_t to2 = 0;
-
-//     uint64_t max_continous = 0;
-//     uint64_t start_continous = 0;
-
-//     int flag = 0;
 
      for (uint32_t i = 0; i < mm.qty_blocks; i++) {
-// //        drawWord1("bitmap position ");
-// //        drawNumber(i);
-// //        drawWord1(" is: ");
-// //        drawNumber(mm.bitmap[i]);
-         if (mm.bitmap[i] != FREE && mm.bitmap[i] != ALLOCATED  && mm.bitmap[i] != START) {
-// //            drawWord1(" ACA HAY UN VALOR QUE NO ESTA BIEN: ");
-// //            drawNumber(mm.bitmap[i]);
-// //            drawWord1(" en posicion: ");
-// //            drawNumber(i);
-// //            newLine();
 
+         if (mm.bitmap[i] != FREE && mm.bitmap[i] != ALLOCATED  && mm.bitmap[i] != START) {
              total++;
          }
          if (mm.bitmap[i] == FREE ) {
-//             if (total2 == 0) {
-//                 from = i;
-//             }
              total2++;
-// //            drawWord1(" at: ");
-// //            drawNumber(i);
-// //            newLine();
-//             to2 = i;
-//             if (max_continous == 0 && !flag) {
-//                 start_continous = i;
-//                 flag = 1;
-// //                drawWord1(" CONTINOUS STREAK STARTS AT: ");
-// //                drawNumber(start_continous);
-//             }
-//             max_continous++;
          }
-//         else if (max_continous != 0){
-// //            drawWord1(" having ");
-// //            drawNumber(max_continous);
-// //            drawWord1("            ");
-//             max_continous = 0;
-//         }
      }
-     drawWord1("total total : ");
+     drawWord1("total memory free : ");
      drawNumber(total2);
      newLine();
-//     drawWord1("from: ");
-//     drawNumber(from);
-//     newLine();
-//     drawWord1("to: ");
-//     drawNumber(to2);
-//     newLine();
-     drawWord1("total with garbage : ");
+     drawWord1("total memory with garbage : ");
      drawNumber(total);
      newLine();
-     drawWord1("en pos 0 hay!: ");
+     drawWord1("en pos 0 hay: ");
      drawNumber(mm.bitmap[0]);
      newLine();
-     drawWord1(" mm start: ");
-    //  ptr_to_string_and_print(mm.start);
-    //  newLine();
-    //  drawWord1(" bitmap start: ");
-    //  ptr_to_string_and_print(mm.bitmap);
-    //  newLine();
-    //  drawWord1(" bitmap end: ");
-    //  ptr_to_string_and_print(&mm.bitmap[mm.qty_blocks-1]);
-    //  newLine();
-
+     print_processes();
 
 }

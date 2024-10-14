@@ -69,22 +69,15 @@ void test_prio()
     for (i = 0; i < TOTAL_PROCESSES; i++)
         kill_process_pid(pids[i]);
 
-//    print_processes();
-//    drawWord1(" AAAAAAAAAAAAAAAAAAA ");
-//    newLine();
+    print_processes();
+    newLine();
 
-//    while(1) {
-//        ;
-//    }
 }
 
 static void endless_loop_print(uint64_t wait)
 {
     while (1)
     {
-//        drawWord1("PID: ");
-//        drawNumber(get_active_pid());
-//        newLine();
         bussy_wait(wait);
     }
 }

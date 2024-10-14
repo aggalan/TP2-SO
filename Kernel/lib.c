@@ -85,7 +85,5 @@ void idle(){
 
 void exit_process() {
     PCB * pcb = get_current();
-//    pcb->process->state = KILLED;
     kill_process_pid(pcb->process->pid);
-//    _irq00Handler();
 }

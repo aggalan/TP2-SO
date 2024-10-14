@@ -51,7 +51,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
   p_rq p_rqs[max_processes];
 
     while(1){
-        drawWord1(" ok ");
+//        drawWord1(" ok ");
 
     // Create max_processes processes
     for (rq = 0; rq < max_processes; rq++) {

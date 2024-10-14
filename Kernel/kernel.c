@@ -60,9 +60,6 @@ void * initializeKernelBinary()
 
 void shell(){
 	char * argv[] = {"shell"};
-//    char ** argv = (char **)mm_malloc(sizeof(char *)*2);
-//    argv[0] = "shell";
-
 	create_process(sampleCodeModuleAddress, 3, 1, argv);
 }
 

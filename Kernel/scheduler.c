@@ -60,13 +60,10 @@ void * schedule(void * current_stack_ptr) {
 if (!scheduler_initialized) {
         return current_stack_ptr;
     }
-
-
     if (process_has_run == KERNEL) {
         if(processes->size == 0) {
             idle_p->process->state = RUNNING;
             process_has_run = IDLE;
-//            idle_p->process->stack->current = current_stack_ptr;
             return idle_p->process->stack->current;
         } else {
             if (processes->current->data->process->state == READY){
@@ -100,9 +97,7 @@ if (!scheduler_initialized) {
 
         if (processes->current->data->process->state == KILLED) {
             node_t * aux = processes->current;
-//            processes->current = processes->current->next;
             remove_process(aux->data->process->pid);
-//            free_node(aux);
         }
 
         if (processes->current == aux && processes->current->data->process->state != READY) {
@@ -131,20 +126,18 @@ void my_nice(pid_t pid_to_nice, uint8_t priority) {
     }
     remove_process_for_nice(pid_to_nice);
     pcb->priority = priority;
-//    drawWord1(" I am in nice between remove and add for pid: ");
-//    drawNumber(pid_to_nice);
-//    newLine();
-//    print_processes();
-//    newLine();
     add_process(pcb, priority);
 
 }
 
 
 void print_processes() {
-    node_t *aux = processes->first;
+    drawWord1(" processes running: ");
+    drawNumber(processes->size);
+    newLine();
     drawWord1("i am going to print the processes now: ");
     newLine();
+    node_t *aux = processes->first;
     do  {
         drawWord1("PID: ");
         drawNumber(aux->data->process->pid);
@@ -152,12 +145,7 @@ void print_processes() {
         drawNumber(aux->data->priority);
         newLine();
         aux = aux->next;
-    } while(aux != processes->last);
-    drawWord1("PID: ");
-    drawNumber(aux->data->process->pid);
-    drawWord1(" PRIORITY: ");
-    drawNumber(aux->data->priority);
-    newLine();
+    } while(aux != processes->first);
     drawWord1(" list last PID: ");
     drawNumber(processes->last->data->process->pid);
     newLine();
