@@ -8,52 +8,61 @@
 #include "tests/test_processes.h"
 #define WHITE 0xFFFFFFFF
 static char buffer[BUFFER_SIZE] = {0};
-int exitFlag =0;
+int exitFlag = 0;
 int registerFlag = 0;
 
-void lineRead(char * buffer);
+void lineRead(char *buffer);
 void call_InvalidOp();
-char reSize(char * buffer);
+char reSize(char *buffer);
 void call_div0();
 
-void startingLine(){
-    char * startingLine = "$>";
-    putString(startingLine,GREEN);
+void startingLine()
+{
+    char *startingLine = "$>";
+    putString(startingLine, GREEN);
     clearBuffer(buffer);
 }
 
-void bufferControl(){
+void bufferControl()
+{
     int i = 0;
-    while (1) {
+    while (1)
+    {
         char c;
-         getC(&c);
-          
-        if(c!=0 && c != '\t'){
-        if (c == '\n'){
-            putC(c,WHITE);
-            if (i == 0){
-                clearBuffer(buffer);
+        getC(&c);
+
+        if (c != 0 && c != '\t')
+        {
+            if (c == '\n')
+            {
+                putC(c, WHITE);
+                if (i == 0)
+                {
+                    clearBuffer(buffer);
+                    return;
+                }
+                buffer[i] = 0;
+                lineRead(buffer);
+                clearBuffer(buffer); // para limpiarlo ahora q lineRead no lo uso
                 return;
             }
-            buffer[i]=0;
-            lineRead(buffer);
-            clearBuffer(buffer);         //para limpiarlo ahora q lineRead no lo uso
-            return;
-
-        }else if (c == '\b'){
-            if (i > 0){
-                i--;               //borro el ultimo caracter
-                putC(c,WHITE);
+            else if (c == '\b')
+            {
+                if (i > 0)
+                {
+                    i--; // borro el ultimo caracter
+                    putC(c, WHITE);
+                }
             }
-
-        }else{
-            if (i < BUFFER_SIZE){
-                buffer[i++] = c;   //guardo el caracter en el buffer
-                putC(c,WHITE);
+            else
+            {
+                if (i < BUFFER_SIZE)
+                {
+                    buffer[i++] = c; // guardo el caracter en el buffer
+                    putC(c, WHITE);
+                }
             }
         }
-    }
-
     }
 }
 
@@ -74,105 +83,144 @@ const char *commands[] = {
     "ps:           Shows the live processes.",
 };
 
-void lineRead(char *buffer) {
-    if (strcmp(buffer, "help") == 0) {
-        putString("The following commands may be used: \n",WHITE);
-        for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++) {
-            putString(commands[i],WHITE);
-            putString("\n",WHITE);
+void lineRead(char *buffer)
+{
+    if (strcmp(buffer, "help") == 0)
+    {
+        putString("The following commands may be used: \n", WHITE);
+        for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
+        {
+            putString(commands[i], WHITE);
+            putString("\n", WHITE);
         }
-    }else if (strcmp(buffer, "eliminator") == 0) {
-      startEliminator();
-
-    }else if (strcmp(buffer, "time") == 0) {
-        char time[9];                               //Viene dada por el formato hh:mm:ss por eso son 8 mas la terminacion en cero
+    }
+    else if (strcmp(buffer, "eliminator") == 0)
+    {
+        startEliminator();
+    }
+    else if (strcmp(buffer, "time") == 0)
+    {
+        char time[9]; // Viene dada por el formato hh:mm:ss por eso son 8 mas la terminacion en cero
         call_timeClock(time);
-        putString(time,WHITE);
-        putString("\n",WHITE);
-    }else if (strcmp(cutString(buffer),"setFont") == 0) {
-        if(reSize(buffer)){
+        putString(time, WHITE);
+        putString("\n", WHITE);
+    }
+    else if (strcmp(cutString(buffer), "setFont") == 0)
+    {
+        if (reSize(buffer))
+        {
             call_clear();
-        } else{
-            putString("Enter a valid size (1 or 2) \n",RED);
+        }
+        else
+        {
+            putString("Enter a valid size (1 or 2) \n", RED);
         }
         clearBuffer(buffer);
-    }else if (strcmp(buffer, "getRegisters") == 0) {
+    }
+    else if (strcmp(buffer, "getRegisters") == 0)
+    {
         call_printRegisters(1);
-    }else if(strcmp(buffer,"clear")==0){
+    }
+    else if (strcmp(buffer, "clear") == 0)
+    {
         call_clear();
         clearBuffer(buffer);
-    }else if(strcmp(buffer,"exit")==0){
-        exitFlag=1;
+    }
+    else if (strcmp(buffer, "exit") == 0)
+    {
+        exitFlag = 1;
         call_clear();
         clearBuffer(buffer);
         return;
-    }else if(strcmp(buffer,"div0")==0){
+    }
+    else if (strcmp(buffer, "div0") == 0)
+    {
         call_div0();
         return;
-    }else if(strcmp(buffer,"invalidOp")==0){
+    }
+    else if (strcmp(buffer, "invalidOp") == 0)
+    {
         call_InvalidOp();
         return;
-    }else if(strcmp(buffer,"status")==0){
+    }
+    else if (strcmp(buffer, "status") == 0)
+    {
         call_status();
         return;
-    }else if(strcmp(buffer,"testmm")==0){
+    }
+    else if (strcmp(buffer, "testmm") == 0)
+    {
         call_test_mm();
         return;
-    }else if(strcmp(buffer,"testprocess")==0){
-        char ** argv_process = (char **)(uintptr_t)call_malloc(2*sizeof(char*));
+    }
+    else if (strcmp(buffer, "testprocess") == 0)
+    {
+        char **argv_process = (char **)(uintptr_t)call_malloc(2 * sizeof(char *));
         argv_process[0] = "process test";
         argv_process[1] = "10";
         call_create_process(test_processes, 1, 1, argv_process);
         call_free(argv_process);
         return;
-    }else if(strcmp(buffer,"testprio")==0){
-        char ** argv_priority = (char **)(uintptr_t)call_malloc(sizeof(char*));
+    }
+    else if (strcmp(buffer, "testprio") == 0)
+    {
+        char **argv_priority = (char **)(uintptr_t)call_malloc(sizeof(char *));
         argv_priority[0] = "process test";
         call_create_process(test_prio, 1, 1, argv_priority);
         call_free(argv_priority);
         return;
-    }else if(strcmp(cutString(buffer),"kil`l")==0){
-        char * init = buffer + strlen("kill ");
-        if (!strlen(init)) {
+    }
+    else if (strcmp(cutString(buffer), "kill") == 0)
+    {
+        char *init = buffer + strlen("kill ");
+        if (!strlen(init))
+        {
             return;
         }
         call_kill(strToInt(init));
         return;
-    }else if(strcmp(buffer,"ps")==0){
+    }
+    else if (strcmp(buffer, "ps") == 0)
+    {
         call_ps();
         return;
-    }else{
-        putString(buffer,WHITE);
-        putString(":command not found",WHITE);
-        putString("\n",WHITE);
+    }
+    else
+    {
+        putString(buffer, WHITE);
+        putString(":command not found", WHITE);
+        putString("\n", WHITE);
     }
     call_printRegisters(0);
- 
 }
 
-char reSize(char * buffer){
-    char * init = buffer + strlen("setFont ");
-    if(! strlen(init))
+char reSize(char *buffer)
+{
+    char *init = buffer + strlen("setFont ");
+    if (!strlen(init))
         return 0;
-    return (char) call_setFontSize(strToInt(init));
+    return (char)call_setFontSize(strToInt(init));
 }
 
-
-int shellInit() {
-    char * start = "Welcome to IncFont OS, type help to get a list of commands.\n";
-    putString(start,GREEN);
+int shellInit()
+{
+    char *start = "Welcome to IncFont OS, type help to get a list of commands.\n";
+    putString(start, GREEN);
     clearBuffer(buffer);
-    while(!exitFlag){
+    while (!exitFlag)
+    {
         startingLine();
         bufferControl();
     }
     return 0;
 }
-void call_InvalidOp(){
+void call_InvalidOp()
+{
     InvalidOpasm();
 }
-void call_div0(){
-    int a=7;
-    int b=0;
-    a=a/b;
+void call_div0()
+{
+    int a = 7;
+    int b = 0;
+    a = a / b;
 }
