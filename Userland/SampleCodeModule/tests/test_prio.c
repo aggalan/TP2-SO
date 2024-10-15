@@ -1,12 +1,9 @@
 #include <stdint.h>
 #include <stdio.h>
-#include "syscall.h"
+#include "../include/lib.h"
 #include "test_util.h"
-#include "processManager.h"
-#include "lib.h"
-#include "test_processes.h"
-#include "../Drivers/include/videoDriver.h"
-#include "scheduler.h"
+#include "../include/usrSysCall.h"
+
 
 #define MINOR_WAIT 1000000 // TODO: Change this value to prevent a process from flooding the screen
 #define WAIT 10000000      // TODO: Change this value to make the wait long enough to see theese processes beeing run at least twice
@@ -18,7 +15,6 @@
 
 int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
 
-static void endless_loop_print(uint64_t wait);
 
 
 void test_prio()
@@ -28,54 +24,44 @@ void test_prio()
     uint64_t i;
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-        pids[i] = create_process(endless_loop_print, 2, 1, argv);
+        pids[i] = call_create_process(endless_loop, 2, 1, argv);
 
     bussy_wait(WAIT);
-    newLine();
-    drawWord1("\nCHANGING PRIORITIES...\n");
-    newLine();
+    
+    print(0xFFFFFF,"\nCHANGING PRIORITIES...\n");
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-       change_priority(pids[i],HIGHEST);
+       call_change_priority(pids[i],HIGHEST);
 
     bussy_wait(WAIT);
-    newLine();
-    drawWord1("\nBLOCKING...\n");
-    newLine();
+
+    print(0xFFFFFF,"\nBLOCKING...\n");
+
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-       block_process(pids[i]);
+       call_block(pids[i]);
 
-    newLine();
-    drawWord1("CHANGING PRIORITIES WHILE BLOCKED...\n");
-    newLine();
-    for (i = 0; i < TOTAL_PROCESSES; i++)
-       change_priority(pids[i], LOWEST);
-
-    newLine();
-    drawWord1("UNBLOCKING...\n");
-    newLine();
+    print(0xFFFFFF, "CHANGING PRIORITIES WHILE BLOCKED...\n");
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-       unblock_process(pids[i]);
+       call_change_priority(pids[i], LOWEST);
+
+
+    print(0xFFFFFF,"UNBLOCKING...\n");
+
+
+    for (i = 0; i < TOTAL_PROCESSES; i++)
+       call_unblock(pids[i]);
 
     bussy_wait(WAIT);
-    newLine();
-    drawWord1("\nKILLING...\n");
-    newLine();
+    
+    print(0xFFFFFF, "\nKILLING...\n");
+    
 
 
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-        kill_process_pid(pids[i]);
+        call_kill(pids[i]);
 
 
-}
-
-static void endless_loop_print(uint64_t wait)
-{
-    while (1)
-    {
-        bussy_wait(wait);
-    }
 }

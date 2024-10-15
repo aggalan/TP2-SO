@@ -1,9 +1,9 @@
 
 #include "test_util.h"
-#include "memoryManager.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "../include/lib.h"
+#include "../include/memoryManager.h"
 #include "../Drivers/include/videoDriver.h"
 
 #define MAX_BLOCKS 128
@@ -14,6 +14,7 @@ typedef struct MM_rq {
 } mm_rq;
 
 uint64_t test_mm(uint64_t argc, char *argv[]) {
+
 
   mm_rq mm_rqs[MAX_BLOCKS];
   uint8_t rq;
@@ -53,7 +54,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address){
         if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size)) {
-          drawWord1("test_mm ERROR");
+          drawWord(0xFFFFFF, "test_mm ERROR");
           return -1;
         }
       }
@@ -64,5 +65,6 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
         mm_free(mm_rqs[i].address);
       }
     }
+    
   }
 }

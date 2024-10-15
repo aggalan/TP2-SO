@@ -7,6 +7,11 @@
         "usersyscalls.h": "c",
         "naiveconsole.h": "c",
         "lib.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "test_util.h": "c",
+        "test_processes.h": "c",
+        "videodriver.h": "c",
+        "memorymanager.h": "c",
+        "processmanager.h": "c"
     }
 }

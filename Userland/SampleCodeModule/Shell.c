@@ -4,6 +4,8 @@
 #include "include/usrSysCall.h"
 #include "include/eliminator.h"
 #include <stdio.h>
+#include "tests/test_util.h"
+#include "tests/test_processes.h"
 #define WHITE 0xFFFFFFFF
 static char buffer[BUFFER_SIZE] = {0};
 int exitFlag =0;
@@ -117,10 +119,17 @@ void lineRead(char *buffer) {
         call_test_mm();
         return;
     }else if(strcmp(buffer,"testprocess")==0){
-        call_process_test();
+        char ** argv_process = call_malloc(2*sizeof(char*));
+        argv_process[0] = "process test";
+        argv_process[1] = "10";
+        call_create_process(test_processes, 1, 1, argv_process);
+        //call_free(argv_process);
+        //call_process_test();
         return;
     }else if(strcmp(buffer,"testprio")==0){
-        call_prio_test();
+        char ** argv_priority = call_malloc(sizeof(char*));
+        argv_priority[0] = "process test";
+        call_create_process(test_prio, 1, 1, argv_priority);
         return;
     }else if(strcmp(cutString(buffer),"kill")==0){
         char * init = buffer + strlen("kill ");

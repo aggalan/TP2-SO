@@ -1,8 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "../include/lib.h"
-#include "../Drivers/include/videoDriver.h"
-#include "../include/scheduler.h"
+#include "../include/usrSysCall.h"
 
 // Random
 static uint32_t m_z = 362436069;
@@ -69,11 +68,10 @@ void endless_loop() {
 }
 
 void endless_loop_print(uint64_t wait) {
-  int64_t pid = get_active_pid();
+  int64_t pid = call_get_pid();
 
   while (1) {
-    drawWord(0xFFFFFF, "%d ");
-    drawNumber(pid);
+    print(0xFFFFFF, "%d ", pid);
     bussy_wait(wait);
   }
 }

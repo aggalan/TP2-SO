@@ -11,9 +11,8 @@
 #include "include/registerHandling.h"
 #include "include/memoryManager.h"
 #include "include/processManager.h"
-#include "include/test_util.h"
-#include "include/test_processes.h"
 #include "include/scheduler.h"
+#include "../include/test_util.h"
 
 static void int_20();
 static void int_21();
@@ -96,17 +95,17 @@ static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
             mm_free(argv);
             return 0;
         case 17:
-            char ** argv2=mm_malloc(2*sizeof(char));
-            argv2[1]="10";
-            argv2[0]="process test";
-            create_process(test_processes,1,1,argv2);
-            mm_free(argv2);
+            // char ** argv2=mm_malloc(2*sizeof(char));
+            // argv2[1]="10";
+            // argv2[0]="process test";
+           // create_process(test_processes,1,1,argv2);
+            // mm_free(argv2);
             return 0;
         case 18:
-            char ** argv3=mm_malloc(sizeof(char));
-            argv3[0]="prio test";
-            create_process(test_prio,1,1,argv3);
-            mm_free(argv3);
+            // char ** argv3=mm_malloc(sizeof(char));
+            // argv3[0]="prio test";
+            // //create_process(test_prio,1,1,argv3);
+            // // mm_free(argv3);
             return 0;
         case 19:
             return block_process((pid_t)rsi);
