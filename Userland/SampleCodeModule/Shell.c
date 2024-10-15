@@ -119,19 +119,19 @@ void lineRead(char *buffer) {
         call_test_mm();
         return;
     }else if(strcmp(buffer,"testprocess")==0){
-        char ** argv_process = call_malloc(2*sizeof(char*));
+        char ** argv_process = (char **)(uintptr_t)call_malloc(2*sizeof(char*));
         argv_process[0] = "process test";
         argv_process[1] = "10";
         call_create_process(test_processes, 1, 1, argv_process);
-        //call_free(argv_process);
-        //call_process_test();
+        call_free(argv_process);
         return;
     }else if(strcmp(buffer,"testprio")==0){
-        char ** argv_priority = call_malloc(sizeof(char*));
+        char ** argv_priority = (char **)(uintptr_t)call_malloc(sizeof(char*));
         argv_priority[0] = "process test";
         call_create_process(test_prio, 1, 1, argv_priority);
+        call_free(argv_priority);
         return;
-    }else if(strcmp(cutString(buffer),"kill")==0){
+    }else if(strcmp(cutString(buffer),"kil`l")==0){
         char * init = buffer + strlen("kill ");
         if (!strlen(init)) {
             return;

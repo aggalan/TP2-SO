@@ -89,7 +89,7 @@ size_t call_waitpid();
 
 void call_change_priority(int pid, int newPrio);
 
-void * call_malloc(uint64_t size);
+int call_malloc(uint64_t size);
 
 void call_free(void * ptr);
 

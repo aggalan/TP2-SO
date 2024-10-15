@@ -136,10 +136,11 @@ void * mm_malloc(uint32_t size) {
 void mm_free(void * ptr) {
     uint32_t index = (ptr - mm.start) / BLOCK_SIZE;
 
-    if (index > mm.qty_blocks || mm.bitmap[index] != START) {
+    if (index > mm.qty_blocks ) {
         drawWord1("INVALID MEMORY ADDRESS TO FREE");
         return;
     }
+    
 
     do {
         mm.bitmap[index++] = FREE;

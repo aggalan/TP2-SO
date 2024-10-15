@@ -122,7 +122,7 @@ static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
             change_priority((pid_t)rsi,(int)rdx);
             return 0;
         case 25:
-            //return (uint64_t) mm_malloc(rsi);
+            return (uint64_t) mm_malloc(rsi);
         case 26:
             mm_free((void *)rsi);
             return 0;
