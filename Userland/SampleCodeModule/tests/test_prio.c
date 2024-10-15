@@ -31,7 +31,7 @@ void test_prio()
     print(0xFFFFFF,"\nCHANGING PRIORITIES...\n");
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-       call_change_priority(pids[i],HIGHEST);
+       call_change_priority(pids[i],prio[i]);
 
     bussy_wait(WAIT);
 
@@ -44,7 +44,7 @@ void test_prio()
     print(0xFFFFFF, "CHANGING PRIORITIES WHILE BLOCKED...\n");
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-      call_change_priority(pids[i], LOWEST);
+      call_change_priority(pids[i], MEDIUM);
 
 
     print(0xFFFFFF,"UNBLOCKING...\n");
