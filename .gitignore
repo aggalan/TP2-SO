@@ -10,3 +10,7 @@
 #Object files
 *.o
 .bash_history
+
+*.json
+
+*.xml
