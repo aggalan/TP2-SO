@@ -85,5 +85,5 @@ void idle(){
 
 void exit_process() {
     PCB * pcb = get_current();
-    kill_process_pid(pcb->process->pid);
+    kill_process_pid(pcb->pid);
 }

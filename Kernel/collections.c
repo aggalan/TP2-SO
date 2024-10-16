@@ -56,7 +56,7 @@ void insert(PCB * data, uint8_t priority, linked_list_ADT list) {
         }
         node_t * new_node = (node_t *)mm_malloc(sizeof(node_t));
         if (new_node == NULL) {
-            remove(data->process->pid, list, 0);
+            remove(data->pid, list, 0);
             return;
         }
         new_node->data = data;
@@ -97,7 +97,7 @@ void remove(pid_t pid_remove, linked_list_ADT list, int nice) {
     uint8_t priority = node->next->data->priority;
 
     do  {
-        if (node->next->data->process->pid == pid_remove) {
+        if (node->next->data->pid == pid_remove) {
             if (node->next == list->current) {
                 list->current = list->current->next;
             }
@@ -129,7 +129,7 @@ node_t * find(pid_t pid_find, linked_list_ADT list) {
     }
     node_t * aux = list->last;
     do {
-        if (aux->next->data->process->pid == pid_find) {
+        if (aux->next->data->pid == pid_find) {
             return aux;
         }
         aux = aux->next;
@@ -138,11 +138,12 @@ node_t * find(pid_t pid_find, linked_list_ADT list) {
 }
 
 void free_node(node_t * node) { //revisar
-    mm_free(node->data->process->name);
-    mm_free(node->data->process->stack->base);
-    mm_free(node->data->process->stack);
-    mm_free(node->data->process->heap);
-    mm_free(node->data->process);
+    //mm_free(node->data->name);
+    mm_free((void*)(node->data->base - STACK + 1));
+    if(node->data->argv != NULL){
+        mm_free((void*)node->data->argv);
+    }
     mm_free(node->data);
     mm_free(node);
 }
+

@@ -126,7 +126,7 @@ static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
             mm_free((void *)rsi);
             return 0;
         case 27:
-            return create_process((void *)rsi,rdx,rcx,(char **)r8);
+            return create_process(rsi,rdx,rcx,(char **)r8);
         case 28:
             print_processes();
             return 0;

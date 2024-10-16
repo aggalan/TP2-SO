@@ -19,7 +19,7 @@ typedef struct memory_manager {
 
 memory_manager mm;
 
-static void full_memory_status();
+//static void full_memory_status();
 
 
 void allocate_heap() {
@@ -164,30 +164,30 @@ void mm_status() {
 }
 
 
-void full_memory_status(){
-    uint64_t total = 0;
-    uint64_t total2 = 0;
+// void full_memory_status(){
+//     uint64_t total = 0;
+//     uint64_t total2 = 0;
 
-    for (uint32_t i = 0; i < mm.qty_blocks; i++)
-    {
+//     for (uint32_t i = 0; i < mm.qty_blocks; i++)
+//     {
 
-         if (mm.bitmap[i] != FREE && mm.bitmap[i] != ALLOCATED && mm.bitmap[i] != START)
-        {
-            total++;
-        }
-        if (mm.bitmap[i] == FREE)
-        {
-            total2++;
-        }
-    }
-    drawWord1("total memory free : ");
-    drawNumber(total2);
-    newLine();
-    drawWord1("total memory with garbage : ");
-    drawNumber(total);
-    newLine();
-    drawWord1("en pos 0 hay: ");
-    drawNumber(mm.bitmap[0]);
-    newLine();
-    print_processes();
-}
+//          if (mm.bitmap[i] != FREE && mm.bitmap[i] != ALLOCATED && mm.bitmap[i] != START)
+//         {
+//             total++;
+//         }
+//         if (mm.bitmap[i] == FREE)
+//         {
+//             total2++;
+//         }
+//     }
+//     drawWord1("total memory free : ");
+//     drawNumber(total2);
+//     newLine();
+//     drawWord1("total memory with garbage : ");
+//     drawNumber(total);
+//     newLine();
+//     drawWord1("en pos 0 hay: ");
+//     drawNumber(mm.bitmap[0]);
+//     newLine();
+//     print_processes();
+// }

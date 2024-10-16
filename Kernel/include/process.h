@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-void * create_context(void * stack_ptr, void * fn, int argc, char ** argv);
+uint64_t create_context(uint64_t rsp, uint64_t fn, int argc, char ** argv);
 
 
 #endif
