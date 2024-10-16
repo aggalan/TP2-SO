@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <idtLoader.h>
+#include <idt_loader.h>
 #include <defs.h>
 #include <interrupts.h>
 

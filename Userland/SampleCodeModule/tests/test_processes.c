@@ -1,4 +1,4 @@
-#include "../include/usrSysCall.h"
+#include "../include/usr_sys_calls.h"
 #include "test_util.h"
 #include "../include/lib.h"
 #include "test_processes.h"

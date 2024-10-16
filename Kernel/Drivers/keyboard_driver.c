@@ -1,9 +1,9 @@
-#include "include/keyboardDriver.h"
-#include "../include/keyboardBuffer.h"
+#include "include/keyboard_driver.h"
+#include "../include/keyboard_buffer.h"
 #include "../include/interrupts.h"
 #include <stdio.h>
-#include "include/scanCode.h"
-#include "include/videoDriver.h"
+#include "include/scan_code.h"
+#include "include/video_driver.h"
     static char keyMapRow = 0;
 void keyboard_handler()
 {

@@ -1,9 +1,5 @@
-//
-// Created by nicol on 5/22/2024.
-//
-
-#ifndef TPE_SYSCALLS_H
-#define TPE_SYSCALLS_H
+#ifndef SYSCALLS_H
+#define SYSCALLS_H
 #define STDIN 0
 #define STDOUT 1
 #define ERROUT 2

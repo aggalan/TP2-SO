@@ -1,5 +1,5 @@
- #ifndef asciiTable_H
- #define asciiTable_H
+ #ifndef SCAN_CODE_H
+ #define SCAN_CODE_H
 #include <stdint.h>
  
 #define LEFT_SHIFT  0x2A

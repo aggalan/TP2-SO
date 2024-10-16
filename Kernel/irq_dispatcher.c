@@ -1,16 +1,16 @@
 #include <time.h>
 #include <stdint.h>
-#include "Drivers/include/keyboardDriver.h"
-#include "Drivers/include/videoDriver.h"
-#include "Drivers/include/SoundDriver.h"
+#include "Drivers/include/keyboard_driver.h"
+#include "Drivers/include/video_driver.h"
+#include "Drivers/include/sound_driver.h"
 #include "include/libasm.h"
 #include <syscalls.h>
-#include <naiveConsole.h>
+#include <naive_console.h>
 #include "include/interrupts.h"
 #include "include/lib.h"
-#include "include/registerHandling.h"
-#include "include/memoryManager.h"
-#include "include/processManager.h"
+#include "include/register_handling.h"
+#include "include/memory_manager_bitmap.h"
+#include "include/process_manager.h"
 #include "include/scheduler.h"
 
 static void int_20();

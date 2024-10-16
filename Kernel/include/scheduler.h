@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <sys/types.h>
-#include "processManager.h"
+#include "process_manager.h"
 
 void change_priority(pid_t pid_to_nice, uint8_t priority);
 

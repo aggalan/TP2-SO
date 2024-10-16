@@ -1,8 +1,8 @@
-#include "Drivers/include/videoDriver.h"
+#include "Drivers/include/video_driver.h"
 #include "include/syscalls.h"
-#include "include/keyboardBuffer.h"
+#include "include/keyboard_buffer.h"
 #include "include/libasm.h"
-#include <naiveConsole.h>
+#include <naive_console.h>
 #include <stdio.h>
 #define MIN(x,y) x < y ? x : y
 

@@ -1,13 +1,13 @@
 #include <stdint.h>
 #include <string.h>
 #include <lib.h>
-#include <moduleLoader.h>
-#include <naiveConsole.h>
+#include <module_loader.h>
+#include <naive_console.h>
 #include <syscalls.h>
-#include "../Drivers/include/videoDriver.h"
-#include "idtLoader.h"
-#include "memoryManager.h"
-#include "processManager.h"
+#include "../Drivers/include/video_driver.h"
+#include "idt_loader.h"
+#include "memory_manager_bitmap.h"
+#include "process_manager.h"
 #include "scheduler.h"
 
 extern uint8_t text;

@@ -1,12 +1,12 @@
 #include <stdint.h>
 #include <sys/types.h>
-#include "processManager.h"
+#include "process_manager.h"
 #include "collections.h"
-#include "memoryManager.h"
+#include "memory_manager_bitmap.h"
 #include "scheduler.h"
 #include "lib.h"
 #include "interrupts.h"
-#include "../Drivers/include/videoDriver.h"
+#include "../Drivers/include/video_driver.h"
 
 static pid_t pids = 0;
 

@@ -1,5 +1,5 @@
-#ifndef lisasm_h
-#define lisasm_h
+#ifndef LIBASM_H
+#define LIBASM_H
 #include <stdint.h>
 //Returns minutes in gmt
 char * getMinutes();

@@ -1,5 +1,5 @@
-#include "memoryManager.h"
-#include "../Drivers/include/videoDriver.h"
+#include "memory_manager_bitmap.h"
+#include "../Drivers/include/video_driver.h"
 #include <stdio.h>
 #include "scheduler.h"
 

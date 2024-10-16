@@ -1,8 +1,8 @@
 
 #define ZERO_EXCEPTION_ID 0
 #define INVALID_OPCODE_ID 6
-#include "Drivers/include/videoDriver.h"
-#include "include/registerHandling.h"
+#include "Drivers/include/video_driver.h"
+#include "include/register_handling.h"
 #include "include/syscalls.h"
 #include "include/interrupts.h"
 static void zero_division();

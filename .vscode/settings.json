@@ -9,6 +9,11 @@
         "lib.h": "c",
         "stdint.h": "c",
         "test_processes.h": "c",
-        "usrsyscall.h": "c"
+        "usrsyscall.h": "c",
+        "eliminator.h": "c",
+        "videodriver.h": "c",
+        "registerhandling.h": "c",
+        "interrupts.h": "c",
+        "collections.h": "c"
     }
 }

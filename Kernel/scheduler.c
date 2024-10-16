@@ -1,12 +1,12 @@
 #include <stdint.h>
 #include "collections.h"
-#include "processManager.h"
+#include "process_manager.h"
 #include <sys/types.h>
 #include "interrupts.h"
 #include "scheduler.h"
 #include "lib.h"
-#include "memoryManager.h"
-#include "../Drivers/include/videoDriver.h"
+#include "memory_manager_bitmap.h"
+#include "../Drivers/include/video_driver.h"
 
 #define KERNEL 0
 #define IDLE 1

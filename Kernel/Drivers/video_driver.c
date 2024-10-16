@@ -1,10 +1,10 @@
-#include "include/videoDriver.h"
+#include "include/video_driver.h"
 #include "include/fonts.h"
-#include "../include/naiveConsole.h"
-#include <naiveConsole.h>
+#include "../include/naive_console.h"
+#include <naive_console.h>
 #include <lib.h>
-#include "../include/keyboardBuffer.h"
-#include "include/scanCode.h"
+#include "../include/keyboard_buffer.h"
+#include "include/scan_code.h"
 #include "../include/lib.h"
 struct vbe_mode_info_structure {
 	uint16_t attributes;		// deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.
