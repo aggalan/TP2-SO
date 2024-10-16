@@ -81,7 +81,7 @@ void * schedule(void * current_stack_ptr) {
         }
     }
 
-    if (process_has_run == IDLE) {
+    if (process_has_run == IDLE) { // ESTE ORDEN DE COASAS SOLO ES VALIDO PORQ LA SHELL AUNQUE ESTE BLOQUEADA QUEDA EN LA LISTA, SI CAMBIA ESO ESTO EXPLOTA MAL !!!
         idle_p->process->stack->current = current_stack_ptr;
         idle_p->process->state = READY;
     } else {
