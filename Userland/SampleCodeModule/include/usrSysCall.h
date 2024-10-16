@@ -97,7 +97,7 @@ pid_t call_create_process(void * entryPoint, int prio, int argc, char * argv[]);
 
 PCB_t * call_ps();
 
-pid_t call_get_pid();
+pid_t call_get_current_pid();
 
 pid_t call_kill_process();
 

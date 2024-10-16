@@ -28,6 +28,7 @@ GLOBAL call_free
 GLOBAL call_create_process
 GLOBAL call_ps
 GLOBAL call_kill_process
+GLOBAL call_get_current_pid
 
 
 section .text
@@ -103,7 +104,7 @@ call_create_process:
     call_to_handler 27
 call_ps:
     call_to_handler 28
-call_get_running_pid:
+call_get_current_pid:
     call_to_handler 29
 call_kill_process:
     call_to_handler 30

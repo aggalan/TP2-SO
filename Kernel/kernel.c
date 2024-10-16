@@ -6,7 +6,6 @@
 #include <syscalls.h>
 #include "../Drivers/include/videoDriver.h"
 #include "idtLoader.h"
-#include "test_util.h"
 #include "memoryManager.h"
 #include "processManager.h"
 #include "scheduler.h"

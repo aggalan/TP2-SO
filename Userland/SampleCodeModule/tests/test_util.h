@@ -1,3 +1,4 @@
+
 #include <stdint.h>
 
 uint32_t GetUint();
@@ -8,5 +9,5 @@ uint64_t test_mm(uint64_t argc, char *argv[]);
 // int64_t test_processes(uint64_t argc, char *argv[]);
 void test_prio();
 void bussy_wait(uint64_t n);
-// void endless_loop();
-// void endless_loop_print(uint64_t wait);
+void endless_loop();
+void endless_loop_print(uint64_t wait);

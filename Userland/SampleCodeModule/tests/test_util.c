@@ -1,5 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
+#include "../include/lib.h"
+#include "../include/usrSysCall.h"
 
 // Random
 static uint32_t m_z = 362436069;
@@ -60,16 +62,16 @@ void bussy_wait(uint64_t n) {
     ;
 }
 
-// void endless_loop() {
-//   while (1)
-//     ;
-// }
+void endless_loop() {
+  while (1)
+    ;
+}
 
-// void endless_loop_print(uint64_t wait) {
-//   int64_t pid = my_getpid();
+void endless_loop_print(uint64_t wait) {
+  int64_t pid = call_get_current_pid();
 
-//   while (1) {
-//     printf("%d ", pid);
-//     bussy_wait(wait);
-//   }
-// }
+  while (1) {
+    print(0xFFFFFF, "%d ", pid);
+    bussy_wait(wait);
+  }
+}
