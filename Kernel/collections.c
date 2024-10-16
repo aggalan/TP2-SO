@@ -47,7 +47,8 @@ void insert(PCB * data, uint8_t priority, linked_list_ADT list) {
         interval = 1;
     }
 
-    node_t * aux = list->first;
+    node_t * aux = list->current;
+
 
     for (int i = 0; i < priority; i++) {
         for (int j = 0; j < interval; j++) {
