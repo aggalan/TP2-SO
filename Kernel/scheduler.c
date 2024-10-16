@@ -81,7 +81,7 @@ void * schedule(void * current_stack_ptr) {
         }
     }
 
-    if (process_has_run == IDLE) { // ESTE ORDEN DE COASAS SOLO ES VALIDO PORQ LA SHELL AUNQUE ESTE BLOQUEADA QUEDA EN LA LISTA, SI CAMBIA ESO ESTO EXPLOTA MAL !!!
+    if (process_has_run == IDLE) { // ESTE ORDEN DE COASAS SOLO ES VALIDO PORQ LA SHELL AUNQUE ESTE BLOQUEADA QUEDA EN LA LISTA, SI CAMBIA ESO ESTO EXPLOTA MAL, PENSA Y HACE MEMORIA JOSE DEL FUTURO A VER A QUE ME REFIERO !!!
         idle_p->process->stack->current = current_stack_ptr;
         idle_p->process->state = READY;
     } else {
@@ -95,9 +95,9 @@ void * schedule(void * current_stack_ptr) {
     }
 
     node_t * aux = processes->current;
-    if (aux == NULL) {
+    if (aux == NULL) { // BIEN A FUTURO ESTA ESTO, PERO MAL LA POSICION VA MAS ARRIBA, RELACIONADO CON EL COMENTARIO DE ARRIBA JOSE DEL FUTURO !
         process_has_run = IDLE;
-        idle_p->process->state = RUNNING;
+        idle_p->process->state = RUNNING; //el timer tick se llama cada 20 ms o algo asi, si queremos ahorrar lineas para eficiencia es al pedo actualizar estado de idle
         return idle_p->process->stack->current;
     }
     processes->current = processes->current->next;
