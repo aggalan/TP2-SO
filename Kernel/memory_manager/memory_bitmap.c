@@ -1,4 +1,4 @@
-#include "memory_manager_bitmap.h"
+#include "./include/memory_manager.h"
 #include "../Drivers/include/video_driver.h"
 #include <stdio.h>
 #include "scheduler.h"

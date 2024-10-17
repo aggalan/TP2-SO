@@ -9,7 +9,7 @@
 #include "include/interrupts.h"
 #include "include/lib.h"
 #include "include/register_handling.h"
-#include "include/memory_manager_bitmap.h"
+#include "./memory_manager/include/memory_manager.h"
 #include "include/process_manager.h"
 #include "include/scheduler.h"
 
@@ -90,17 +90,10 @@ static uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, u
 //            annihilate();
             return 0;
         case 17:
-            // char ** argv2=mm_malloc(2*sizeof(char));
-            // argv2[1]="10";
-            // argv2[0]="process test";
-            // create_process(test_processes,1,1,argv2);
-            // mm_free(argv2);
+
             // return 0;
         case 18:
-            // char ** argv3=mm_malloc(sizeof(char));
-            // argv3[0]="prio test";
-            // create_process(test_prio,1,1,argv3);
-            // mm_free(argv3);
+
             // return 0;
         case 19:
             return block_process((pid_t)rsi);
@@ -126,7 +119,6 @@ static uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, u
         case 28:
             print_processes();
             return 0;
-            //return processes_info();
         case 29:
             return get_current_pid();
         case 30:

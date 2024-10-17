@@ -5,7 +5,7 @@
 #include "interrupts.h"
 #include "scheduler.h"
 #include "lib.h"
-#include "memory_manager_bitmap.h"
+#include "./memory_manager/include/memory_manager.h"
 #include "../Drivers/include/video_driver.h"
 #include "hash_map.h"
 

@@ -2,7 +2,7 @@
 #include <sys/types.h>
 #include "process_manager.h"
 #include "collections.h"
-#include "memory_manager_bitmap.h"
+#include "./memory_manager/include/memory_manager.h"
 #include "scheduler.h"
 #include "lib.h"
 #include "interrupts.h"

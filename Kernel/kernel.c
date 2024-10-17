@@ -6,7 +6,7 @@
 #include <syscalls.h>
 #include "../Drivers/include/video_driver.h"
 #include "idt_loader.h"
-#include "memory_manager_bitmap.h"
+#include "./memory_manager/include/memory_manager.h"
 #include "process_manager.h"
 #include "scheduler.h"
 
