@@ -47,6 +47,8 @@ void print(uint32_t hexColor, const char * format, ...);
 // Returns 0 if the strings are equal, a positive integer if the first string is greater, or a negative integer if the second string is greater.
 int str_cmp(char * str1, char * str2);
 
+void str_cpy(char *dest, const char *src);
+
 //copy str on an auxiliar char * until first space 
 char * cut_string(char * str);
 

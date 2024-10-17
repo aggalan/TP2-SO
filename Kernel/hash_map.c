@@ -29,10 +29,13 @@ hash_map_ADT hm_init() {
     return map;
 }
 
-void insert_map(pid_t key, PCB * value, hash_map_ADT map) {
+int insert_map(pid_t key, PCB * value, hash_map_ADT map) {
     size_t hash = hash_func(key, map);
 
     map_node * new_node = (map_node *)mm_malloc(sizeof(map_node));
+    if (new_node == NULL) {
+        return 0;
+    }
     new_node->key = key;
     new_node->value = value;
     new_node->next = NULL;
@@ -48,9 +51,10 @@ void insert_map(pid_t key, PCB * value, hash_map_ADT map) {
         map->PCB_arr[hash] = new_node;
     }
     map->size++;
+    return 1;
 }
 
-void remove_map(pid_t key, hash_map_ADT map) {
+int remove_map(pid_t key, hash_map_ADT map) {
     size_t hash = hash_func(key, map);
     map_node * aux = map->PCB_arr[hash];
     while (aux != NULL) {
@@ -66,10 +70,11 @@ void remove_map(pid_t key, hash_map_ADT map) {
             free_PCB(aux->value);
             mm_free(aux); //ver si liberamos toda o en la lisa a mi me parece que aca
             map->size--;
-            return;
+            return 1;
         }
         aux = aux->next;
     }
+    return 0;
 }
 
 PCB * find_map(pid_t key, hash_map_ADT map) {
@@ -93,5 +98,6 @@ void free_PCB(PCB * pcb) { //revisar
 //    if(pcb->argv != NULL){
 //        mm_free((void*)pcb->argv);
 //    }
+    mm_free(pcb->argv);
     mm_free(pcb);
 }

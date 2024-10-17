@@ -7,6 +7,7 @@
 #include "lib.h"
 #include "interrupts.h"
 #include "../Drivers/include/video_driver.h"
+//#include "hash_map.h"
 
 static pid_t pids = 0;
 
@@ -49,6 +50,19 @@ pid_t create_process(uint64_t fn, int priority, int argc, char **argv){
     return pcb->pid;
 }
 
+//void annihilate(hash_map_ADT map) {
+//    for (int i = 0, j = 0; i < MAX_MAP_SIZE && j < map->size; i++) {
+//        if (map->PCB_arr[i] != NULL) {
+//            map_node * aux = map->PCB_arr[i];
+//            while (aux != NULL) {
+//                kill_process_pid(aux->value->pid);
+//                j++;
+//                aux = aux->next;
+//            }
+//        }
+//    }
+//}
+
 
 pid_t kill_process() {
     return kill_process_pid(running_process());
@@ -85,7 +99,7 @@ pid_t block_process(pid_t pid){
     pcb->state = BLOCKED;
     pid_t process = running_process();
     if(pcb->pid == process){
-        _irq00Handler();
+        nice();
     }
     return pcb->pid;
 }

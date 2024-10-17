@@ -34,18 +34,20 @@ void scheduler_init() {
     scheduler_initialized = 1;
 }
 
-void add_process(PCB * pcb, uint8_t priority, int nice) {
-    insert(pcb, priority, processes);
-    if (!nice) {
-        insert_map(pcb->pid, pcb, map);
+int add_process(PCB * pcb, uint8_t priority, int nice) {
+    int status = insert(pcb, priority, processes);
+    if (!nice && status) {
+        status = insert_map(pcb->pid, pcb, map);
     }
+    return status;
 }
 
-void remove_process(pid_t pid_to_remove, int nice) { 
-    remove(pid_to_remove, processes);
-    if (!nice) {
-        remove_map(pid_to_remove, map);
+int remove_process(pid_t pid_to_remove, int nice) {
+    int status = remove(pid_to_remove, processes);
+    if (!nice && status) {
+        status = remove_map(pid_to_remove, map);
     }
+    return status;
 }
 
 PCB * find_process(pid_t pid_find) {
@@ -143,9 +145,16 @@ void change_priority(pid_t pid_to_nice, uint8_t priority) {
     if (pcb == NULL) {
         return;
     }
-    remove_process(pid_to_nice, 1);
-    pcb->priority = priority;
-    add_process(pcb, priority, 1);
+    int status = 0;
+    if (priority > pcb->priority) {
+        status = add_process(pcb, priority - pcb->priority, 1);
+    } else if (priority < pcb->priority){
+        status = remove_times(pid_to_nice, pcb->priority - priority, processes);
+    }
+
+    if (status) {
+        pcb->priority = priority;
+    }
 
 }
 

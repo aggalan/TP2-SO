@@ -40,6 +40,8 @@ pid_t create_process(uint64_t fn, int priority, int arc, char **argv);
 
 pid_t kill_process();
 
+//void annihilate(hash_map_ADT map);
+
 pid_t kill_process_pid(pid_t pid);
 
 pid_t block_process(pid_t pid);

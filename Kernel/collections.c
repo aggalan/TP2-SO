@@ -21,13 +21,13 @@ linked_list_ADT ll_init() {
 }
 
 
-void insert(PCB * data, uint8_t priority, linked_list_ADT list) {
+int insert(PCB * data, uint8_t priority, linked_list_ADT list) {
 
 
     if (list->first == NULL) {
         node_t * new_node = (node_t *)mm_malloc(sizeof(node_t));
         if (new_node == NULL) {
-            return;
+            return 0;
         }
         new_node->data = data;
         new_node->next = new_node;
@@ -38,7 +38,7 @@ void insert(PCB * data, uint8_t priority, linked_list_ADT list) {
     }
 
     if (priority == 0) {
-        return;
+        return 1;
     }
 
     uint8_t interval = list->total_size/priority;
@@ -56,8 +56,9 @@ void insert(PCB * data, uint8_t priority, linked_list_ADT list) {
         }
         node_t * new_node = (node_t *)mm_malloc(sizeof(node_t));
         if (new_node == NULL) {
-            remove(data->pid, list);
-            return;
+            data->priority = i+1;
+            remove(data->pid, list); // trae problemas
+            return 0;
         }
         new_node->data = data;
 
@@ -72,13 +73,14 @@ void insert(PCB * data, uint8_t priority, linked_list_ADT list) {
     }
     list->size++;
     list->total_size += priority;
+    return 1;
 }
 
-void remove(pid_t pid_remove, linked_list_ADT list) {
+int remove(pid_t pid_remove, linked_list_ADT list) {
 
     node_t * node = find(pid_remove, list); //uso este y no el del hashmap porq me sirve mas
     if (node == NULL) {
-        return;
+        return 0;
     }
 
     if (list->size == 1) {
@@ -87,7 +89,7 @@ void remove(pid_t pid_remove, linked_list_ADT list) {
         list->last = NULL;
         list->current = NULL;
         list->size = 0;
-        return;
+        return 1;
     }
 
     uint8_t priority = node->next->data->priority;
@@ -113,6 +115,49 @@ void remove(pid_t pid_remove, linked_list_ADT list) {
     } while (priority > 0);
     list->size--;
     list->total_size -= priority;
+    return 1;
+}
+
+int remove_times(pid_t pid_remove, int times ,linked_list_ADT list) {
+    node_t * node = find(pid_remove, list); //uso este y no el del hashmap porq me sirve mas
+    if (node == NULL) {
+        return 0;
+    }
+
+    if (times >= node->next->data->priority) {
+        remove(pid_remove, list);
+    }
+
+    if (list->size == 1) {
+        mm_free(list->first);
+        list->first = NULL;
+        list->last = NULL;
+        list->current = NULL;
+        list->size = 0;
+        return 1;
+    }
+
+    do  {
+        if (node->next->data->pid == pid_remove) {
+            if (node->next == list->current) {
+                list->current = list->current->next;
+            }
+
+            node_t *to_remove = node->next;
+            node->next = node->next->next;
+            if (list->first == to_remove) {
+                list->first = node->next;
+            }
+            if (list->last == to_remove) {
+                list->last = node; // y ya en la linea anterior nos encargamos de que siga siendo circular la lista
+            }
+            mm_free(to_remove);
+            times--;
+        }
+        node = node->next;
+    } while (times > 0);
+    list->total_size -= times;
+    return 1;
 }
 
 node_t * find(pid_t pid_find, linked_list_ADT list) {

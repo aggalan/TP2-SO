@@ -96,6 +96,16 @@ int str_len(const char *str)
     }
     return length;
 }
+
+void str_cpy(char *dest, const char *src) {
+    while (*src != '\0') {
+        *dest = *src;
+        dest++;
+        src++;
+    }
+    *dest = '\0';  // Add the null terminator
+}
+
 int str_cmp(char *str1, char *str2)
 {
     while (*str1 && *str2 && *str1 == *str2)

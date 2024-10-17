@@ -87,7 +87,7 @@ static uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, u
             mm_status();
             return 0;
         case 16:
-            annihilate();
+//            annihilate();
             return 0;
         case 17:
             // char ** argv2=mm_malloc(2*sizeof(char));

@@ -25,16 +25,17 @@ int64_t test_processes(uint64_t argc, char *argv[])
   uint8_t alive = 0;
   uint8_t action;
   uint64_t max_processes;
-  char *argvAux[] = {0};
+//  char *argvAux[] = {0};
 
-  if (argc != 1)
+
+  if (argc != 2)
   {
-    return -1;
+      return -1;
   }
 
   if ((max_processes = satoi(argv[1])) <= 0)
   {
-    return -1;
+      return -1;
   }
 
   p_rq p_rqs[max_processes];
@@ -44,7 +45,11 @@ int64_t test_processes(uint64_t argc, char *argv[])
     // Create max_processes processes
     for (rq = 0; rq < max_processes; rq++)
     {
+        char ** argvAux = (char **)(uintptr_t) call_malloc(sizeof(char *));
+        print(0xFFFFFF, "i malloc\n");
+        argvAux[0] = "endless loop";
       p_rqs[rq].pid = call_create_process(endless_loop, 2, 1, argvAux);
+      print(0xFFFFFF, "i create\n");
 
       if (p_rqs[rq].pid == -1)
       {

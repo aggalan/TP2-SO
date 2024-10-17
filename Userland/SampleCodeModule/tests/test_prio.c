@@ -17,11 +17,18 @@ int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
 void test_prio()
 {
    int64_t pids[TOTAL_PROCESSES];
-   char *argv[] = {"test"};
+//   char *argv[] = {"test"};
+   char ** mem_loc[TOTAL_PROCESSES];
+   for (int i = 0; i < TOTAL_PROCESSES; i++) {
+       char ** argvAux = (char **)(uintptr_t) call_malloc(sizeof(char *));
+       argvAux[0] = "endless loop";
+       mem_loc[i] = argvAux;
+
+   }
    uint64_t i;
 
    for (i = 0; i < TOTAL_PROCESSES; i++)
-      pids[i] = call_create_process(endless_loop, 2, 1, argv);
+      pids[i] = call_create_process(endless_loop, 2, 1, mem_loc[i]);
 
    bussy_wait(WAIT);
 

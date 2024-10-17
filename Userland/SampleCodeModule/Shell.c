@@ -168,7 +168,7 @@ void line_read(char *buffer)
     else if (str_cmp(buffer, "testprio") == 0)
     {
         char **argv_priority = (char **)(uintptr_t)call_malloc(sizeof(char *));
-        argv_priority[0] = "prio test";
+        argv_priority[0] = "prio";
         call_create_process(test_prio, 1, 1, argv_priority);
         return;
     }

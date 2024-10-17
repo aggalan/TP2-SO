@@ -24,9 +24,9 @@ typedef struct hash_map * hash_map_ADT;
 
 hash_map_ADT hm_init();
 
-void insert_map(pid_t key, PCB * value, hash_map_ADT map);
+int insert_map(pid_t key, PCB * value, hash_map_ADT map);
 
-void remove_map(pid_t key, hash_map_ADT map);
+int remove_map(pid_t key, hash_map_ADT map);
 
 PCB * find_map(pid_t key, hash_map_ADT map);
 
