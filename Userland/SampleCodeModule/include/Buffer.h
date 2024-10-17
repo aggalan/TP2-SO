@@ -3,6 +3,6 @@
 
 #define BUFFER_SIZE 130
 
-void clearBuffer(char * buffer); //clears the buffer received
+void clear_buffer(char *buffer); // clears the buffer received
 
 #endif

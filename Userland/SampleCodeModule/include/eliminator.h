@@ -9,5 +9,5 @@
 #define WIDTH 1024
 
 //Starts the game
-void startEliminator();
+void start_eliminator();
 #endif

@@ -2,7 +2,7 @@
 #define SHELL_H
 
 
-int shellInit();   //Function to initialize shell
+int shell_init();   //Function to initialize shell
 
 
 #endif //SHELL_H

@@ -1,18 +1,18 @@
 GLOBAL call_sys_read
 GLOBAL call_sys_write
-GLOBAL call_timeClock
-GLOBAL call_setFontSize
-GLOBAL call_printRegisters
+GLOBAL call_time_clock
+GLOBAL call_set_font_size
+GLOBAL call_print_registers
 GLOBAL call_clear
-GLOBAL InvalidOpasm
-GLOBAL call_getHeight
-GLOBAL call_getWidth
-GLOBAL call_moveCursorX
-GLOBAL call_moveCursorY
-GLOBAL call_drawRectangle
+GLOBAL invalid_op_asm
+GLOBAL call_get_height
+GLOBAL call_get_width
+GLOBAL call_move_cursor_x
+GLOBAL call_move_cursor_y
+GLOBAL call_draw_rectangle
 GLOBAL call_sleepms
 GLOBAL call_beep
-GLOBAL call_getTicks
+GLOBAL call_get_ticks
 GLOBAL call_status
 GLOBAL call_test_mm
 GLOBAL call_process_test
@@ -52,27 +52,27 @@ call_sys_write:
     call_to_handler 1
 call_sys_read:
     call_to_handler 2
-call_timeClock:
+call_time_clock:
     call_to_handler 3
-call_printRegisters:
+call_print_registers:
     call_to_handler 4
 call_clear:
     call_to_handler 5
-call_getTicks:
+call_get_ticks:
     call_to_handler 6
-call_getHeight:
+call_get_height:
     call_to_handler 7
-call_getWidth:
+call_get_width:
     call_to_handler 8
-call_moveCursorX:
+call_move_cursor_x:
     call_to_handler 9
-call_moveCursorY:
+call_move_cursor_y:
     call_to_handler 10
-call_drawRectangle:
+call_draw_rectangle:
     call_to_handler 11
 call_sleepms:
     call_to_handler 12
-call_setFontSize:
+call_set_font_size:
     call_to_handler 13
 call_beep:
     call_to_handler 14
@@ -110,7 +110,7 @@ call_kill_process:
     call_to_handler 30
 
 
-InvalidOpasm:
+invalid_op_asm:
     mov rax, 0x12345678
     rdpmc
     ret

@@ -16,19 +16,19 @@ int call_sys_read(int fd, char *buf, int size);
 void call_sys_write(int fd, const char *buf, int size, uint32_t hexColor);
 
 // Gets the current time and stores it in a buffer
-void call_timeClock(char *buf);
+void call_time_clock(char *buf);
 
 // Prints registers based on a flag value
-void call_printRegisters(int flag);
+void call_print_registers(int flag);
 
 // Draws a rectangle on the screen with specified color, position, and dimensions
-void call_drawRectangle(uint64_t color, uint32_t x, uint32_t y, uint32_t height, uint32_t width);
+void call_draw_rectangle(uint64_t color, uint32_t x, uint32_t y, uint32_t height, uint32_t width);
 
 // Returns the current position of the kernels buffer
-int call_getBufferPosition();
+int call_get_buffer_position();
 
 // Gets the character at a specified position on the kernels buffer
-int call_getCharAt(int pos);
+int call_get_char_at(int pos);
 
 // Draws a squarewith specified position, size, and color
 void call_put_square(uint32_t x, uint32_t y, uint32_t size, uint64_t hexColor);
@@ -37,13 +37,13 @@ void call_put_square(uint32_t x, uint32_t y, uint32_t size, uint64_t hexColor);
 void call_sleepms(int mseconds);
 
 // Sets the font size for text 
-int call_setFontSize(uint32_t size);
+int call_set_font_size(uint32_t size);
 
 // Draws a word on a graphics screen with specified color at a given position
-void call_drawWordColorAt(uint64_t hexColor, char* word, uint32_t x, uint32_t y);
+void call_draw_word_color_at(uint64_t hexColor, char* word, uint32_t x, uint32_t y);
 
 // Draws a character  with specified color at a given position
-void call_characterAt(uint64_t hexColor, char c, uint32_t x, uint32_t y);
+void call_character_at(uint64_t hexColor, char c, uint32_t x, uint32_t y);
 
 // Produces a beep 
 void call_beep();
@@ -52,22 +52,22 @@ void call_beep();
 void call_clear();
 
 // Handles an invalid operation in assembly language
-void InvalidOpasm();
+void invalid_op_asm();
 
 // Gets the width of the screen or drawing area
-uint16_t call_getWidth();
+uint16_t call_get_width();
 
 // Gets the height of the screen or drawing area
-uint16_t call_getHeight();
+uint16_t call_get_height();
 
 // Moves the cursor to a specified vertical position
-void call_moveCursorY(uint16_t posY);
+void call_move_cursor_y(uint16_t posY);
 
 // Moves the cursor to a specified horizontal position
-void call_moveCursorX(uint16_t posX);
+void call_move_cursor_x(uint16_t posX);
 
 // Gets the elapsed time since some reference point in milliseconds
-int call_getTicks();
+int call_get_ticks();
 
 void call_status();
 
