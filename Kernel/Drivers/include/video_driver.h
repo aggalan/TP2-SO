@@ -48,6 +48,7 @@ void moveCursorY(uint16_t posY);
 void drawRegister(int reg,uint32_t colour);
 
 void drawWord1(char * string);
+void address_to_string(void *ptr);
 void drawNumber(int value);
 void drawNumberColor(int value, uint64_t fcolor, uint64_t bcolor);
 void intToStr(int value, char* str, int base);

@@ -43,7 +43,7 @@ pid_t create_process(uint64_t fn, int priority, int argc, char **argv){
     if(pcb->pid == 0){
         idle_proc = pcb;
     }else{
-        add_process(pcb, priority);
+        add_process(pcb, priority, 0);
     }
 
     return pcb->pid;

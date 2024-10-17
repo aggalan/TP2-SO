@@ -7,12 +7,14 @@
 #include "lib.h"
 #include "memory_manager_bitmap.h"
 #include "../Drivers/include/video_driver.h"
+#include "hash_map.h"
 
 #define KERNEL 0
 #define IDLE 1
 #define PROCESS 2
 
 linked_list_ADT processes;
+hash_map_ADT map;
 PCB * idle_p;
 int was_killed = 0;
 int process_has_run = KERNEL;
@@ -23,6 +25,7 @@ void free_node(node_t * node);
 void scheduler_init() {
 
     processes = ll_init();
+    map = hm_init();
 
     create_process((uint64_t)idle, 1, 0, NULL);
 
@@ -31,17 +34,22 @@ void scheduler_init() {
     scheduler_initialized = 1;
 }
 
-void add_process(PCB * pcb, uint8_t priority) {
+void add_process(PCB * pcb, uint8_t priority, int nice) {
     insert(pcb, priority, processes);
+    if (!nice) {
+        insert_map(pcb->pid, pcb, map);
+    }
 }
 
 void remove_process(pid_t pid_to_remove, int nice) { 
-    remove(pid_to_remove, processes, nice);
+    remove(pid_to_remove, processes);
+    if (!nice) {
+        remove_map(pid_to_remove, map);
+    }
 }
 
 PCB * find_process(pid_t pid_find) {
-    node_t * aux = find(pid_find, processes);
-    return aux->next->data;
+    return find_map(pid_find, map);
 }
 
 PCB * get_current() {
@@ -137,27 +145,71 @@ void change_priority(pid_t pid_to_nice, uint8_t priority) {
     }
     remove_process(pid_to_nice, 1);
     pcb->priority = priority;
-    add_process(pcb, priority);
+    add_process(pcb, priority, 1);
 
 }
 
 
 void print_processes() {
     drawWord1("There are ");
-    drawNumber(processes->size);
+    drawNumber(map->size);
     drawWord1(" processes in the system");
     newLine();
-    node_t *aux = processes->first;
-    do  {
-        drawWord1("PID: ");
-        drawNumber(aux->data->pid);
-        drawWord1(" PRIORITY: ");
-        drawNumber(aux->data->priority);
-        newLine();
-        aux = aux->next;
-    } while(aux != processes->first);
+    drawWord1("PID    ");
+    drawWord1("PRIORITY   ");
+    drawWord1("STACK BASE   ");
+    drawWord1("RSP        ");
+    drawWord1("IS FOREGROUND");
+    newLine();
+    for (int i = 0, j = 0; j < map->size && i < MAX_MAP_SIZE; i++) {
+        if (map->PCB_arr[i] != NULL) {
+            map_node * aux = map->PCB_arr[i];
+            while (aux != NULL) {
+                drawNumber(aux->key);
 
+                pid_t beaut = aux->key;
+                int m = 0;
+                while(beaut/10 > 0){
+                    beaut = beaut/10;
+                    m++;
+                }
+                for (int z = 0; z < (6-m); z++ ) {
+                    drawWord1(" ");
+                }
 
+                drawNumber(aux->value->priority);
+                drawWord1("          ");
+                address_to_string(aux->value->base);
+
+                unsigned long beaut2 = aux->value->base;
+                m = 0;
+                while(beaut2/16 > 0){
+                    beaut2 = beaut2/16;
+                    m++;
+                }
+                for (int z = 0; z < (10-m); z++ ) {
+                    drawWord1(" ");
+                }
+
+//                drawWord1("     ");
+                address_to_string(aux->value->rsp);
+
+                beaut2 = aux->value->base;
+                m = 0;
+                while(beaut2/16 > 0){
+                    beaut2 = beaut2/16;
+                    m++;
+                }
+                for (int z = 0; z < (8-m); z++ ) {
+                    drawWord1(" ");
+                }
+                drawWord1("FALSE");
+                newLine();
+                j++;
+                aux = aux->next;
+            }
+        }
+    }
 }
 
 void killed() {

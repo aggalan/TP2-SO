@@ -1,9 +1,9 @@
 #include <stdint.h>
 #include "collections.h"
-#include "memoryManager.h"
+#include "memory_manager_bitmap.h"
 #include <sys/types.h>
-#include "processManager.h"
-#include "../Drivers/include/videoDriver.h"
+#include "process_manager.h"
+#include "../Drivers/include/video_driver.h"
 
 
 linked_list_ADT ll_init() {
@@ -56,7 +56,7 @@ void insert(PCB * data, uint8_t priority, linked_list_ADT list) {
         }
         node_t * new_node = (node_t *)mm_malloc(sizeof(node_t));
         if (new_node == NULL) {
-            remove(data->pid, list, 0);
+            remove(data->pid, list);
             return;
         }
         new_node->data = data;
@@ -74,19 +74,15 @@ void insert(PCB * data, uint8_t priority, linked_list_ADT list) {
     list->total_size += priority;
 }
 
-void remove(pid_t pid_remove, linked_list_ADT list, int nice) {
+void remove(pid_t pid_remove, linked_list_ADT list) {
 
-    node_t * node = find(pid_remove, list);
+    node_t * node = find(pid_remove, list); //uso este y no el del hashmap porq me sirve mas
     if (node == NULL) {
         return;
     }
 
     if (list->size == 1) {
-        if (nice) {
-            mm_free(list->first);
-        } else {
-            free_node(list->first);
-        }
+        mm_free(list->first);
         list->first = NULL;
         list->last = NULL;
         list->current = NULL;
@@ -110,11 +106,7 @@ void remove(pid_t pid_remove, linked_list_ADT list, int nice) {
             if (list->last == to_remove) {
                 list->last = node; // y ya en la linea anterior nos encargamos de que siga siendo circular la lista
             }
-            if (priority == 1 && !nice) {
-                free_node(to_remove); // libero todoooo
-                break;
-            }
-            mm_free(to_remove); //solo libero nodo porq no es el ultimo
+            mm_free(to_remove);
             priority--;
         }
         node = node->next;
@@ -137,13 +129,5 @@ node_t * find(pid_t pid_find, linked_list_ADT list) {
     return NULL;
 }
 
-void free_node(node_t * node) { //revisar
-    //mm_free(node->data->name);
-    mm_free((void*)(node->data->base - STACK + 1));
-    if(node->data->argv != NULL){
-        mm_free((void*)node->data->argv);
-    }
-    mm_free(node->data);
-    mm_free(node);
-}
+
 

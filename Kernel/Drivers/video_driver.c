@@ -173,6 +173,35 @@ void drawWord1(char * string) {
     drawWord(defaultFColor, string);
 }
 
+void address_to_string(void *ptr) {
+    unsigned long address = (unsigned long)ptr;
+    char hex_chars[] = "0123456789ABCDEF";
+    char buffer[20];  // Local buffer for the address string
+    int i = 0;
+    int start = 2; // For "0x" prefix
+
+    // Add "0x" prefix to indicate hexadecimal
+    buffer[0] = '0';
+    buffer[1] = 'x';
+
+    // Fill the buffer from end to start with hex digits
+    for (i = start; address > 0; i++) {
+        buffer[i] = hex_chars[address % 16];
+        address /= 16;
+    }
+
+    buffer[i] = '\0';  // Null-terminate the string
+
+    // Reverse the portion of the string that contains the hexadecimal representation
+    for (int j = start, k = i - 1; j < k; j++, k--) {
+        char temp = buffer[j];
+        buffer[j] = buffer[k];
+        buffer[k] = temp;
+    }
+
+    drawWord1(buffer);  // Call drawWord1 to print the string directly
+}
+
 void drawNumber(int value) {
     drawNumberColor(value, defaultFColor, defaultBColor);
 }

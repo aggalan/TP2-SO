@@ -4,7 +4,7 @@
 
 #include <stdint.h>
 #include <sys/types.h>
-#include "processManager.h"
+#include "process_manager.h"
 
 typedef struct node_t {
     PCB * data;
@@ -26,7 +26,7 @@ linked_list_ADT ll_init();
 
 void insert(PCB * data, uint8_t priority,linked_list_ADT list);
 
-void remove(pid_t pid_remove, linked_list_ADT list, int nice);
+void remove(pid_t pid_remove, linked_list_ADT list);
 
 void modify_priority(pid_t pid, uint8_t new_priority, linked_list_ADT list);
 
