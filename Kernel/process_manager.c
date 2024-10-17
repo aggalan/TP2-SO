@@ -35,6 +35,7 @@ pid_t create_process(uint64_t fn, int priority, int argc, char **argv){
     pcb->pid = pids++;
     pcb->ppid = 0;
     pcb->argv=argv;
+    pcb->name = argv[0];
 
     pcb->base = (uint64_t) mm_malloc(STACK);
     pcb->base += STACK -1;

@@ -21,7 +21,8 @@ void test_prio()
    char ** mem_loc[TOTAL_PROCESSES];
    for (int i = 0; i < TOTAL_PROCESSES; i++) {
        char ** argvAux = (char **)(uintptr_t) call_malloc(sizeof(char *));
-       argvAux[0] = "endless loop";
+       argvAux[0] = (char *) call_malloc(sizeof(char)*(str_len("endless loop")+1));
+       str_cpy(argvAux[0], "endless loop");
        mem_loc[i] = argvAux;
 
    }

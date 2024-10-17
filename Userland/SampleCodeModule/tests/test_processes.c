@@ -46,10 +46,9 @@ int64_t test_processes(uint64_t argc, char *argv[])
     for (rq = 0; rq < max_processes; rq++)
     {
         char ** argvAux = (char **)(uintptr_t) call_malloc(sizeof(char *));
-        print(0xFFFFFF, "i malloc\n");
-        argvAux[0] = "endless loop";
+        argvAux[0] = (char *) call_malloc(sizeof(char)* str_len("endless loop")+1);
+        str_cpy(argvAux[0], "endless loop");
       p_rqs[rq].pid = call_create_process(endless_loop, 2, 1, argvAux);
-      print(0xFFFFFF, "i create\n");
 
       if (p_rqs[rq].pid == -1)
       {

@@ -152,23 +152,28 @@ void line_read(char *buffer)
     else if (str_cmp(buffer, "testmm") == 0)
     {
         char **argv_mm = (char **)(uintptr_t)call_malloc(2 * sizeof(char *));
-        argv_mm[0] = "mem test";
-        argv_mm[1] = "266240";
+        argv_mm[0] = (char *)call_malloc(sizeof(char)*(str_len("mem test") + 1));
+        str_cpy(argv_mm[0], "mem test");
+        argv_mm[1] = (char *)call_malloc(sizeof(char)*(str_len("266240") + 1));
+        str_cpy(argv_mm[1], "266240");
         call_create_process(test_mm, 1, 2, argv_mm);
         return;
     }
     else if (str_cmp(buffer, "testprocess") == 0)
     {
         char **argv_process = (char **)(uintptr_t)call_malloc(2 * sizeof(char *));
-        argv_process[0] = "process test";
-        argv_process[1] = "10";
+        argv_process[0] = (char *)call_malloc(sizeof(char)*(str_len("process test") + 1));
+        str_cpy(argv_process[0], "process test");
+        argv_process[1] = (char *)call_malloc(sizeof(char)*(str_len("10") + 1));
+        str_cpy(argv_process[1], "10");
         call_create_process(test_processes, 1, 2, argv_process);
         return;
     }
     else if (str_cmp(buffer, "testprio") == 0)
     {
         char **argv_priority = (char **)(uintptr_t)call_malloc(sizeof(char *));
-        argv_priority[0] = "prio";
+        argv_priority[0] = (char *)call_malloc(sizeof(char)*(str_len("prio") + 1));
+        str_cpy(argv_priority[0], "prio");
         call_create_process(test_prio, 1, 1, argv_priority);
         return;
     }

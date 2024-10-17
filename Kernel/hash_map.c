@@ -93,11 +93,8 @@ PCB * find_map(pid_t key, hash_map_ADT map) {
 }
 
 void free_PCB(PCB * pcb) { //revisar
-    //mm_free(pcb->name);
+    mm_free(pcb->name);
     mm_free((void*)(pcb->base - STACK + 1));
-//    if(pcb->argv != NULL){
-//        mm_free((void*)pcb->argv);
-//    }
     mm_free(pcb->argv);
     mm_free(pcb);
 }

@@ -165,6 +165,7 @@ void print_processes() {
     drawWord1(" processes in the system");
     newLine();
     drawWord1("PID    ");
+    drawWord1("NAME          ");
     drawWord1("PRIORITY   ");
     drawWord1("STACK BASE   ");
     drawWord1("RSP        ");
@@ -185,7 +186,13 @@ void print_processes() {
                 for (int z = 0; z < (6-m); z++ ) {
                     drawWord1(" ");
                 }
+                //name
+                drawWord1(aux->value->name);
+                for (int z = 0; z < 14-str_len(aux->value->name); z++) {
+                    drawWord1(" ");
+                }
 
+                //name
                 drawNumber(aux->value->priority);
                 drawWord1("          ");
                 address_to_string(aux->value->base);
@@ -200,7 +207,6 @@ void print_processes() {
                     drawWord1(" ");
                 }
 
-//                drawWord1("     ");
                 address_to_string(aux->value->rsp);
 
                 beaut2 = aux->value->base;
