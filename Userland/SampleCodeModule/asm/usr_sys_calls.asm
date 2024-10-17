@@ -29,6 +29,7 @@ GLOBAL call_create_process
 GLOBAL call_ps
 GLOBAL call_kill_process
 GLOBAL call_get_current_pid
+GLOBAL call_annihilate
 
 
 section .text
@@ -78,7 +79,7 @@ call_beep:
     call_to_handler 14
 call_status:
     call_to_handler 15
-call_test_mm:
+call_annihilate:
     call_to_handler 16
 call_process_test:
     call_to_handler 17

@@ -71,7 +71,7 @@ int call_get_ticks();
 
 void call_status();
 
-void call_test_mm();
+void call_annihilate();
 
 void call_process_test();
 

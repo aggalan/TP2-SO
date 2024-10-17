@@ -81,6 +81,7 @@ const char *commands[] = {
     "testprocess:  Test the process creation.",
     "testprio:     Test the priority of the process.",
     "ps:           Shows the live processes.",
+    "annihilate:   Kills all processes except for the Shell. ",
 };
 
 void line_read(char *buffer)
@@ -154,7 +155,6 @@ void line_read(char *buffer)
         argv_mm[0] = "mem test";
         argv_mm[1] = "266240";
         call_create_process(test_mm, 1, 2, argv_mm);
-        call_free(argv_mm);
         return;
     }
     else if (str_cmp(buffer, "testprocess") == 0)
@@ -163,7 +163,6 @@ void line_read(char *buffer)
         argv_process[0] = "process test";
         argv_process[1] = "10";
         call_create_process(test_processes, 1, 2, argv_process);
-        call_free(argv_process);
         return;
     }
     else if (str_cmp(buffer, "testprio") == 0)
@@ -171,7 +170,6 @@ void line_read(char *buffer)
         char **argv_priority = (char **)(uintptr_t)call_malloc(sizeof(char *));
         argv_priority[0] = "prio test";
         call_create_process(test_prio, 1, 1, argv_priority);
-        call_free(argv_priority);
         return;
     }
     else if (str_cmp(cut_string(buffer), "kill") == 0)
@@ -187,6 +185,11 @@ void line_read(char *buffer)
     else if (str_cmp(buffer, "ps") == 0)
     {
         call_ps();
+        return;
+    }
+    else if (str_cmp(buffer, "annihilate") == 0)
+    {
+        call_annihilate();
         return;
     }
     else
