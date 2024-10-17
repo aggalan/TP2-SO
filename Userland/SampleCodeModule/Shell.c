@@ -153,7 +153,7 @@ void line_read(char *buffer)
         char **argv_mm = (char **)(uintptr_t)call_malloc(2 * sizeof(char *));
         argv_mm[0] = "mem test";
         argv_mm[1] = "266240";
-        call_create_process(test_mm, 1, 1, argv_mm);
+        call_create_process(test_mm, 1, 2, argv_mm);
         call_free(argv_mm);
         return;
     }
@@ -162,14 +162,14 @@ void line_read(char *buffer)
         char **argv_process = (char **)(uintptr_t)call_malloc(2 * sizeof(char *));
         argv_process[0] = "process test";
         argv_process[1] = "10";
-        call_create_process(test_processes, 1, 1, argv_process);
+        call_create_process(test_processes, 1, 2, argv_process);
         call_free(argv_process);
         return;
     }
     else if (str_cmp(buffer, "testprio") == 0)
     {
         char **argv_priority = (char **)(uintptr_t)call_malloc(sizeof(char *));
-        argv_priority[0] = "process test";
+        argv_priority[0] = "prio test";
         call_create_process(test_prio, 1, 1, argv_priority);
         call_free(argv_priority);
         return;
