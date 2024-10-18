@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include <sys/types.h>
 #include "hash_map.h"
-#include "memory_manager_bitmap.h"
+#include "./memory_manager/include/memory_manager.h"
 #include "../Drivers/include/video_driver.h"
 
 

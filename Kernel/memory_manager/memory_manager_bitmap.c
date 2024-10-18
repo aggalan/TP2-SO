@@ -1,4 +1,4 @@
-#include "memory_manager_bitmap.h"
+#include "./include/memory_manager.h"
 #include "../Drivers/include/video_driver.h"
 #include <stdio.h>
 #include "scheduler.h"
@@ -13,9 +13,6 @@ typedef struct memory_manager {
     uint32_t current;
 } memory_manager;
 
-#define FREE 0
-#define ALLOCATED 1
-#define START 2
 
 memory_manager mm;
 

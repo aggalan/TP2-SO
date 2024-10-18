@@ -1,6 +1,5 @@
 #ifndef COLLECTIONS_H
 #define COLLECTIONS_H
-#include <stddef.h>
 
 #include <stdint.h>
 #include <sys/types.h>

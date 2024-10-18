@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include "process_manager.h"
-#include "memory_manager_bitmap.h"
+#include "./memory_manager/include/memory_manager.h"
 #include "scheduler.h"
 #include "lib.h"
 #include "interrupts.h"
@@ -186,7 +186,7 @@ void print_processes() {
                 //name
                 drawNumber(aux->value->priority);
                 drawWord1("          ");
-                address_to_string(aux->value->base);
+                address_to_string((void *)aux->value->base); //legal porque base es uint64_t
 
                 unsigned long beaut2 = aux->value->base;
                 m = 0;
@@ -198,7 +198,7 @@ void print_processes() {
                     drawWord1(" ");
                 }
 
-                address_to_string(aux->value->rsp);
+                address_to_string((void *)aux->value->rsp); //legal porque rsp es uint64_t
 
                 beaut2 = aux->value->base;
                 m = 0;
