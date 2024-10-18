@@ -5,6 +5,8 @@
 #include <sys/types.h>
 #include "process_manager.h"
 
+#define MAX_MAP_SIZE 200
+
 typedef struct node_t {
     PCB * data;
     struct node_t * next;
@@ -20,6 +22,27 @@ typedef struct linked_list{ //es circular que last apunte a first
 
 typedef struct linked_list * linked_list_ADT;
 
+typedef struct map_node{
+    pid_t key;
+    PCB * value;
+    struct map_node * next;
+    struct map_node * prev;
+}map_node;
+
+typedef struct hash_map{
+    map_node ** PCB_arr;
+    size_t size;
+}hash_map;
+
+typedef struct hash_map * hash_map_ADT;
+
+hash_map_ADT hm_init();
+
+int insert_map(pid_t key, PCB * value, hash_map_ADT map);
+
+PCB * remove_map(pid_t key, hash_map_ADT map);
+
+PCB * find_map(pid_t key, hash_map_ADT map);
 
 linked_list_ADT ll_init();
 

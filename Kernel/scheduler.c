@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include "collections.h"
 #include "process_manager.h"
 #include <sys/types.h>
 #include "interrupts.h"
@@ -7,7 +6,7 @@
 #include "lib.h"
 #include "./memory_manager/include/memory_manager.h"
 #include "../Drivers/include/video_driver.h"
-#include "hash_map.h"
+#include "./collections/include/collections.h"
 
 #define KERNEL 0
 #define IDLE 1

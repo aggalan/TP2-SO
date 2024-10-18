@@ -6,7 +6,7 @@
 #include "lib.h"
 #include "interrupts.h"
 #include "../Drivers/include/video_driver.h"
-#include "hash_map.h"
+#include "./collections/include/collections.h"
 
 hash_map_ADT map;
 static pid_t pids = 0;
