@@ -5,7 +5,9 @@
 
 #define HEAP_SIZE       0x10000000  // 256MB heap
 #define BLOCK_SIZE      32        //  bytes per block
+#define NULL            0
 
+typedef enum { FREE, ALLOCATED, START } BlockStatus;
 
 void * mm_malloc(uint32_t size);
 void mm_free(void * ptr);
