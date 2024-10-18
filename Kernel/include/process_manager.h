@@ -25,6 +25,7 @@ enum State { BLOCKED,
 typedef struct PCB{
     char * name;
     char ** argv;
+    uint64_t argc;
     pid_t pid;
     pid_t ppid;
     uint64_t rsp;
@@ -36,11 +37,11 @@ typedef struct PCB{
 }PCB;
 
 
-pid_t create_process(uint64_t fn, int priority, int arc, char **argv);
+pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv);
 
 pid_t kill_process();
 
-//void annihilate(hash_map_ADT map);
+void annihilate();
 
 pid_t kill_process_pid(pid_t pid);
 
@@ -51,6 +52,16 @@ pid_t unblock_process(pid_t pid);
 int wait_pid(pid_t pid_to_wait);
 
 PCB * get_idle();
+
+void hash_map_init();
+
+int add_pcb(pid_t key, PCB * value);
+
+int remove_pcb(pid_t key);
+
+PCB * find_pcb(pid_t key);
+
+void print_processes();
 
 
 

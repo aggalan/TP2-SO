@@ -6,7 +6,6 @@
 #include "memory_manager_bitmap.h"
 #include "../Drivers/include/video_driver.h"
 
-void free_PCB(PCB * pcb);
 
 size_t hash_func(pid_t key, hash_map_ADT map) {
     return key % MAX_MAP_SIZE;
@@ -54,7 +53,7 @@ int insert_map(pid_t key, PCB * value, hash_map_ADT map) {
     return 1;
 }
 
-int remove_map(pid_t key, hash_map_ADT map) {
+PCB * remove_map(pid_t key, hash_map_ADT map) {
     size_t hash = hash_func(key, map);
     map_node * aux = map->PCB_arr[hash];
     while (aux != NULL) {
@@ -67,14 +66,14 @@ int remove_map(pid_t key, hash_map_ADT map) {
             if (aux->next != NULL) {
                 aux->next->prev = aux->prev;
             }
-            free_PCB(aux->value);
-            mm_free(aux); //ver si liberamos toda o en la lisa a mi me parece que aca
+            PCB * to_return = aux->value;
+            mm_free(aux);
             map->size--;
-            return 1;
+            return to_return;
         }
         aux = aux->next;
     }
-    return 0;
+    return NULL;
 }
 
 PCB * find_map(pid_t key, hash_map_ADT map) {
@@ -90,11 +89,4 @@ PCB * find_map(pid_t key, hash_map_ADT map) {
         aux = aux->next;
     }
     return NULL;
-}
-
-void free_PCB(PCB * pcb) { //revisar
-    mm_free(pcb->name);
-    mm_free((void*)(pcb->base - STACK + 1));
-    mm_free(pcb->argv);
-    mm_free(pcb);
 }

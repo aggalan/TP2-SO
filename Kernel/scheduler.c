@@ -14,7 +14,6 @@
 #define PROCESS 2
 
 linked_list_ADT processes;
-hash_map_ADT map;
 PCB * idle_p;
 int was_killed = 0;
 int process_has_run = KERNEL;
@@ -25,7 +24,7 @@ void free_node(node_t * node);
 void scheduler_init() {
 
     processes = ll_init();
-    map = hm_init();
+    hash_map_init();
 
     create_process((uint64_t)idle, 1, 0, NULL);
 
@@ -34,25 +33,14 @@ void scheduler_init() {
     scheduler_initialized = 1;
 }
 
-int add_process(PCB * pcb, uint8_t priority, int nice) {
-    int status = insert(pcb, priority, processes);
-    if (!nice && status) {
-        status = insert_map(pcb->pid, pcb, map);
-    }
-    return status;
+int add_process(PCB * pcb, uint8_t priority) {
+    return insert(pcb, priority, processes);
 }
 
-int remove_process(pid_t pid_to_remove, int nice) {
-    int status = remove(pid_to_remove, processes);
-    if (!nice && status) {
-        status = remove_map(pid_to_remove, map);
-    }
-    return status;
+int remove_process(pid_t pid_to_remove) {
+    return remove(pid_to_remove, processes);
 }
 
-PCB * find_process(pid_t pid_find) {
-    return find_map(pid_find, map);
-}
 
 PCB * get_current() {
     if (processes->size == 0) {
@@ -116,11 +104,6 @@ uint64_t schedule(uint64_t rsp) {
 
     while(processes->current->data->state != READY) {
 
-//        if (processes->current->data->process->state == KILLED) {
-//            node_t * aux = processes->current;
-//            remove_process(aux->data->process->pid, 0);
-//        }
-
         if (processes->current == aux && processes->current->data->state != READY) {
             process_has_run = IDLE;
             idle_p->state = RUNNING;
@@ -141,13 +124,13 @@ pid_t get_active_pid() {
 }
 
 void change_priority(pid_t pid_to_nice, uint8_t priority) {
-    PCB * pcb = find_process(pid_to_nice);
+    PCB * pcb = find_pcb(pid_to_nice);
     if (pcb == NULL) {
         return;
     }
     int status = 0;
     if (priority > pcb->priority) {
-        status = add_process(pcb, priority - pcb->priority, 1);
+        status = add_process(pcb, priority - pcb->priority);
     } else if (priority < pcb->priority){
         status = remove_times(pid_to_nice, pcb->priority - priority, processes);
     }
@@ -156,75 +139,6 @@ void change_priority(pid_t pid_to_nice, uint8_t priority) {
         pcb->priority = priority;
     }
 
-}
-
-
-void print_processes() {
-    drawWord1("There are ");
-    drawNumber(map->size);
-    drawWord1(" processes in the system");
-    newLine();
-    drawWord1("PID    ");
-    drawWord1("NAME          ");
-    drawWord1("PRIORITY   ");
-    drawWord1("STACK BASE   ");
-    drawWord1("RSP        ");
-    drawWord1("IS FOREGROUND");
-    newLine();
-    for (int i = 0, j = 0; j < map->size && i < MAX_MAP_SIZE; i++) {
-        if (map->PCB_arr[i] != NULL) {
-            map_node * aux = map->PCB_arr[i];
-            while (aux != NULL) {
-                drawNumber(aux->key);
-
-                pid_t beaut = aux->key;
-                int m = 0;
-                while(beaut/10 > 0){
-                    beaut = beaut/10;
-                    m++;
-                }
-                for (int z = 0; z < (6-m); z++ ) {
-                    drawWord1(" ");
-                }
-                //name
-                drawWord1(aux->value->name);
-                for (int z = 0; z < 14-str_len(aux->value->name); z++) {
-                    drawWord1(" ");
-                }
-
-                //name
-                drawNumber(aux->value->priority);
-                drawWord1("          ");
-                address_to_string(aux->value->base);
-
-                unsigned long beaut2 = aux->value->base;
-                m = 0;
-                while(beaut2/16 > 0){
-                    beaut2 = beaut2/16;
-                    m++;
-                }
-                for (int z = 0; z < (10-m); z++ ) {
-                    drawWord1(" ");
-                }
-
-                address_to_string(aux->value->rsp);
-
-                beaut2 = aux->value->base;
-                m = 0;
-                while(beaut2/16 > 0){
-                    beaut2 = beaut2/16;
-                    m++;
-                }
-                for (int z = 0; z < (8-m); z++ ) {
-                    drawWord1(" ");
-                }
-                drawWord1("FALSE");
-                newLine();
-                j++;
-                aux = aux->next;
-            }
-        }
-    }
 }
 
 void killed() {

@@ -16,7 +16,7 @@ linked_list_ADT ll_init() {
     list_ptr->first = NULL;
     list_ptr->last = NULL;
     list_ptr->current = NULL;
-    list_ptr->total_size = 0;
+//    list_ptr->total_size = 0;
     return list_ptr;
 }
 
@@ -34,6 +34,7 @@ int insert(PCB * data, uint8_t priority, linked_list_ADT list) {
         list->first = new_node;
         list->last = new_node;
         list->current = new_node;
+        list->size++;
         priority--;
     }
 
@@ -41,7 +42,7 @@ int insert(PCB * data, uint8_t priority, linked_list_ADT list) {
         return 1;
     }
 
-    uint8_t interval = list->total_size/priority;
+    uint8_t interval = list->size/priority;
 
     if (interval == 0) {
         interval = 1;
@@ -57,7 +58,7 @@ int insert(PCB * data, uint8_t priority, linked_list_ADT list) {
         node_t * new_node = (node_t *)mm_malloc(sizeof(node_t));
         if (new_node == NULL) {
             data->priority = i+1;
-            remove(data->pid, list); // trae problemas
+            remove(data->pid, list);
             return 0;
         }
         new_node->data = data;
@@ -71,8 +72,8 @@ int insert(PCB * data, uint8_t priority, linked_list_ADT list) {
 
         aux = new_node;
     }
-    list->size++;
-    list->total_size += priority;
+    list->size+=priority;
+//    list->total_size += priority;
     return 1;
 }
 
@@ -83,16 +84,17 @@ int remove(pid_t pid_remove, linked_list_ADT list) {
         return 0;
     }
 
-    if (list->size == 1) {
-        mm_free(list->first);
-        list->first = NULL;
-        list->last = NULL;
-        list->current = NULL;
-        list->size = 0;
-        return 1;
-    }
+//    if (list->size == 1) {
+//        mm_free(list->first);
+//        list->first = NULL;
+//        list->last = NULL;
+//        list->current = NULL;
+//        list->size = 0;
+//        return 1;
+//    }
 
     uint8_t priority = node->next->data->priority;
+    list->size-= priority;
 
     do  {
         if (node->next->data->pid == pid_remove) {
@@ -113,8 +115,14 @@ int remove(pid_t pid_remove, linked_list_ADT list) {
         }
         node = node->next;
     } while (priority > 0);
-    list->size--;
-    list->total_size -= priority;
+
+    if (list->size == 0) {
+        list->first = NULL;
+        list->last = NULL;
+        list->current = NULL;
+    }
+
+
     return 1;
 }
 
@@ -128,14 +136,16 @@ int remove_times(pid_t pid_remove, int times ,linked_list_ADT list) {
         remove(pid_remove, list);
     }
 
-    if (list->size == 1) {
-        mm_free(list->first);
-        list->first = NULL;
-        list->last = NULL;
-        list->current = NULL;
-        list->size = 0;
-        return 1;
-    }
+//    if (list->size == 1) {
+//        mm_free(list->first);
+//        list->first = NULL;
+//        list->last = NULL;
+//        list->current = NULL;
+//        list->size = 0;
+//        return 1;
+//    }
+
+    list->size -= times;
 
     do  {
         if (node->next->data->pid == pid_remove) {
@@ -156,7 +166,12 @@ int remove_times(pid_t pid_remove, int times ,linked_list_ADT list) {
         }
         node = node->next;
     } while (times > 0);
-    list->total_size -= times;
+
+    if (list->size == 0) {
+        list->first = NULL;
+        list->last = NULL;
+        list->current = NULL;
+    }
     return 1;
 }
 

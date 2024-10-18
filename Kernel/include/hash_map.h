@@ -26,7 +26,7 @@ hash_map_ADT hm_init();
 
 int insert_map(pid_t key, PCB * value, hash_map_ADT map);
 
-int remove_map(pid_t key, hash_map_ADT map);
+PCB * remove_map(pid_t key, hash_map_ADT map);
 
 PCB * find_map(pid_t key, hash_map_ADT map);
 
