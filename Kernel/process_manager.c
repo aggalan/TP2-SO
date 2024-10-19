@@ -129,6 +129,8 @@ pid_t kill_process_pid(pid_t pid) {
     }
 
     if (pcb->is_waited) {
+        remove_child(parent, pid);
+        remove_pcb(pid);
         parent->state = READY;
     }
 

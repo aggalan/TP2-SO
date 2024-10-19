@@ -58,6 +58,7 @@ void test_prio()
    bussy_wait(WAIT);
 
    pid_t waited_pid = call_waitpid(pids[1]);
+   pid_t waited_pid_2 = call_waitpid(pids[2]);
 
 
    print(0xFFFFFF, "\nKILLING...\n");
