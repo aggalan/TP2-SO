@@ -60,7 +60,7 @@ pid_t block_process(pid_t pid);
 
 pid_t unblock_process(pid_t pid);
 
-int wait_pid(pid_t pid_to_wait);
+pid_t wait_pid(pid_t pid_to_wait);
 
 PCB * get_idle();
 

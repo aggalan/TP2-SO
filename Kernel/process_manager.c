@@ -200,7 +200,7 @@ pid_t unblock_process(pid_t pid){
     return pcb->pid;
 }
 
-int wait_pid(pid_t pid_to_wait) {
+pid_t wait_pid(pid_t pid_to_wait) {
     PCB * pcb = find_pcb(pid_to_wait);
     if (pcb == NULL || pcb->ppid != get_current_pid()) {
         return 0;
@@ -213,6 +213,7 @@ int wait_pid(pid_t pid_to_wait) {
 
     nice();
 
+    return pcb->pid;
 }
 
 
