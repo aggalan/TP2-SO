@@ -12,11 +12,14 @@ hash_map_ADT map;
 static pid_t pids = 0;
 
 PCB * idle_proc = NULL;
+PCB * shell_process;
 
 PCB * create_pcb(void * fn, uint8_t prio, uint64_t argc, char ** argv);
 //pid_t create_process(uint64_t fn, int priority, int argc, char **argv);
 PCB * get_idle();
 void free_PCB(PCB * pcb);
+void fetch_milk(PCB * child);
+void remove_child(PCB * parent, pid_t pid);
 
 
 PCB * get_idle(){
@@ -34,15 +37,21 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv){
     pcb->state = READY;
     pcb->priority = priority;
     pcb->pid = pids++;
-    pcb->ppid = 0;
     pcb->argv=argv;
     pcb->argc = argc;
     pcb->name = argv[0];
+    pcb->is_waited = 0;
 
     pcb->base = (uint64_t) mm_malloc(STACK);
     pcb->base += STACK -1;
 
     pcb->rsp = create_context(pcb->base,pcb->rip, argc, argv);
+
+    if (pcb->pid != 1) {
+        PCB * parent = get_current();
+        add_child(pcb, parent);
+        pcb->ppid = parent->pid;
+    }
 
     if(pcb->pid == 0){
         idle_proc = pcb;
@@ -50,8 +59,18 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv){
         add_pcb(pcb->pid, pcb);
         add_process(pcb, priority);
     }
+    if (pcb->pid == 1) {
+        shell_process = pcb;
+    }
 
     return pcb->pid;
+}
+
+void add_child(PCB * child, PCB * parent) {
+    child_node * node = (child_node *) mm_malloc(sizeof(child_node));
+    node->pcb = child;
+    node->next = parent->child;
+    parent->child = node;
 }
 
 void annihilate() {
@@ -77,22 +96,82 @@ pid_t kill_process() {
 
 pid_t kill_process_pid(pid_t pid) {
 
+//    drawWord1(" HERE I AM I SHOULD BE CALLED 4 TIMES ");
+
     PCB * pcb = find_pcb(pid);
     if (pcb == NULL) {
         return -1;
     }
     int state = pcb->state;
-    // pcb->state = KILLED;
-
+    if (state == ZOMBIE) {
+        return 0;
+    }
     remove_process(pid);
-    remove_pcb(pid);
+
+    PCB * parent = find_pcb(pcb->ppid);
+
+
+    fetch_milk(pcb); // the parent of the children goes out for some milk... he never came back.
+
+
+    if (parent->pid == 1) {
+        remove_child(parent, pid);
+        remove_pcb(pid);
+        if (state == RUNNING) {
+            killed();
+            nice();
+        }
+        return pid;
+    } else {
+        pcb->state = ZOMBIE;
+        // aca en linux se libera la mayoria de las cosas y te quedas con el return status para que lo levante el padre
+        //cabe aclarar que nuestro waitpid solo le pasamos pid creo entonces el parent nunca va a levantar el return status de hijo pero lo disenamos para que si quisiera lo pueda hacer
+    }
+
+    if (pcb->is_waited) {
+        parent->state = READY;
+    }
 
     if (state == RUNNING) {
         killed();
         nice();
     }
 
+
     return pid;
+}
+
+void fetch_milk(PCB * child) { //ver esto
+    child_node * aux = child->child;
+    while (aux != NULL) {
+        child_node * to_change = aux;
+        aux = aux->next;
+        if (to_change->pcb->state == ZOMBIE) {
+            remove_pcb(to_change->pcb->pid);
+            mm_free(to_change);
+        } else {
+            to_change->pcb->ppid = 1;
+            to_change->next = shell_process->child;
+            shell_process->child = to_change;
+        }
+    }
+}
+
+void remove_child(PCB * parent, pid_t pid) {
+    child_node * aux = parent->child;
+    if (aux->pcb->pid == pid) {
+        parent->child = aux->next;
+        mm_free(aux);
+    }
+    while (aux->next != NULL) {
+        if (aux->next->pcb->pid == pid) {
+            child_node * to_remove = aux->next;
+            aux->next = aux->next->next;
+            mm_free(to_remove);
+            break;
+        }
+        aux = aux->next;
+    }
 }
 
 pid_t block_process(pid_t pid){
@@ -119,6 +198,21 @@ pid_t unblock_process(pid_t pid){
 
     pcb->state = READY;
     return pcb->pid;
+}
+
+int wait_pid(pid_t pid_to_wait) {
+    PCB * pcb = find_pcb(pid_to_wait);
+    if (pcb == NULL || pcb->ppid != get_current_pid()) {
+        return 0;
+    }
+
+    pcb->is_waited = 1;
+
+    PCB * to_wait = get_current();
+    to_wait->state = WAITING;
+
+    nice();
+
 }
 
 
@@ -160,6 +254,9 @@ void print_processes() {
     drawWord1("PRIORITY   ");
     drawWord1("STACK BASE   ");
     drawWord1("RSP        ");
+
+    drawWord1("STATE    ");
+
     drawWord1("IS FOREGROUND");
     newLine();
     for (int i = 0, j = 0; j < map->size && i < MAX_MAP_SIZE; i++) {
@@ -209,6 +306,34 @@ void print_processes() {
                 for (int z = 0; z < (8-m); z++ ) {
                     drawWord1(" ");
                 }
+
+                char * buff = NULL;
+                switch(aux->value->state) {
+                    case READY:
+                        buff = "READY";
+                        break;
+                    case BLOCKED:
+                        buff = "BLOCKED";
+                        break;
+                    case RUNNING:
+                        buff = "RUNNING";
+                        break;
+                    case ZOMBIE:
+                        buff = "ZOMBIE";
+                        break;
+                    case WAITING:
+                        buff = "WAITING";
+                        break;
+                    case EXITED:
+                        buff = "EXITED";
+                        break;
+                }
+                drawWord1(buff);
+                for (int z = 0; z < 9-str_len(buff); z++) {
+                    drawWord1(" ");
+                }
+
+
                 drawWord1("FALSE");
                 newLine();
                 j++;

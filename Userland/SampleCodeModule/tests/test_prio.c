@@ -57,6 +57,8 @@ void test_prio()
 
    bussy_wait(WAIT);
 
+   call_waitpid(pids[1]);
+
    print(0xFFFFFF, "\nKILLING...\n");
 
    for (i = 0; i < TOTAL_PROCESSES; i++)

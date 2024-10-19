@@ -197,6 +197,16 @@ void line_read(char *buffer)
         call_annihilate();
         return;
     }
+    else if (str_cmp(buffer, "waitpid"))
+    {
+        char *init = buffer + str_len("waitpid ");
+        if (!str_len(init))
+        {
+            return;
+        }
+        call_waitpid(str_to_int(init));
+        return;
+    }
     else
     {
         put_string(buffer, WHITE);

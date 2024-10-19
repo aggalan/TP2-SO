@@ -103,7 +103,7 @@ static uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, u
             nice();
             return 0;
         case 23:
-            //return wait_pid((pid_t)rsi);
+            return wait_pid((pid_t)rsi);
         case 24:
             change_priority((pid_t)rsi,(int)rdx);
             return 0;

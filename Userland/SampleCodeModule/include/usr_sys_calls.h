@@ -85,7 +85,7 @@ pid_t call_kill(pid_t pid);
 
 void call_nice();
 
-size_t call_waitpid();
+size_t call_waitpid(pid_t pid_to_wait);
 
 void call_change_priority(int pid, int newPrio);
 

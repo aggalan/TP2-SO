@@ -19,8 +19,11 @@ enum State { BLOCKED,
             READY,
             RUNNING,
             ZOMBIE,
-            KILLED };
+            KILLED,
+            WAITING,
+            EXITED };
 
+typedef struct child_node child_node;
 
 typedef struct PCB{
     char * name;
@@ -33,8 +36,14 @@ typedef struct PCB{
     uint64_t rip;
     int state;
     int priority;
-
+    int is_waited;
+    struct child_node * child;
 }PCB;
+
+typedef struct child_node{
+    PCB * pcb;
+    struct child_node * next;
+}child_node;
 
 
 pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv);
@@ -42,6 +51,8 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv);
 pid_t kill_process();
 
 void annihilate();
+
+void add_child(PCB * child, PCB * parent);
 
 pid_t kill_process_pid(pid_t pid);
 
