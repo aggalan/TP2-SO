@@ -16,7 +16,7 @@ void putC(char c, uint32_t hex_color)
     call_sys_write(STDOUT, &c, 1, hex_color);
 }
 
-void put_int(int num, uint32_t hex_color)
+void put_int(uint64_t num, uint32_t hex_color)
 {
     if (num < 0)
     {
@@ -58,14 +58,14 @@ void print(uint32_t hexColor, const char *str, ...)
             {
             case 'c':
             {
-                char *c = va_arg(args, char *);
-                putC(*c, hexColor);
+                char c = va_arg(args, char *);
+                putC(c, hexColor);
                 break;
             }
             case 'd':
             {
-                int *d = va_arg(args, int *);
-                put_int(*d, hexColor);
+                int d = va_arg(args, int *);
+                put_int(d, hexColor);
                 break;
             }
             case 's':

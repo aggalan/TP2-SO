@@ -7,6 +7,7 @@ char * getMinutes();
 char * getSeconds();
 //Returns hours in gmt
 char * getHours();
+uint16_t getKey();
 uint8_t inb(uint8_t);
 void outb(uint8_t,uint8_t);
 #endif

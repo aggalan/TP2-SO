@@ -47,7 +47,7 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv){
     pcb->is_waited = 0;
 
     pcb->base = (uint64_t) mm_malloc(STACK);
-    if (pcb->base == NULL) {
+    if ((void *)pcb->base == NULL) {
         mm_free(pcb);
         for (int i = 0; i < argc; i++) {
             mm_free(argv[i]);
