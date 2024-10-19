@@ -129,9 +129,11 @@ pid_t kill_process_pid(pid_t pid) {
     }
 
     if (pcb->is_waited) {
-        remove_child(parent, pid);
-        remove_pcb(pid);
-        parent->state = READY;
+        if (parent != NULL) {
+            remove_child(parent, pid);
+            remove_pcb(pid);
+            parent->state = READY;
+        }
     }
 
     if (state == RUNNING) {
@@ -210,10 +212,11 @@ pid_t wait_pid(pid_t pid_to_wait) {
 
     pcb->is_waited = 1;
 
-    PCB * to_wait = get_current();
-    to_wait->state = WAITING;
-
-    nice();
+    if (pcb->state != ZOMBIE) {
+        PCB * to_wait = get_current();
+        to_wait->state = WAITING;
+        nice();
+    }
 
     return pcb->pid;
 }
@@ -240,6 +243,7 @@ int add_pcb(pid_t key, PCB * value) {
 int remove_pcb(pid_t key) {
     PCB * status = remove_map(key, map);
     free_PCB(status);
+    status = NULL;
     return 1; // por ahora ya fue el return status se lo dejo asi aunque ni lo use
 }
 
