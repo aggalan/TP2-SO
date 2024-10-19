@@ -30,6 +30,10 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv){
 
     PCB * pcb = (PCB *) mm_malloc(sizeof(PCB));
     if(pcb == NULL){
+        for (int i = 0; i < argc; i++) {
+            mm_free(argv[i]);
+        }
+        mm_free(argv);
         return -1;
     }
 
@@ -43,6 +47,14 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv){
     pcb->is_waited = 0;
 
     pcb->base = (uint64_t) mm_malloc(STACK);
+    if (pcb->base == NULL) {
+        mm_free(pcb);
+        for (int i = 0; i < argc; i++) {
+            mm_free(argv[i]);
+        }
+        mm_free(argv);
+        return -1;
+    }
     pcb->base += STACK -1;
 
     pcb->rsp = create_context(pcb->base,pcb->rip, argc, argv);

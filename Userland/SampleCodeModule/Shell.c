@@ -74,7 +74,7 @@ const char *commands[] = {
     "getRegisters: Show the actual state of the registers.",
     "clear:        Empty the terminal.",
     "exit:         Kills the terminal.",
-    "div0:         Test the exception of the cero division.",
+    "div0:         Test the exception of the zero division.",
     "invalidOp:    Test the exception of an invalid operand.",
     "status:       Shows the status of the memory.",
     "testmm:       Test the memory management.",
@@ -195,16 +195,6 @@ void line_read(char *buffer)
     else if (str_cmp(buffer, "annihilate") == 0)
     {
         call_annihilate();
-        return;
-    }
-    else if (str_cmp(buffer, "waitpid"))
-    {
-        char *init = buffer + str_len("waitpid ");
-        if (!str_len(init))
-        {
-            return;
-        }
-        call_waitpid(str_to_int(init));
         return;
     }
     else
