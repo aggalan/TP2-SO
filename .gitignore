@@ -15,3 +15,13 @@
 
 *.xml
 *.iml
+
+*.DS_Store
+*.idea/*
+*.idea
+*.log
+*.log.*
+*.png
+*.vscode
+*.vscode/*
+*.sublime-project
