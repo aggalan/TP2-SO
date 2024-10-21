@@ -81,7 +81,7 @@ void endless_loop_print(uint64_t argc, char ** argv)
 
   while (1)
   {
-    print(0xFFFFFF, "%d", pid);
+    print(0xFFFFFF, "%d ", pid);
     bussy_wait(wait);
   }
   

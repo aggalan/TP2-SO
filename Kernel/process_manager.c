@@ -48,6 +48,7 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv)
     pcb->argc = argc;
     pcb->name = argv[0];
     pcb->is_waited = 0;
+    pcb->child = NULL;
 
     pcb->base = (uint64_t)mm_malloc(STACK);
     if ((void *)pcb->base == NULL)
@@ -204,10 +205,14 @@ void fetch_milk(PCB *child)
 void remove_child(PCB *parent, pid_t pid)
 {
     child_node *aux = parent->child;
+    if (aux == NULL) { //no deberia suceder porlas
+        return;
+    }
     if (aux->pcb->pid == pid)
     {
         parent->child = aux->next;
         mm_free(aux);
+        return;
     }
     while (aux->next != NULL)
     {
@@ -216,7 +221,7 @@ void remove_child(PCB *parent, pid_t pid)
             child_node *to_remove = aux->next;
             aux->next = aux->next->next;
             mm_free(to_remove);
-            break;
+            return;
         }
         aux = aux->next;
     }
@@ -308,9 +313,11 @@ int add_pcb(pid_t key, PCB *value)
 int remove_pcb(pid_t key)
 {
     PCB *status = remove_map(key, map);
-    free_PCB(status);
-    status = NULL;
-    return 1; // por ahora ya fue el return status se lo dejo asi aunque ni lo use
+    if (status != NULL) { //porlas
+        free_PCB(status);
+        return 1;
+    }
+    return 0; // por ahora ya fue el return status se lo dejo asi aunque ni lo use
 }
 
 PCB *find_pcb(pid_t key)

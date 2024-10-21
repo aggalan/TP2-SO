@@ -58,7 +58,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
             str_cpy(argvAux[0], "endless loop");
         }
 
-      p_rqs[rq].pid = call_create_process(endless_loop, 2, 1, argvAux);
+      p_rqs[rq].pid = call_create_process(endless_loop, 1, 1, argvAux);
 
       if (p_rqs[rq].pid == -1)
       {
