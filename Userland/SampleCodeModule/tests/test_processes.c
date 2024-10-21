@@ -54,9 +54,13 @@ int64_t test_processes(uint64_t argc, char *argv[])
 
         argvAux[0] = (char *) call_malloc(sizeof(char)* str_len("endless loop")+1);
 
-        if (argvAux[0] != 0) {
-            str_cpy(argvAux[0], "endless loop");
+        if (argvAux[0] == 0) {
+            print(0xFFFFFF, "\nNo room for arguments\n");
+//            call_free(argvAux); //just dont. you risk the integrity of the entire project just by uncommenting this line. fuck off
+            return -1;
         }
+
+        str_cpy(argvAux[0], "endless loop");
 
       p_rqs[rq].pid = call_create_process(endless_loop, 1, 1, argvAux);
 

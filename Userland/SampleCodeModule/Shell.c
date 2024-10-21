@@ -102,14 +102,14 @@ command_t commands[] = {
     {"clear", call_clear, "Clears the screen."},
     {"set_font", cmd_set_font, "Sets the font size."},
     {"status", call_status, "Displays the status of the memory in the system."},
-    {"process_test", process_test, "Runs the process test."},
+    {"p", process_test, "Runs the process test."},
     {"prio_test", prio_test, "Runs the priority test."},
     {"mem_test", mm_test, "Runs the memory test."},
     {"ps", cmd_ps, "Displays the processes in the system."},
     {"time", cmd_time, "Displays the current time."},
     {"set_font", cmd_set_font, "Sets the font size."},
     {"kill", cmd_kill, "Kills a process. (usage: kill <pid>)"},
-    {"annihilate", cmd_annihilate, "Kills all processes except for the Shell."},
+    {"a", cmd_annihilate, "Kills all processes except for the Shell."},
     {"block", cmd_block, "Blocks a process. (usage: block <pid>)"},
     {"unblock", cmd_unblock, "Unblocks a process. (usage: unblock <pid>)"},
     {"changeprio", cmd_changeprio, "Changes the priority of a process. (usage: changeprio <pid> <newPrio>)"},
@@ -133,7 +133,7 @@ void line_read(char *buffer)
     put_string(buffer, WHITE);
     put_string(": command not found", WHITE);
     put_string("\n", WHITE);
-    call_print_registers(0);
+//    call_print_registers(0);
 }
 
 void cmd_ps()
