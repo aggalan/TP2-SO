@@ -182,7 +182,7 @@ pid_t kill_process_pid(pid_t pid)
 }
 
 void fetch_milk(PCB *child)
-{ // ver esto
+{
     child_node *aux = child->child;
     while (aux != NULL)
     {
@@ -190,6 +190,7 @@ void fetch_milk(PCB *child)
         aux = aux->next;
         if (to_change->pcb->state == ZOMBIE)
         {
+            fetch_milk(to_change->pcb);
             remove_pcb(to_change->pcb->pid);
             mm_free(to_change);
         }
