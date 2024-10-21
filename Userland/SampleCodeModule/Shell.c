@@ -219,13 +219,23 @@ void cmd_set_font(char *args)
 
 void cmd_kill(char *args)
 {
-    char *pid_str = cut_string(args);
+    char *pid_str = buffer + str_len("kill ");
     if (!str_len(pid_str))
     {
         put_string("Usage: kill <pid>\n", WHITE);
         return;
     }
-    call_kill(str_to_int(pid_str));
+    if(str_to_int(pid_str) == 1)
+    {
+        put_string("You can't kill the shell.\nTo exit the shell, type 'exit'\n", WHITE);
+    }else if(call_kill(str_to_int(pid_str)) == -1)
+    {
+        put_string("Invalid pid.\n", WHITE);
+    }
+    else
+    {
+        put_string("Process killed.\n", WHITE);
+    }
 }
 
 void cmd_annihilate(char *args)
@@ -235,36 +245,57 @@ void cmd_annihilate(char *args)
 
 void cmd_block(char *args)
 {
-    char *pid_str = cut_string(args);
+    char *pid_str = buffer + str_len("block ");
     if (!str_len(pid_str))
     {
         put_string("Usage: block <pid>\n", WHITE);
         return;
     }
-    call_block(str_to_int(pid_str));
+    if(call_block(str_to_int(pid_str)) == -1)
+    {
+        put_string("Invalid pid.\n", WHITE);
+    }
+    else
+    {
+        put_string("Process blocked.\n", WHITE);
+    }
 }
 
 void cmd_unblock(char *args)
 {
-    char *pid_str = cut_string(args);
+    char *pid_str = buffer + str_len("unblock ");
     if (!str_len(pid_str))
     {
         put_string("Usage: unblock <pid>\n", WHITE);
         return;
     }
-    call_unblock(str_to_int(pid_str));
+    if(call_unblock(str_to_int(pid_str)) == -1)
+    {
+        put_string("Invalid pid.\n", WHITE);
+    }
+    else
+    {
+        put_string("Process unblocked.\n", WHITE);
+    }
 }
 
 void cmd_changeprio(char *args)
 {
-    char *pid_str = cut_string(args);
-    char *newPrio_str = cut_string(pid_str);
+    char *pid_str = cut_string(buffer + str_len("changeprio "));
+    char *newPrio_str = buffer + str_len("changeprio ") + str_len(pid_str) + 1;
     if (!str_len(pid_str) || !str_len(newPrio_str))
     {
         put_string("Usage: changeprio <pid> <newPrio>\n", WHITE);
         return;
     }
-    call_change_priority(str_to_int(pid_str), str_to_int(newPrio_str));
+    if(call_change_priority(str_to_int(pid_str), str_to_int(newPrio_str)) == -1)
+    {
+        put_string("Invalid pid or priority.\n", WHITE);
+    }
+    else
+    {
+        put_string("Priority changed.\n", WHITE);
+    }
 }
 
 char re_size(char *buffer)

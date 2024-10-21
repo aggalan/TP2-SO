@@ -22,7 +22,6 @@ GLOBAL call_unblock
 GLOBAL call_kill
 GLOBAL call_change_priority
 GLOBAL call_waitpid
-GLOBAL call_nice
 GLOBAL call_malloc
 GLOBAL call_free
 GLOBAL call_create_process
@@ -91,8 +90,8 @@ call_unblock:
     call_to_handler 20
 call_kill:
     call_to_handler 21
-call_nice:
-    call_to_handler 22
+; call_nice:
+;     call_to_handler 22
 call_waitpid:
     call_to_handler 23
 call_change_priority:

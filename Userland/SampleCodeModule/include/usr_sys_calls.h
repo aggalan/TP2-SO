@@ -83,7 +83,6 @@ pid_t call_unblock(pid_t pid);
 
 pid_t call_kill(pid_t pid);
 
-void call_nice();
 
 pid_t call_waitpid(pid_t pid_to_wait);
 
