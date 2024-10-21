@@ -117,7 +117,6 @@ static uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, u
         case 28:
             print_processes();
             return 0;
-            //return processes_info();
         case 29:
             return get_current_pid();
         case 30:

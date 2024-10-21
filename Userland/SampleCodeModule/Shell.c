@@ -7,6 +7,16 @@
 #include "tests/test_processes.h"
 #include "tests/test_util.h"
 #define WHITE 0xFFFFFFFF
+
+
+typedef void (*command_func_t)(char *args);
+
+typedef struct {
+    char *command;
+    command_func_t func;
+    const char *description;
+} command_t;
+
 static char buffer[BUFFER_SIZE] = {0};
 int exit_flag = 0;
 int register_flag = 0;
@@ -66,144 +76,195 @@ void buffer_control()
     }
 }
 
-// Define an array to store command strings
-const char *commands[] = {
-    "eliminator:   Game similar to tron(the movie).",
-    "time:         Shows the actual time.",
-    "setFont:      Change the font size, receive an int from 1 to 2.",
-    "getRegisters: Show the actual state of the registers.",
-    "clear:        Empty the terminal.",
-    "exit:         Kills the terminal.",
-    "div0:         Test the exception of the zero division.",
-    "invalidOp:    Test the exception of an invalid operand.",
-    "status:       Shows the status of the memory.",
-    "testmm:       Test the memory management.",
-    "testprocess:  Test the process creation.",
-    "testprio:     Test the priority of the process.",
-    "ps:           Shows the live processes.",
-    "annihilate:   Kills all processes except for the Shell. ",
+
+void cmd_help(char *args);
+void cmd_eliminator(char *args);
+void cmd_time(char *args);
+void cmd_setFont(char *args);
+void cmd_kill(char *args);
+void cmd_annihilate(char *args);
+void cmd_block(char *args);
+void cmd_unblock(char *args);
+void cmd_changeprio(char *args);
+void mm_test();
+void process_test();
+void prio_test();
+void cmd_set_font(char *args);
+void cmd_print_registers();
+void cmd_exit();
+void cmd_ps();
+
+
+
+command_t commands[] = {
+    {"help", cmd_help, "Displays this help message."},
+    {"eliminator", cmd_eliminator, "Starts the eliminator."},
+    {"clear", call_clear, "Clears the screen."},
+    {"set_font", cmd_set_font, "Sets the font size."},
+    {"status", call_status, "Displays the status of the memory in the system."},
+    {"process_test", process_test, "Runs the process test."},
+    {"prio_test", prio_test, "Runs the priority test."},
+    {"mem_test", mm_test, "Runs the memory test."},
+    {"ps", cmd_ps, "Displays the processes in the system."},
+    {"time", cmd_time, "Displays the current time."},
+    {"set_font", cmd_set_font, "Sets the font size."},
+    {"kill", cmd_kill, "Kills a process. (usage: kill <pid>)"},
+    {"annihilate", cmd_annihilate, "Kills all processes except for the Shell."},
+    {"block", cmd_block, "Blocks a process. (usage: block <pid>)"},
+    {"unblock", cmd_unblock, "Unblocks a process. (usage: unblock <pid>)"},
+    {"changeprio", cmd_changeprio, "Changes the priority of a process. (usage: changeprio <pid> <newPrio>)"},
+    {"div_0", call_div0, "Generates a division by zero exception."},
+    {"invalid_op", call_invalid_op, "Generates an invalid operation exception."},
+    {"get_registers", cmd_print_registers, "Prints the registers of the current process."},
+    {"exit", cmd_exit, "Exits the shell."}
 };
 
 void line_read(char *buffer)
 {
-    if (str_cmp(buffer, "help") == 0)
+    char *command = cut_string(buffer);
+    for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
     {
-        put_string("The following commands may be used: \n", WHITE);
-        for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
+        if (str_cmp(command, commands[i].command) == 0)
         {
-            put_string(commands[i], WHITE);
-            put_string("\n", WHITE);
-        }
-    }
-    else if (str_cmp(buffer, "eliminator") == 0)    
-    {
-        start_eliminator();
-    }
-    else if (str_cmp(buffer, "time") == 0)
-    {
-        char time[9]; // Viene dada por el formato hh:mm:ss por eso son 8 mas la terminacion en cero
-        call_time_clock(time);
-        put_string(time, WHITE);
-        put_string("\n", WHITE);
-    }
-    else if (str_cmp(cut_string(buffer), "setFont") == 0)
-    {
-        if (re_size(buffer))
-        {
-            call_clear();
-        }
-        else
-        {
-            put_string("Enter a valid size (1 or 2) \n", RED);
-        }
-        clear_buffer(buffer);
-    }
-    else if (str_cmp(buffer, "getRegisters") == 0)
-    {
-        call_print_registers(1);
-    }
-    else if (str_cmp(buffer, "clear") == 0)
-    {
-        call_clear();
-        clear_buffer(buffer);
-    }
-    else if (str_cmp(buffer, "exit") == 0)
-    {
-        exit_flag = 1;
-        call_clear();
-        clear_buffer(buffer);
-        return;
-    }
-    else if (str_cmp(buffer, "div0") == 0)
-    {
-        call_div0();
-        return;
-    }
-    else if (str_cmp(buffer, "invalidOp") == 0)
-    {
-        call_invalid_op();
-        return;
-    }
-    else if (str_cmp(buffer, "status") == 0)
-    {
-        call_status();
-        return;
-    }
-    else if (str_cmp(buffer, "testmm") == 0)
-    {
-        char **argv_mm = (char **)(uintptr_t)call_malloc(2 * sizeof(char *));
-        argv_mm[0] = (char *)call_malloc(sizeof(char)*(str_len("mem test") + 1));
-        str_cpy(argv_mm[0], "mem test");
-        argv_mm[1] = (char *)call_malloc(sizeof(char)*(str_len("266240") + 1));
-        str_cpy(argv_mm[1], "266240");
-        call_create_process(test_mm, 1, 2, argv_mm);
-        return;
-    }
-    else if (str_cmp(buffer, "testprocess") == 0)
-    {
-        char **argv_process = (char **)(uintptr_t)call_malloc(2 * sizeof(char *));
-        argv_process[0] = (char *)call_malloc(sizeof(char)*(str_len("process test") + 1));
-        str_cpy(argv_process[0], "process test");
-        argv_process[1] = (char *)call_malloc(sizeof(char)*(str_len("10") + 1));
-        str_cpy(argv_process[1], "10");
-        call_create_process(test_processes, 1, 2, argv_process);
-        return;
-    }
-    else if (str_cmp(buffer, "testprio") == 0)
-    {
-        char **argv_priority = (char **)(uintptr_t)call_malloc(sizeof(char *));
-        argv_priority[0] = (char *)call_malloc(sizeof(char)*(str_len("prio") + 1));
-        str_cpy(argv_priority[0], "prio");
-        call_create_process(test_prio, 1, 1, argv_priority);
-        return;
-    }
-    else if (str_cmp(cut_string(buffer), "kill") == 0)
-    {
-        char *init = buffer + str_len("kill ");
-        if (!str_len(init))
-        {
+            commands[i].func(buffer);
             return;
         }
-        call_kill(str_to_int(init));
-        return;
     }
-    else if (str_cmp(buffer, "ps") == 0)
+    put_string(buffer, WHITE);
+    put_string(": command not found", WHITE);
+    put_string("\n", WHITE);
+    call_print_registers(0);
+}
+
+void cmd_ps()
+{
+    call_ps();
+}
+
+void cmd_exit()
+{
+    exit_flag = 1;
+    call_clear();
+    clear_buffer(buffer);
+}
+
+void cmd_print_registers()
+{
+    call_print_registers(1);
+}
+
+void mm_test()
+{
+    char **argv_mm = (char **)(uintptr_t)call_malloc(2 * sizeof(char *));
+    argv_mm[0] = (char *)call_malloc(sizeof(char) * (str_len("mem test") + 1));
+    str_cpy(argv_mm[0], "mem test");
+    argv_mm[1] = (char *)call_malloc(sizeof(char) * (str_len("266240") + 1));
+    str_cpy(argv_mm[1], "266240");
+    call_create_process(test_mm, 1, 2, argv_mm);
+    return;
+}
+void process_test()
+{
+    char **argv_process = (char **)(uintptr_t)call_malloc(2 * sizeof(char *));
+    argv_process[0] = (char *)call_malloc(sizeof(char) * (str_len("process test") + 1));
+    str_cpy(argv_process[0], "process test");
+    argv_process[1] = (char *)call_malloc(sizeof(char) * (str_len("10") + 1));
+    str_cpy(argv_process[1], "10");
+    call_create_process(test_processes, 1, 2, argv_process);
+}
+void prio_test()
+{
+    char **argv_priority = (char **)(uintptr_t)call_malloc(sizeof(char *));
+    argv_priority[0] = (char *)call_malloc(sizeof(char) * (str_len("prio") + 1));
+    str_cpy(argv_priority[0], "prio");
+    call_create_process(test_prio, 1, 1, argv_priority);
+}
+
+void cmd_help(char *args)
+{
+    put_string("The following commands may be used: \n", WHITE);
+    for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
     {
-        call_ps();
-        return;
+        put_string(commands[i].command, WHITE);
+        put_string(": ", WHITE);
+        put_string(commands[i].description, WHITE);
+        put_string("\n", WHITE);
     }
-    else if (str_cmp(buffer, "annihilate") == 0)
+}
+
+void cmd_eliminator(char *args)
+{
+    start_eliminator();
+}
+
+void cmd_time(char *args)
+{
+    char time[9]; // Viene dada por el formato hh:mm:ss por eso son 8 mas la terminacion en cero
+    call_time_clock(time);
+    put_string(time, WHITE);
+    put_string("\n", WHITE);
+}
+
+void cmd_set_font(char *args)
+{
+    if (re_size(args))
     {
-        call_annihilate();
-        return;
+        call_clear();
     }
     else
     {
-        put_string(buffer, WHITE);
-        put_string(":command not found", WHITE);
-        put_string("\n", WHITE);
+        put_string("Invalid font size.\n", WHITE);
     }
-    call_print_registers(0);
+}
+
+void cmd_kill(char *args)
+{
+    char *pid_str = cut_string(args);
+    if (!str_len(pid_str))
+    {
+        put_string("Usage: kill <pid>\n", WHITE);
+        return;
+    }
+    call_kill(str_to_int(pid_str));
+}
+
+void cmd_annihilate(char *args)
+{
+    call_annihilate();
+}
+
+void cmd_block(char *args)
+{
+    char *pid_str = cut_string(args);
+    if (!str_len(pid_str))
+    {
+        put_string("Usage: block <pid>\n", WHITE);
+        return;
+    }
+    call_block(str_to_int(pid_str));
+}
+
+void cmd_unblock(char *args)
+{
+    char *pid_str = cut_string(args);
+    if (!str_len(pid_str))
+    {
+        put_string("Usage: unblock <pid>\n", WHITE);
+        return;
+    }
+    call_unblock(str_to_int(pid_str));
+}
+
+void cmd_changeprio(char *args)
+{
+    char *pid_str = cut_string(args);
+    char *newPrio_str = cut_string(pid_str);
+    if (!str_len(pid_str) || !str_len(newPrio_str))
+    {
+        put_string("Usage: changeprio <pid> <newPrio>\n", WHITE);
+        return;
+    }
+    call_change_priority(str_to_int(pid_str), str_to_int(newPrio_str));
 }
 
 char re_size(char *buffer)
@@ -226,10 +287,12 @@ int shell_init()
     }
     return 0;
 }
+
 void call_invalid_op()
 {
     invalid_op_asm();
 }
+
 void call_div0()
 {
     int a = 7;

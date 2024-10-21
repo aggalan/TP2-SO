@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include "process_manager.h"
 
-void change_priority(pid_t pid_to_nice, uint8_t priority);
+int change_priority(pid_t pid_to_nice, uint8_t priority);
 
 void  scheduler_init();
 

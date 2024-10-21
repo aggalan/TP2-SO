@@ -74,13 +74,15 @@ void endless_loop()
     ;
 }
 
-void endless_loop_print(uint64_t wait)
+void endless_loop_print(uint64_t argc, char ** argv)
 {
+  uint64_t wait = satoi(argv[1]);
   int64_t pid = call_get_current_pid();
 
   while (1)
   {
-    print(0xFFFFFF, "%d ", pid);
+    print(0xFFFFFF, "%d", pid);
     bussy_wait(wait);
   }
+  
 }

@@ -122,11 +122,14 @@ pid_t get_active_pid() {
     return processes->current->data->pid;
 }
 
-void change_priority(pid_t pid_to_nice, uint8_t priority) {
+int change_priority(pid_t pid_to_nice, uint8_t priority) {
+    if(pid_to_nice == 1) {
+        return -1;
+    }
     PCB * pcb = find_pcb(pid_to_nice);
     if (pcb == NULL) {
-        return;
-    }
+        return -1;
+    }   
     int status = 0;
     if (priority > pcb->priority) {
         status = add_process(pcb, priority - pcb->priority);
@@ -137,6 +140,7 @@ void change_priority(pid_t pid_to_nice, uint8_t priority) {
     if (status) {
         pcb->priority = priority;
     }
+    return 0;
 
 }
 

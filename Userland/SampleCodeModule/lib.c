@@ -58,16 +58,16 @@ void print(uint32_t hexColor, const char *str, ...)
             {
             case 'c':
             {
-                char c = va_arg(args, char *);
+                char c = va_arg(args, int);
                 putC(c, hexColor);
                 break;
             }
             case 'd':
             {
-                int d = va_arg(args, int *);
+                int d = va_arg(args, int);
                 put_int(d, hexColor);
                 break;
-            }
+            }   
             case 's':
             {
                 char *s = va_arg(args, char *);

@@ -87,7 +87,7 @@ void call_nice();
 
 pid_t call_waitpid(pid_t pid_to_wait);
 
-void call_change_priority(int pid, int newPrio);
+int call_change_priority(int pid, int newPrio);
 
 void * call_malloc(uint64_t size);
 
