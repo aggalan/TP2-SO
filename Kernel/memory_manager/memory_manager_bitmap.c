@@ -1,3 +1,4 @@
+#ifdef BITMAP
 #include "./include/memory_manager.h"
 #include "../Drivers/include/video_driver.h"
 #include <stdio.h>
@@ -188,3 +189,5 @@ void mm_status() {
 //     newLine();
 //     print_processes();
 // }
+
+#endif

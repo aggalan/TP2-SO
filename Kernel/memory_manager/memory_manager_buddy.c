@@ -1,3 +1,4 @@
+#ifdef BUDDY
 #include "./include/memory_manager.h"
 #include "../Drivers/include/video_driver.h"
 #include <stdint.h>
@@ -13,17 +14,17 @@ typedef struct Block
     BlockStatus status;
 } Block;
 
-typedef struct MemoryStatus
+typedef struct memory_status_t
 {
     uint64_t total_memory;
     uint64_t used_memory;
     uint64_t free_memory;
-} MemoryStatus;
+} memory_status_t;
 
 Block *free_lists[AMOUNT_OF_ORDERS];
 void *base_address;
 uint64_t total_memory_size;
-MemoryStatus memory_status;
+memory_status_t memory_status;
 
 static uint64_t align_up(uint64_t size, uint64_t alignment)
 {
@@ -189,3 +190,4 @@ void mm_status()
     drawNumber(memory_status.free_memory);
     newLine();
 }
+#endif
