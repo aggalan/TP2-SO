@@ -176,8 +176,9 @@ void mm_free(void *ptr)
     free_lists[order - MIN_ORDER] = block;
 }
 
-void mm_status()
-{
+void mm_status() {
+    drawWord1("Running on Buddy System");
+    newLine();
     drawWord1("Memory Status:");
     newLine();
     drawWord1("Total Memory: ");

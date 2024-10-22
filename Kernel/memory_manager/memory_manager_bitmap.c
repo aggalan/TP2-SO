@@ -147,6 +147,8 @@ void mm_free(void * ptr) {
 }
 
 void mm_status() {
+    drawWord1("Running on Bitmap System");
+    newLine();
     drawWord1("Total Memory: ");
     drawNumber(mm.qty_blocks*BLOCK_SIZE);
     newLine();
