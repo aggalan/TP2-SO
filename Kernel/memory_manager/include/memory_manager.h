@@ -14,7 +14,7 @@ void * mm_malloc(size_t size);
 void mm_fill(size_t required, size_t first);
 void mm_free(void * ptr);
 void mm_status();
-uintptr_t mm_find(size_t required, size_t start);
+uintptr_t mm_find(size_t required, size_t start, size_t end);
 
 
 #endif

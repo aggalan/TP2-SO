@@ -26,7 +26,7 @@ void * mm_malloc(size_t size);
 void mm_fill(size_t required, size_t first);
 void mm_free(void * ptr);
 void mm_status();
-uintptr_t mm_find(size_t required, size_t start);
+uintptr_t mm_find(size_t required, size_t start, size_t end);
 int trash();
 
 
@@ -82,10 +82,10 @@ void * mm_malloc(size_t size){
         return NULL;
     }
 
-    uint64_t first = mm_find(required, manager.current);
+    uint64_t first = mm_find(required, manager.current, manager.blocks);
 
     if(first == NULL){
-        first = mm_find(required, 0);
+        first = mm_find(required, 0, manager.current);
     }
 
     if(first == NULL){
@@ -98,18 +98,19 @@ void * mm_malloc(size_t size){
 }
 
 
-uintptr_t mm_find(size_t required, size_t start){
+uintptr_t mm_find(size_t required, size_t start, size_t end){
 
     size_t free = 0;
     size_t first = start;
     size_t i;
 
-    for(i = first; i < manager.blocks; i++){
+    for(i = first; i < end; i++){
         if(manager.bitmap[i] == FREE){
             free++;
 
             if(free == required){
                 mm_fill(required, first);
+                manager.current = i;
                 return (uintptr_t)(manager.start + first * BLOCK_SIZE);
             }
         }else{
