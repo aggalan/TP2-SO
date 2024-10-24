@@ -23,5 +23,4 @@ int sem_wait(int id);
 int sem_post(int id);
 int sem_close(int id);
 
-
 #endif
