@@ -40,8 +40,6 @@ int64_t test_processes(uint64_t argc, char *argv[])
 
   p_rq p_rqs[max_processes];
 
-  uint64_t cp = 0;
-
   while (1)
   {
     // Create max_processes processes
@@ -68,12 +66,11 @@ int64_t test_processes(uint64_t argc, char *argv[])
 
       if (p_rqs[rq].pid == -1)
       {
-        print(0xFFFFFF, "\ntest_processes: ERROR creating process, with cp: %d\n", cp);
+        print(0xFFFFFF, "\ntest_processes: ERROR creating process\n");
         return -1;
       }
       else
       {
-          cp++;
         p_rqs[rq].state = RUNNING;
         alive++;
       }

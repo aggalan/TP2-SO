@@ -191,7 +191,6 @@ void fetch_milk(PCB *child)
 {
     child_node *aux = child->child;
     child_node *to_change = aux;
-    uint64_t fp = 0;
     while (aux != NULL)
     {
         to_change = aux;
@@ -208,15 +207,7 @@ void fetch_milk(PCB *child)
             to_change->next = shell_process->child;
             shell_process->child = to_change;
         }
-        fp++;
     }
-    if (fp > 0) {
-        newLine();
-        drawWord1(" FP: ");
-        drawNumber(fp);
-        newLine();
-    }
-
 }
 
 void remove_child(PCB *parent, pid_t pid)
