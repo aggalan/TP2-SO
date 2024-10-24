@@ -126,6 +126,8 @@ pid_t kill_process()
 pid_t kill_process_pid(pid_t pid)
 {
 
+    _cli();
+
     //    drawWord1(" HERE I AM I SHOULD BE CALLED 4 TIMES ");
 
     PCB *pcb = find_pcb(pid);
@@ -153,6 +155,8 @@ pid_t kill_process_pid(pid_t pid)
             killed();
             nice();
         }
+
+        _sti();
         return pid;
     }
     else
@@ -177,6 +181,8 @@ pid_t kill_process_pid(pid_t pid)
         killed();
         nice();
     }
+
+    _sti();
 
     return pid;
 }
