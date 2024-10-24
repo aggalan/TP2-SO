@@ -143,15 +143,16 @@ pid_t kill_process_pid(pid_t pid)
 
     PCB *parent = find_pcb(pcb->ppid);
 
-    remove_process(pid); // jeje esto esta mal
-
     if (parent->pid == 1 || pcb->is_waited)
     {
         if (pcb->is_waited) {
             parent->state = READY;
         }
         remove_child(parent, pid);
+        _cli();
+        remove_process(pid);
         remove_pcb(pid);
+        _sti();
         if (state == RUNNING)
         {
             nice();
@@ -167,13 +168,17 @@ pid_t kill_process_pid(pid_t pid)
 
     if (pcb->is_waited)
     {
-        if (parent != NULL)
-        {
             remove_child(parent, pid);
-            remove_pcb(pid);
             parent->state = READY;
-        }
+            _cli();
+            remove_process(pid);
+            remove_pcb(pid);
+            _sti();
     }
+
+    _cli();
+    remove_process(pid);
+    _sti();
 
     if (state == RUNNING)
     {
@@ -439,8 +444,7 @@ void print_processes()
                     drawWord1(" ");
                 }
 
-                drawWord1("FALSE          ");
-                drawNumber(aux->value->ppid);
+                drawWord1("FALSE");
                 newLine();
                 j++;
                 aux = aux->next;
