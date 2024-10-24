@@ -4,25 +4,17 @@
 #include <stdio.h>
 #include "scheduler.h"
 
-typedef struct memory_manager {
-    void * start;
-    uint64_t size;
-    uint64_t bitmap_size;
-    uint32_t qty_blocks;
-    uint32_t used_blocks;
-    uint32_t * bitmap;
-    uint32_t current;
-} memory_manager;
 
 
-memory_manager mm;
+
+memory_manager_ADT mm;
 
 //static void full_memory_status();
 
 
 void allocate_heap() {
-    for (uint32_t i = 0; i < mm.qty_blocks; i++) {
-        mm.bitmap[i] = FREE;
+    for (uint32_t i = 0; i < mm->qty_blocks; i++) {
+        mm->bitmap[i] = FREE;
     }
 }
 
@@ -35,26 +27,26 @@ void mm_init(void * mem_start, uint64_t mem_size) {
         return;
     }
 
-    mm.qty_blocks = mem_size/BLOCK_SIZE;
+    mm->qty_blocks = mem_size/BLOCK_SIZE;
 
     if(mem_size % BLOCK_SIZE != 0) {
-        mm.qty_blocks++;
-        total_size = mm.qty_blocks * BLOCK_SIZE;
+        mm->qty_blocks++;
+        total_size = mm->qty_blocks * BLOCK_SIZE;
     }
 
-    mm.bitmap_size = mm.qty_blocks/BLOCK_SIZE;
+    mm->bitmap_size = mm->qty_blocks/BLOCK_SIZE;
 
-    if(mm.qty_blocks % BLOCK_SIZE != 0) {
-        mm.bitmap_size++;
+    if(mm->qty_blocks % BLOCK_SIZE != 0) {
+        mm->bitmap_size++;
     }
 
-    total_size += mm.bitmap_size * BLOCK_SIZE;
+    total_size += mm->bitmap_size * BLOCK_SIZE;
 
-    mm.size = total_size;
-    mm.start = mem_start +  mm.bitmap_size * BLOCK_SIZE * sizeof(uint32_t);
-    mm.used_blocks = 0;
-    mm.bitmap = mem_start;
-    mm.current = 0;
+    mm->size = total_size;
+    mm->start = mem_start +  mm->bitmap_size * BLOCK_SIZE * sizeof(uint32_t);
+    mm->used_blocks = 0;
+    mm->bitmap = mem_start;
+    mm->current = 0;
 
     allocate_heap();
 }
@@ -62,18 +54,18 @@ void mm_init(void * mem_start, uint64_t mem_size) {
 
 void * find_contiguous_mem(uint32_t req_blocks, uint32_t * index) {
     uint32_t cont_blocks = 0;
-    uint32_t start = mm.current;
-    *index = mm.current;
+    uint32_t start = mm->current;
+    *index = mm->current;
 
     while (cont_blocks < req_blocks) {
 
-        if(mm.current == 0 && cont_blocks > 0) {
+        if(mm->current == 0 && cont_blocks > 0) {
             cont_blocks = 0;
         }
 
-        if (mm.bitmap[mm.current] == FREE) {
+        if (mm->bitmap[mm->current] == FREE) {
             if (cont_blocks == 0) {
-                *index = mm.current;
+                *index = mm->current;
             }
             cont_blocks++;
             
@@ -81,24 +73,24 @@ void * find_contiguous_mem(uint32_t req_blocks, uint32_t * index) {
             cont_blocks = 0;
         }
 
-        mm.current = (mm.current + 1) % mm.qty_blocks;
+        mm->current = (mm->current + 1) % mm->qty_blocks;
 
-        if (mm.current == start) {
+        if (mm->current == start) {
             if(cont_blocks == req_blocks)
             {
-                return (void *)(mm.start + (*index) * BLOCK_SIZE);
+                return (void *)(mm->start + (*index) * BLOCK_SIZE);
             }
             return NULL; 
         }
     }
 
-    return (void *)(mm.start + (*index) * BLOCK_SIZE);
+    return (void *)(mm->start + (*index) * BLOCK_SIZE);
 }
 
 void allocate_mem(uint32_t index, uint32_t blocks) {
-    mm.bitmap[index] = START;
+    mm->bitmap[index] = START;
     for (uint32_t i = 1; i < blocks; i++) {
-        mm.bitmap[index + i] = ALLOCATED;
+        mm->bitmap[index + i] = ALLOCATED;
     }
 }
 
@@ -106,7 +98,7 @@ void * mm_malloc(uint32_t size) {
     uint32_t required_blocks = size/BLOCK_SIZE;
     uint32_t index = 0;
 
-    if (required_blocks > mm.qty_blocks - mm.used_blocks) {
+    if (required_blocks > mm->qty_blocks - mm->used_blocks) {
         drawWord1("NOT ENOUGH MEMORY FOR ALLOCATION");
         return NULL;
     }
@@ -124,7 +116,7 @@ void * mm_malloc(uint32_t size) {
 
     allocate_mem(index, required_blocks);
 
-    mm.used_blocks += required_blocks;
+    mm->used_blocks += required_blocks;
         
     return ptr;
 
@@ -132,17 +124,17 @@ void * mm_malloc(uint32_t size) {
 
 
 void mm_free(void * ptr) {
-    uint32_t index = (ptr - mm.start) / BLOCK_SIZE;
+    uint32_t index = (ptr - mm->start) / BLOCK_SIZE;
 
-    if (index > mm.qty_blocks || mm.bitmap[index] != START) {
+    if (index > mm->qty_blocks || mm->bitmap[index] != START) {
         drawWord1("INVALID MEMORY ADDRESS TO FREE");
         return;
     }
 
     do {
-        mm.bitmap[index++] = FREE;
-        mm.used_blocks--;
-    }while (index < mm.qty_blocks && mm.bitmap[index] == ALLOCATED);
+        mm->bitmap[index++] = FREE;
+        mm->used_blocks--;
+    }while (index < mm->qty_blocks && mm->bitmap[index] == ALLOCATED);
 
 }
 
@@ -150,13 +142,13 @@ void mm_status() {
     drawWord1("Running on Bitmap System");
     newLine();
     drawWord1("Total Memory: ");
-    drawNumber(mm.qty_blocks*BLOCK_SIZE);
+    drawNumber(mm->qty_blocks*BLOCK_SIZE);
     newLine();
     drawWord1("Total Memory In Use: ");
-    drawNumber(mm.used_blocks*BLOCK_SIZE);
+    drawNumber(mm->used_blocks*BLOCK_SIZE);
     newLine();
     drawWord1("Total Free: ");
-    drawNumber((mm.qty_blocks - mm.used_blocks)*BLOCK_SIZE);
+    drawNumber((mm->qty_blocks - mm->used_blocks)*BLOCK_SIZE);
     newLine();
     //full_memory_status();
 
