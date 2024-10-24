@@ -5,6 +5,8 @@ GLOBAL getMinutes
 GLOBAL getSeconds
 GLOBAL inb
 GLOBAL outb
+GLOBAL acquire
+GLOBAL release
 section .text
 	
 cpuVendor:
@@ -119,3 +121,15 @@ outb:
 	pop rbp
 	ret
 
+
+acquire:
+	mov al, 0
+.loop
+	xchg [lock], al
+	test al, al
+	jz .loop
+	ret
+
+release:
+	mov [lock], 1
+	ret

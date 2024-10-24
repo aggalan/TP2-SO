@@ -10,4 +10,6 @@ char * getHours();
 uint16_t getKey();
 uint8_t inb(uint8_t);
 void outb(uint8_t,uint8_t);
+void acquire(uint64_t * lock);
+void release(uint64_t * lock);
 #endif

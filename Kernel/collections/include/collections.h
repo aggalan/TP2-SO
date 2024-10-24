@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include "process_manager.h"
+#include "semaphore.h"
 
 #define MAX_MAP_SIZE 200
 
@@ -57,5 +58,7 @@ void modify_priority(pid_t pid, uint8_t new_priority, linked_list_ADT list);
 node_t * find(pid_t pid_find, linked_list_ADT list); 
 
 void free_node(node_t * node);
+
+int sem_insert(PCB * pcb, linked_list list);
 
 #endif
