@@ -86,11 +86,12 @@ uint64_t schedule(uint64_t rsp) {
     } else {
         if (processes->current->data->state == RUNNING) {
             processes->current->data->state = READY;
-        }
-        if (!was_killed) {
             processes->current->data->rsp = rsp;
         }
-        was_killed = 0;
+//        if (!was_killed) {
+//            processes->current->data->rsp = rsp;
+//        }
+//        was_killed = 0;
     }
 
     node_t * aux = processes->current;

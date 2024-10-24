@@ -83,7 +83,9 @@ void idle(){
 	}
 }
 
-void exit_process() {
+void exit_process(int status) {
     PCB * pcb = get_current();
+//    pcb->state = EXITED;
     kill_process_pid(pcb->pid);
+//    nice();
 }

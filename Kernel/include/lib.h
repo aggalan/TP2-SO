@@ -14,5 +14,5 @@ void sleepms(int ms);
 int str_len(char * str);
 int str_cpy(char * dest, char * src);
 void idle();
-void exit_process();
+void exit_process(int status);
 #endif

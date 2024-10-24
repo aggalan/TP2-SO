@@ -40,6 +40,8 @@ int64_t test_processes(uint64_t argc, char *argv[])
 
   p_rq p_rqs[max_processes];
 
+  uint64_t cp = 0;
+
   while (1)
   {
     // Create max_processes processes
@@ -56,7 +58,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
 
         if (argvAux[0] == 0) {
             print(0xFFFFFF, "\nNo room for arguments\n");
-//            call_free(argvAux); //just dont. you risk the integrity of the entire project just by uncommenting this line. fuck off
+            call_free(argvAux); //just dont. you risk the integrity of the entire project just by uncommenting this line. fuck off
             return -1;
         }
 
@@ -66,11 +68,12 @@ int64_t test_processes(uint64_t argc, char *argv[])
 
       if (p_rqs[rq].pid == -1)
       {
-        print(0xFFFFFF, "test_processes: ERROR creating process\n");
+        print(0xFFFFFF, "\ntest_processes: ERROR creating process, with cp: %d\n", cp);
         return -1;
       }
       else
       {
+          cp++;
         p_rqs[rq].state = RUNNING;
         alive++;
       }

@@ -70,6 +70,8 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv)
         PCB *parent = get_current();
         add_child(pcb, parent);
         pcb->ppid = parent->pid;
+    } else {
+        pcb->ppid = -1;
     }
 
     if (pcb->pid == 0)
@@ -126,8 +128,6 @@ pid_t kill_process()
 pid_t kill_process_pid(pid_t pid)
 {
 
-    //    drawWord1(" HERE I AM I SHOULD BE CALLED 4 TIMES ");
-
     PCB *pcb = find_pcb(pid);
     if (pcb == NULL)
     {
@@ -138,19 +138,22 @@ pid_t kill_process_pid(pid_t pid)
     {
         return 0;
     }
-    remove_process(pid);
-
-    PCB *parent = find_pcb(pcb->ppid);
 
     fetch_milk(pcb); // the parent of the children goes out for some milk... he never came back.
 
-    if (parent->pid == 1)
+    PCB *parent = find_pcb(pcb->ppid);
+
+    remove_process(pid); // jeje esto esta mal
+
+    if (parent->pid == 1 || pcb->is_waited)
     {
+        if (pcb->is_waited) {
+            parent->state = READY;
+        }
         remove_child(parent, pid);
         remove_pcb(pid);
         if (state == RUNNING)
         {
-            killed();
             nice();
         }
         return pid;
@@ -174,19 +177,19 @@ pid_t kill_process_pid(pid_t pid)
 
     if (state == RUNNING)
     {
-        killed();
         nice();
     }
-
     return pid;
 }
 
 void fetch_milk(PCB *child)
 {
     child_node *aux = child->child;
+    child_node *to_change = aux;
+    uint64_t fp = 0;
     while (aux != NULL)
     {
-        child_node *to_change = aux;
+        to_change = aux;
         aux = aux->next;
         if (to_change->pcb->state == ZOMBIE)
         {
@@ -200,7 +203,15 @@ void fetch_milk(PCB *child)
             to_change->next = shell_process->child;
             shell_process->child = to_change;
         }
+        fp++;
     }
+    if (fp > 0) {
+        newLine();
+        drawWord1(" FP: ");
+        drawNumber(fp);
+        newLine();
+    }
+
 }
 
 void remove_child(PCB *parent, pid_t pid)
@@ -428,7 +439,8 @@ void print_processes()
                     drawWord1(" ");
                 }
 
-                drawWord1("FALSE");
+                drawWord1("FALSE          ");
+                drawNumber(aux->value->ppid);
                 newLine();
                 j++;
                 aux = aux->next;
