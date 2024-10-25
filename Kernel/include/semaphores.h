@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include "process_manager.h"
 #include "libasm.h"
-#include "collections.h"
+#include "../collections/include/collections.h"
 
 
 typedef struct{
