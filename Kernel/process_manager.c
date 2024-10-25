@@ -26,7 +26,7 @@ PCB *get_idle()
     return idle_proc;
 }
 
-pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv)
+pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv, int ground)
 {
 
     PCB *pcb = (PCB *)mm_malloc(sizeof(PCB));
@@ -49,6 +49,7 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv)
     pcb->name = argv[0];
     pcb->is_waited = 0;
     pcb->child = NULL;
+    pcb->ground = ground;
 
     pcb->base = (uint64_t)mm_malloc(STACK);
     if ((void *)pcb->base == NULL)
@@ -86,6 +87,10 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv)
     if (pcb->pid == 1)
     {
         shell_process = pcb;
+    }
+
+    if (ground && pcb->ppid == 1) {
+        wait_pid(pcb->pid);
     }
 
     return pcb->pid;
@@ -145,14 +150,15 @@ pid_t kill_process_pid(pid_t pid)
 
     if (parent->pid == 1 || pcb->is_waited)
     {
-        if (pcb->is_waited) {
-            parent->state = READY;
-        }
+        int is_waited = pcb->is_waited;
         remove_child(parent, pid);
         _cli();
         remove_process(pid);
         remove_pcb(pid);
         _sti();
+        if (is_waited) {
+            parent->state = READY;
+        }
         if (state == RUNNING)
         {
             nice();

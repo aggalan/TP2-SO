@@ -34,6 +34,7 @@ typedef struct PCB{
     uint64_t rsp;
     uint64_t base;
     uint64_t rip;
+    int ground;
     int state;
     int priority;
     int is_waited;
@@ -46,7 +47,7 @@ typedef struct child_node{
 }child_node;
 
 
-pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv);
+pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv, int ground);
 
 pid_t kill_process();
 

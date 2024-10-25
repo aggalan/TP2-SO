@@ -39,7 +39,7 @@ static pid_t irq_wait_pid(pid_t rsi);
 static int irq_change_priority(pid_t rsi, uint8_t rdx);
 static uint64_t irq_mm_malloc(uint32_t rsi);
 static int irq_mm_free(void *rsi);
-static pid_t irq_create_process(uint64_t rsi, uint8_t rdx, uint64_t rcx, char **r8);
+static pid_t irq_create_process(uint64_t rsi, uint8_t rdx, uint64_t rcx, char **r8, int r9);
 static int irq_print_processes();
 static pid_t irq_get_current_pid();
 static pid_t irq_kill_process();
@@ -234,8 +234,8 @@ static int irq_mm_free(void *rsi) {
     return 0;
 }
 
-static pid_t irq_create_process(uint64_t rsi, uint8_t rdx, uint64_t rcx, char **r8) {
-    return create_process(rsi, rdx, rcx, r8);
+static pid_t irq_create_process(uint64_t rsi, uint8_t rdx, uint64_t rcx, char **r8, int r9) {
+    return create_process(rsi, rdx, rcx, r8, r9);
 }
 
 static int irq_print_processes() {

@@ -57,7 +57,7 @@ void *initializeKernelBinary()
 void shell()
 {
 	char *argv[] = {"shell"};
-	create_process((uint64_t)sampleCodeModuleAddress, 5, 1, argv);
+	create_process((uint64_t)sampleCodeModuleAddress, 5, 1, argv, 0);
 }
 
 int main()

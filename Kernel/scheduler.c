@@ -25,7 +25,7 @@ void scheduler_init() {
     processes = ll_init();
     hash_map_init();
 
-    create_process((uint64_t)idle, 1, 0, NULL);
+    create_process((uint64_t)idle, 1, 0, NULL, 0);
 
     idle_p = get_idle();
 
@@ -83,15 +83,11 @@ uint64_t schedule(uint64_t rsp) {
     if (process_has_run == IDLE) { // ESTE ORDEN DE COASAS SOLO ES VALIDO PORQ LA SHELL AUNQUE ESTE BLOQUEADA QUEDA EN LA LISTA, SI CAMBIA ESO ESTO EXPLOTA MAL, PENSA Y HACE MEMORIA JOSE DEL FUTURO A VER A QUE ME REFIERO !!!
         idle_p->rsp = rsp;
         idle_p->state = READY;
-    } else {
+    } else if (processes->current->data->state != ZOMBIE && processes->current->data->state != READY) { // CREO QUE ZOMBIES NUNCA VAN A ESTAR PERO BUENO
         if (processes->current->data->state == RUNNING) {
             processes->current->data->state = READY;
-            processes->current->data->rsp = rsp;
         }
-//        if (!was_killed) {
-//            processes->current->data->rsp = rsp;
-//        }
-//        was_killed = 0;
+        processes->current->data->rsp = rsp;
     }
 
     node_t * aux = processes->current;

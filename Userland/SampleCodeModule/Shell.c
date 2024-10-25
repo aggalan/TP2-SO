@@ -160,7 +160,7 @@ void mm_test()
     str_cpy(argv_mm[0], "mem test");
     argv_mm[1] = (char *)call_malloc(sizeof(char) * (str_len("266240") + 1));
     str_cpy(argv_mm[1], "266240");
-    call_create_process(test_mm, 1, 2, argv_mm);
+//    call_create_process(test_mm, 1, 2, argv_mm, 0);
     return;
 }
 void process_test()
@@ -170,14 +170,28 @@ void process_test()
     str_cpy(argv_process[0], "process test");
     argv_process[1] = (char *)call_malloc(sizeof(char) * (str_len("10") + 1));
     str_cpy(argv_process[1], "10");
-    call_create_process(test_processes, 1, 2, argv_process);
+//    call_create_process(test_processes, 1, 2, argv_process);
+    char *str = buffer + str_len("p ");
+    if (*str == '&') {
+        call_create_process(test_processes, 1, 2, argv_process, 0);
+    } else {
+        call_create_process(test_processes, 1, 2, argv_process, 1);
+        print(WHITE, "\ndo i return here?\n");
+    }
 }
 void prio_test()
 {
     char **argv_priority = (char **)(uintptr_t)call_malloc(sizeof(char *));
     argv_priority[0] = (char *)call_malloc(sizeof(char) * (str_len("prio") + 1));
     str_cpy(argv_priority[0], "prio");
-    call_create_process(test_prio, 1, 1, argv_priority);
+//    call_create_process(test_prio, 1, 1, argv_priority, 0);
+    char *str = buffer + str_len("prio_test ");
+    if (*str == '&') {
+        call_create_process(test_prio, 1, 1, argv_priority, 0);
+    } else {
+        call_create_process(test_prio, 1, 1, argv_priority, 1);
+        print(WHITE, "\ndo i return here?\n");
+    }
 }
 
 void cmd_help(char *args)
