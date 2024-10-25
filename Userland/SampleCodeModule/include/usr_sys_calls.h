@@ -100,6 +100,14 @@ pid_t call_get_current_pid();
 
 pid_t call_kill_process();
 
+void call_nice();
 
+int call_sem_open(int id, int n);
+
+int call_sem_close(int id);
+
+int call_sem_wait(int id);
+
+int call_sem_post(int id);
 
 #endif /* USERSYSCALLS_H */

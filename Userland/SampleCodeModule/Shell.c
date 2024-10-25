@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "tests/test_processes.h"
 #include "tests/test_util.h"
+#include "tests/test_sync.h"
 #define WHITE 0xFFFFFFFF
 
 typedef void (*command_func_t)(char *args);
@@ -102,6 +103,7 @@ command_t commands[] = {
     {"process_test", process_test, "Runs the process test."},
     {"prio_test", prio_test, "Runs the priority test."},
     {"mem_test", mm_test, "Runs the memory test."},
+    {"sync_test", test_sync, "Runs the sync test."},
     {"ps", cmd_ps, "Displays the processes in the system."},
     {"time", cmd_time, "Displays the current time."},
     {"set_font", cmd_set_font, "Sets the font size."},

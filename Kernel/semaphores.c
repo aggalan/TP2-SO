@@ -38,9 +38,12 @@ sem * my_sem_create(int n){
 
 
 int my_sem_open(int id, int n){
+    drawWord1("aca");
     if(manager->semaphores[id] != NULL){
         return -1;
     }
+
+    drawWord1("opened");
     manager->semaphores[id] = my_sem_create(n);
     return 0;
 }
@@ -50,6 +53,7 @@ int my_sem_close(int id){
     if(manager->semaphores[id] == NULL){
         return -1;
     }
+    drawWord1("closed");
     my_sem_free(id);
     manager->semaphores[id] = NULL;
     return 0;
@@ -59,6 +63,7 @@ int my_sem_wait(int id){
     if(manager->semaphores[id] != NULL){
         return -1;
     }
+    drawWord1("wait");
     return wait(manager->semaphores[id]);
 };
 
@@ -66,6 +71,7 @@ int my_sem_post(int id){
     if(manager->semaphores[id] != NULL){
         return -1;
     }
+    drawWord1("post");
     return post(manager->semaphores[id]);
 };
 

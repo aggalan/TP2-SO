@@ -9,6 +9,7 @@
 #include "./memory_manager/include/memory_manager.h"
 #include "process_manager.h"
 #include "scheduler.h"
+#include "semaphores.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -65,6 +66,7 @@ int main()
 	load_idt();
 	mm_init((void *)0x600000, 0x2700000);
 	scheduler_init();
+	my_sem_init();
 	shell();
 
 	while (1)
