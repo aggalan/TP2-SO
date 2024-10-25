@@ -1,4 +1,5 @@
 *.bin
+*.elf
 *.sys
 *.sh
 
