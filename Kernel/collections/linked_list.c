@@ -191,3 +191,23 @@ node_t * find(pid_t pid_find, linked_list_ADT list) {
 
 
 
+int sem_insert(PCB * data, linked_list_ADT list) {
+    node_t * new_node = (node_t *)mm_malloc(sizeof(node_t));
+    if (new_node == NULL) {
+        return 0;
+    }
+    new_node->data = data;
+
+    if (list->first == NULL) {
+        new_node->next = new_node;
+        list->first = new_node;
+        list->last = new_node;
+    } else {
+        new_node->next = list->first;
+        list->last->next = new_node;
+        list->last = new_node;
+    }
+
+    list->size++;
+    return 1;
+}

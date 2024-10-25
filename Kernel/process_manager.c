@@ -298,7 +298,7 @@ pid_t wait_pid(pid_t pid_to_wait)
         to_wait->state = WAITING;
         nice();
     } else {
-        remove_child(find_pcb(pcb->ppid), pcb);
+        remove_child(find_pcb(pcb->ppid), pcb->pid);
         remove_pcb(pid_to_wait);
     }
 
