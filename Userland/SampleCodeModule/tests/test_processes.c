@@ -62,7 +62,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
 
         str_cpy(argvAux[0], "endless loop");
 
-      p_rqs[rq].pid = call_create_process(endless_loop, 1, 1, argvAux);
+      p_rqs[rq].pid = call_create_process(endless_loop, 1, 1, argvAux, 0);
 
       if (p_rqs[rq].pid == -1)
       {
@@ -94,6 +94,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
               print(0xFFFFFF, "test_processes: ERROR killing process\n");
               return -1;
             }
+//            call_waitpid(p_rqs[rq].pid); si queres que corra para siempre descoment esto y anda joya
             p_rqs[rq].state = KILLED;
             alive--;
           }
