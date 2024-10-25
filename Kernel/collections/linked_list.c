@@ -218,7 +218,6 @@ PCB * sem_remove(linked_list_ADT list) {
         return NULL;
     }
 
-    node_t *prev = list->last;
     node_t *current = list->first;
     PCB * removed_pcb = NULL;
 

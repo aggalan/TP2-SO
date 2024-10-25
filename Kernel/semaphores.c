@@ -79,30 +79,30 @@ void my_sem_free(int id){
 }
 
 
-int wait(sem_t *semaphore) {
-    acquire(&semaphore->lock);
+int wait(sem *semaphore) {
+    acquire(semaphore->lock);
     
-    if (semaphore->value <= 0) {
-        sem_insert(semaphore->blocked, running_process());
+    if (semaphore->n <= 0) {
+        sem_insert(find_pcb(running_process()), semaphore->blocked);
         
         do {
-            release(&semaphore->lock);
+            release(semaphore->lock);
             block_process(running_process());
             
-            acquire(&semaphore->lock);
-        } while (semaphore->value <= 0);
+            acquire(semaphore->lock);
+        } while (semaphore->n <= 0);
     }
     
-    semaphore->value--;
-    release(&semaphore->lock);
+    semaphore->n--;
+    release(semaphore->lock);
     return 0;
 }
 
 
-int post(sem_t *semaphore) {
-    acquire(&semaphore->lock);
+int post(sem *semaphore) {
+    acquire(semaphore->lock);
     
-    semaphore->value++;
+    semaphore->n++;
     
     // Intentar despertar un proceso bloqueado, si hay alguno
     PCB * pcb = sem_remove(semaphore->blocked);
@@ -110,6 +110,6 @@ int post(sem_t *semaphore) {
         unblock_process(pcb->pid);
     }
     
-    release(&semaphore->lock);
+    release(semaphore->lock);
     return 0;
 }
