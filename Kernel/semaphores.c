@@ -4,6 +4,8 @@
 #include "./memory_manager/include/memory_manager.h"
 #include "../Drivers/include/video_driver.h"
 #include "./collections/include/collections.h"
+#include "process_manager.h"
+
 
 #define MAX_SEMAPHORES 10
 
@@ -77,34 +79,37 @@ void my_sem_free(int id){
 }
 
 
-int wait(sem * semaphore){
-    acquire(semaphore->lock);
-
-    while (semaphore->n <= 0) {
-        // Add current process to blocked list
+int wait(sem_t *semaphore) {
+    acquire(&semaphore->lock);
+    
+    if (semaphore->value <= 0) {
         sem_insert(semaphore->blocked, running_process());
-        // Release lock and block the process
-        release(semaphore->lock);
-        //block_process();
-        // When unblocked, reacquire the lock
-        acquire(semaphore->lock);
+        
+        do {
+            release(&semaphore->lock);
+            block_process(running_process());
+            
+            acquire(&semaphore->lock);
+        } while (semaphore->value <= 0);
     }
-
-    semaphore->n--;
-    release(semaphore->lock);
+    
+    semaphore->value--;
+    release(&semaphore->lock);
     return 0;
 }
 
-int post(sem * semaphore){
-    acquire(semaphore->lock);
-    semaphore->n++;
 
-    // Unblock next process if exists
-    // if (sem->blocked->size > 0) {
-    //     process_t* process_to_unblock = ll_remove_first(sem->blocked);
-    //     unblock_process(process_to_unblock);
-    // }
-
-    release(semaphore->lock);
+int post(sem_t *semaphore) {
+    acquire(&semaphore->lock);
+    
+    semaphore->value++;
+    
+    // Intentar despertar un proceso bloqueado, si hay alguno
+    PCB * pcb = sem_remove(semaphore->blocked);
+    if (pcb != NULL) {
+        unblock_process(pcb->pid);
+    }
+    
+    release(&semaphore->lock);
     return 0;
 }

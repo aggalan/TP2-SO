@@ -211,3 +211,33 @@ int sem_insert(PCB * data, linked_list_ADT list) {
     list->size++;
     return 1;
 }
+
+
+PCB * sem_remove(linked_list_ADT list) {
+    if (list == NULL || list->size == 0) {
+        return NULL;
+    }
+
+    node_t *prev = list->last;
+    node_t *current = list->first;
+    PCB * removed_pcb = NULL;
+
+    // Remove the first node (FIFO behavior)
+    removed_pcb = (PCB *)current->data;
+    
+    if (list->size == 1) {
+        // Only one node in the list
+        mm_free(current);
+        list->first = NULL;
+        list->last = NULL;
+    } else {
+        // More than one node
+        list->first = current->next;
+        list->last->next = list->first;
+        mm_free(current);
+    }
+    
+    list->size--;
+    return removed_pcb;
+}
+

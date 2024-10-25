@@ -61,4 +61,6 @@ void free_node(node_t * node);
 
 int sem_insert(PCB * pcb, linked_list_ADT list);
 
+PCB * sem_remove(linked_list_ADT list);
+
 #endif  
