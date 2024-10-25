@@ -10,12 +10,10 @@
 
 typedef struct memory_manager {
     void * start;
-    uint64_t size;
-    uint64_t bitmap_size;
-    uint32_t qty_blocks;
-    uint32_t used_blocks;
+    uint32_t blocks;
+    uint32_t used;
     uint32_t * bitmap;
-    uint32_t current;
+    size_t current;
 } memory_manager;
 
 typedef struct memory_manager * memory_manager_ADT;

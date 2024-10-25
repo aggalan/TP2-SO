@@ -1,8 +1,6 @@
 include Makefile.inc
 
-KERNEL_ELF=kernel.elf
-KERNEL_BIN=kernel.bin
-
+KERNEL=kernel.bin
 SOURCES=$(wildcard *.c)
 SOURCES_ASM=$(wildcard asm/*.asm)
 OBJECTS=$(SOURCES:.c=.o)
@@ -23,42 +21,28 @@ OBJECTS_COLLECTIONS=$(SOURCES_COLLECTIONS:.c=.o)
 
 LOADEROBJECT=$(LOADERSRC:.asm=.o)
 
-ALL_OBJECTS=$(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_DRIVERS) $(OBJECTS_BITMAP) $(OBJECTS_COLLECTIONS) $(OBJECTS_BUDDY)
+all: $(KERNEL)
 
-# Define specific flags for kernel linking
-KERNEL_LDFLAGS=-z max-page-size=0x1000 -T kernel.ld --oformat elf64-x86-64 -nostdlib
+$(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_DRIVERS) $(OBJECTS_BITMAP) $(OBJECTS_COLLECTIONS) $(OBJECTS_BUDDY)
+	$(LD) $(LDFLAGS) -T kernel.ld -o $(KERNEL) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_DRIVERS) $(OBJECTS_BITMAP) $(OBJECTS_BUDDY) $(OBJECTS_COLLECTIONS)
 
-all: $(KERNEL_BIN)
-
-$(KERNEL_ELF): $(ALL_OBJECTS)
-	@echo "Linking ELF file..."
-	$(LD) $(KERNEL_LDFLAGS) -o $@ $(ALL_OBJECTS)
-	@echo "Verifying ELF file..."
-	file $@ || true
-
-$(KERNEL_BIN): $(KERNEL_ELF)
-	@echo "Creating binary..."
-	objcopy -O binary -S $< $@
-	@echo "Verifying binary file..."
-	ls -l $@
+buddy: $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_DRIVERS) $(OBJECTS_BUDDY) $(OBJECTS_COLLECTIONS)
+	$(LD) $(LDFLAGS) -T kernel.ld -o $(KERNEL) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_DRIVERS) $(OBJECTS_BUDDY) $(OBJECTS_COLLECTIONS)
 
 %.o: %.c
-	@echo "Compiling $<..."
 	$(GCC) $(GCCFLAGS) -I./include -c $< -D$(MM) -o $@
 
 %.o : %.asm
-	@echo "Assembling $<..."
 	$(ASM) $(ASMFLAGS) $< -o $@
 
 $(LOADEROBJECT):
-	@echo "Building loader..."
 	$(ASM) $(ASMFLAGS) $(LOADERSRC) -o $(LOADEROBJECT)
 
 clean:
-	@echo "Cleaning..."
-	rm -rf asm/*.o *.o *.bin *.elf
+	rm -rf asm/*.o *.o *.bin
 	rm -rf Drivers/*.o
 	rm -rf memory_manager/*.o
 	rm -rf collections/*.o
+	rm -rf *.o *.bin
 
-.PHONY: all clean
+.PHONY: all clean buddy
