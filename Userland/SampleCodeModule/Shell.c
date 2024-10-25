@@ -93,6 +93,7 @@ void cmd_set_font(char *args);
 void cmd_print_registers();
 void cmd_exit();
 void cmd_ps();
+void sync();
 
 command_t commands[] = {
     {"help", cmd_help, "Displays this help message."},
@@ -103,7 +104,7 @@ command_t commands[] = {
     {"process_test", process_test, "Runs the process test."},
     {"prio_test", prio_test, "Runs the priority test."},
     {"mem_test", mm_test, "Runs the memory test."},
-    {"sync_test", test_sync, "Runs the sync test."},
+    {"sync_test", sync, "Runs the sync test."},
     {"ps", cmd_ps, "Displays the processes in the system."},
     {"time", cmd_time, "Displays the current time."},
     {"set_font", cmd_set_font, "Sets the font size."},
@@ -200,6 +201,15 @@ void prio_test()
     {
         call_create_process(test_prio, 1, 1, argv_priority, 1);
     }
+}
+
+void sync(){
+    char ** argv_aux = (char **)(uintptr_t)call_malloc(2 *sizeof(char *));
+    argv_aux[0] = (char *)call_malloc(sizeof(char) * (str_len("sync") + 1));
+    str_cpy(argv_aux[0], "sync");
+    call_create_process(test_sync, 1, 1, argv_aux, 1);
+    cmd_ps();
+    print(0xFFFFF, "ACA");
 }
 
 void cmd_help(char *args)
