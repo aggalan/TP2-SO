@@ -16,7 +16,6 @@ linked_list_ADT ll_init() {
     list_ptr->first = NULL;
     list_ptr->last = NULL;
     list_ptr->current = NULL;
-//    list_ptr->total_size = 0;
     return list_ptr;
 }
 
@@ -218,25 +217,19 @@ PCB * sem_remove(linked_list_ADT list) {
         return NULL;
     }
 
-    node_t *current = list->first;
-    PCB * removed_pcb = NULL;
-
-    // Remove the first node (FIFO behavior)
-    removed_pcb = (PCB *)current->data;
+    PCB * removed = (PCB *)list->first->data;
     
     if (list->size == 1) {
-        // Only one node in the list
-        mm_free(current);
+        //mm_free(current);
         list->first = NULL;
         list->last = NULL;
     } else {
-        // More than one node
-        list->first = current->next;
+        list->first = list->first->next;
         list->last->next = list->first;
-        mm_free(current);
+        //mm_free(current);
     }
     
     list->size--;
-    return removed_pcb;
+    return removed;
 }
 

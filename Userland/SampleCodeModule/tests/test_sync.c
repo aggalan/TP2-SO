@@ -13,7 +13,6 @@ void slowInc(int64_t *p, int64_t inc) {
   call_nice(); // This makes the race condition highly probable
   aux += inc;
   *p = aux;
-  print(0xFFFFFF, " UPDATED: %d ", *p);
 }
 
 uint64_t my_process_inc(uint64_t argc, char *argv[]) {
@@ -32,7 +31,7 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
     return -1;
 
   if (use_sem)
-    if (call_sem_open(SEM_ID)== -1) {
+    if (call_sem_open(SEM_ID) == -1) {
       print(0xFFFFFF,"test_sync: ERROR opening semaphore\n");
       return -1;
     }
@@ -49,29 +48,23 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
   return 0;
 }
 
-uint64_t test_sync(uint64_t argc, char *argv[]) {
-    
-     //{name,n, use_sem, 0}
-
+uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
 
   if (argc != 4)
     return -1;
 
-int use_sem = satoi(argv[2]);
-int n = satoi(argv[1]);
-
-if(use_sem){
-    if(call_sem_init(SEM_ID, n) == -1){
-        print(0xFFFFFF,"test_sync: ERROR creating semaphore\n");
-        return -1;
-    }
-}
-
   char *argvDec[] = {"dec", argv[1], "-1", argv[2], NULL};
   char *argvInc[] = {"inc", argv[1], "1", argv[2], NULL};
 
   global = 0;
+
+  if(satoi(argv[2])){
+    if(call_sem_init(SEM_ID, satoi(argv[1])) == -1){
+        print(0xFFFFFF, "test_sync: ERROR creating semaphore\n");
+        return -1;
+    }
+  }
 
   uint64_t i;
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
@@ -84,10 +77,15 @@ if(use_sem){
     call_waitpid(pids[i + TOTAL_PAIR_PROCESSES]);
   }
 
-  if (use_sem)
+  if(global < 0){
+    print(0xFFFFFF,"COLOMBIANA");
+  }
+
+    print(0xFFFFFF,"Final value: %d\n", global);
+
+    if (satoi(argv[2]))
     call_sem_close(SEM_ID);
 
-  print(0xFFFFFF,"Final value: %d\n", global);
 
   return 0;
 }

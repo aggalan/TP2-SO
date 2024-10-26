@@ -33,64 +33,64 @@ sem * my_sem_create(int n){
     sem * semaphore = (sem *) mm_malloc(sizeof(sem));
     semaphore->n = n;
     semaphore->blocked = ll_init();
-    semaphore->lock = 1;
+    if(n > 0)
+        semaphore->lock = 1;
+        else
+        semaphore->lock = 0;
     return semaphore;
 }
 
 
 int my_sem_init(int id, int n){
     if(manager->semaphores[id] != NULL){
-        drawWord1("INVALID SEMAPHORE TO INIT ");
         return -1;
     }
 
-    drawWord1("INIT ");
     manager->semaphores[id] = my_sem_create(n);
     return 0;
 }
 
 int my_sem_open(int id){
     if(manager->semaphores[id] == NULL){
-        drawWord1("INVALID SEMAPHORE TO OPEN ");
         return -1;
     }
-    drawWord1("OPENED ");
     return 0;
 }
 
 
 int my_sem_close(int id){
     if(manager->semaphores[id] == NULL){
-        drawWord1("INVALID SEMAPHORE TO CLOSE ");
         return -1;
     }
-    drawWord1("CLOSED ");
+    sem * semaphore = manager->semaphores[id];
     //my_sem_free(id);
+    acquire(&semaphore->lock);
+    PCB * pcb = sem_remove(semaphore->blocked);
+    if(pcb != NULL){
+        release(&semaphore->lock);
+        return 0;
+    }
     manager->semaphores[id] = NULL;
+    release(&semaphore->lock);
     return 0;
 }
 
 int my_sem_wait(int id){
     if(manager->semaphores[id] == NULL){
-        drawWord1("INVALID SEMAPHORE TO WAIT ");
         return -1;
     }
-    drawWord1("WAITED ");
     return wait(manager->semaphores[id]);
 };
 
 int my_sem_post(int id){
     if(manager->semaphores[id] == NULL){
-        drawWord1("INVALID SEMAPHORE TO POST ");
         return -1;
     }
-    drawWord1("POSTED ");
     return post(manager->semaphores[id]);
 };
 
 void my_sem_free(int id){
      if(manager->semaphores[id] != NULL){
-        drawWord1("INVALID SEMAPHORE TO FREE ");
         return;
     }
 
@@ -101,19 +101,14 @@ void my_sem_free(int id){
 int wait(sem * semaphore) {
     
     acquire(&semaphore->lock);
-    if (semaphore->n <= 0) {
-        sem_insert(find_pcb(running_process()), semaphore->blocked);
-        
-        do {
-            release(&semaphore->lock);
-            block_process(running_process());
-            
-            acquire(&semaphore->lock);
-        } while (semaphore->n <= 0);
+    if(semaphore->n > 0){
+        semaphore->n--;
+        release(&semaphore->lock);
+        return 0;
     }
-    
-    semaphore->n--;
+    sem_insert(find_pcb(running_process()), semaphore->blocked);
     release(&semaphore->lock);
+    block_process(running_process());
     return 0;
 }
 
@@ -121,14 +116,15 @@ int wait(sem * semaphore) {
 int post(sem * semaphore) {
     acquire(&semaphore->lock);
     
-    semaphore->n++;
-    
     // Intentar despertar un proceso bloqueado, si hay alguno
     PCB * pcb = sem_remove(semaphore->blocked);
     if (pcb != NULL) {
         unblock_process(pcb->pid);
+        release(&semaphore->lock);
+        return 0;
     }
     
+    semaphore->n++;
     release(&semaphore->lock);
     return 0;
 }
