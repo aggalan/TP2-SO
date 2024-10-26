@@ -11,13 +11,15 @@ int64_t global; // shared memory
 void slowInc(int64_t *p, int64_t inc) {
   uint64_t aux = *p;
   call_nice(); // This makes the race condition highly probable
+  print(0xFFFFFF,"BEFORE  %d   ", aux);
   aux += inc;
   *p = aux;
-
   if(inc > 0)
     print(0xFFFFFF," + ");
     else 
     print(0xFFFFFF," - "); 
+  print(0xFFFFFF," %d ", inc);
+  print(0xFFFFFF," = %d\n", *p);
 }
 
 uint64_t my_process_inc(uint64_t argc, char *argv[]) {
