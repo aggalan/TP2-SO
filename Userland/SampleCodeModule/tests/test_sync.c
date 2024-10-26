@@ -13,6 +13,7 @@ void slowInc(int64_t *p, int64_t inc) {
   call_nice(); // This makes the race condition highly probable
   aux += inc;
   *p = aux;
+  print(0xFFFFFF, " UPDATED: %d ", *p);
 }
 
 uint64_t my_process_inc(uint64_t argc, char *argv[]) {
@@ -85,7 +86,6 @@ if(use_sem){
 
   if (use_sem)
     call_sem_close(SEM_ID);
-
 
   print(0xFFFFFF,"Final value: %d\n", global);
 

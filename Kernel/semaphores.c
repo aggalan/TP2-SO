@@ -33,7 +33,7 @@ sem * my_sem_create(int n){
     sem * semaphore = (sem *) mm_malloc(sizeof(sem));
     semaphore->n = n;
     semaphore->blocked = ll_init();
-    semaphore->lock = 0;
+    semaphore->lock = 1;
     return semaphore;
 }
 
@@ -98,10 +98,9 @@ void my_sem_free(int id){
 }
 
 
-int wait(sem *semaphore) {
-    drawNumber(semaphore->lock);
-    acquire(&semaphore->lock);
+int wait(sem * semaphore) {
     
+    acquire(&semaphore->lock);
     if (semaphore->n <= 0) {
         sem_insert(find_pcb(running_process()), semaphore->blocked);
         
