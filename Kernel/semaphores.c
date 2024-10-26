@@ -5,15 +5,13 @@
 #include "../Drivers/include/video_driver.h"
 #include "./collections/include/collections.h"
 #include "process_manager.h"
-
-
 #define MAX_SEMAPHORES 10
 
-int created = 0;
 
 int wait(sem * semaphore);
 int post(sem * semaphore);
 sem * my_sem_create(int n);
+
 
 typedef struct sem_manager_cdt{
     sem * semaphores[MAX_SEMAPHORES];
@@ -58,20 +56,23 @@ int my_sem_open(int id){
 }
 
 
-int my_sem_close(int id){
-    if(manager->semaphores[id] == NULL){
-        return -1;
+int my_sem_close(int id) {
+    if (manager->semaphores[id] == NULL) {
+        return -1; 
     }
+    
     sem * semaphore = manager->semaphores[id];
-    //my_sem_free(id);
     acquire(&semaphore->lock);
-    pid_t pid = sem_remove(semaphore->blocked);
-    if(pid < 0){
-        release(&semaphore->lock);
-        return 0;
+    
+    pid_t pid;
+    while ((pid = sem_remove(semaphore->blocked)) > 0) {
+        unblock_process(pid);
     }
+    
+    my_sem_free(semaphore);
     manager->semaphores[id] = NULL;
     release(&semaphore->lock);
+    
     return 0;
 }
 
@@ -94,7 +95,8 @@ void my_sem_free(int id){
         return;
     }
 
-    //free lista
+    mm_free(manager->semaphores[id]->blocked);
+    mm_free(manager->semaphores[id]);
 }
 
 

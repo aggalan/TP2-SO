@@ -210,7 +210,7 @@ void sync(){
     argv_sync[2] = (char *)call_malloc(sizeof(char));
     argv_sync[3] = (char *)call_malloc(sizeof(char));
     str_cpy(argv_sync[0], "sync");
-    str_cpy(argv_sync[1], "4");
+    str_cpy(argv_sync[1], "3");
     str_cpy(argv_sync[2], "0");
     str_cpy(argv_sync[3], "0");
     call_create_process(test_sync, 1, 4, argv_sync, 0);

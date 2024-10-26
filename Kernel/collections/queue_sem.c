@@ -50,13 +50,13 @@ pid_t sem_remove(queue_sem_ADT queue) {
     node_sem * current = queue->first;
     
     if (queue->size == 1) {
-        //mm_free(current);
+        mm_free(current);
         queue->first = NULL;
         queue->last = NULL;
     } else {
         queue->first = queue->first->next;
         queue->last->next = queue->first;
-        //mm_free(current);
+        mm_free(current);
     }
     
     queue->size--;
