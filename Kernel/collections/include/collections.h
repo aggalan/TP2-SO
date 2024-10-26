@@ -59,8 +59,23 @@ node_t * find(pid_t pid_find, linked_list_ADT list);
 
 void free_node(node_t * node);
 
-int sem_insert(PCB * pcb, linked_list_ADT list);
+typedef struct node_sem {
+    pid_t pid;
+    struct node_sem * next;
+}node_sem;
 
-PCB * sem_remove(linked_list_ADT list);
+typedef struct queue_sem{ //es circular que last apunte a first
+    node_sem * first;
+    node_sem * last;
+    uint64_t size;
+}queue_sem;
+
+typedef struct queue_sem * queue_sem_ADT;
+
+queue_sem_ADT qs_init();
+
+int sem_insert(pid_t pcb, queue_sem_ADT list);
+
+pid_t sem_remove(queue_sem_ADT list);
 
 #endif  

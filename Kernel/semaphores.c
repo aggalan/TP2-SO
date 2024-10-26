@@ -32,7 +32,7 @@ void sem_manager(){
 sem * my_sem_create(int n){
     sem * semaphore = (sem *) mm_malloc(sizeof(sem));
     semaphore->n = n;
-    semaphore->blocked = ll_init();
+    semaphore->blocked = qs_init();
     if(n > 0)
         semaphore->lock = 1;
         else
@@ -65,8 +65,8 @@ int my_sem_close(int id){
     sem * semaphore = manager->semaphores[id];
     //my_sem_free(id);
     acquire(&semaphore->lock);
-    PCB * pcb = sem_remove(semaphore->blocked);
-    if(pcb != NULL){
+    pid_t pid = sem_remove(semaphore->blocked);
+    if(pid < 0){
         release(&semaphore->lock);
         return 0;
     }
@@ -106,9 +106,10 @@ int wait(sem * semaphore) {
         release(&semaphore->lock);
         return 0;
     }
-    sem_insert(find_pcb(running_process()), semaphore->blocked);
+    pid_t pid = running_process();
+    sem_insert(pid, semaphore->blocked);
     release(&semaphore->lock);
-    block_process(running_process());
+    block_process(pid);
     return 0;
 }
 
@@ -117,9 +118,9 @@ int post(sem * semaphore) {
     acquire(&semaphore->lock);
     
     // Intentar despertar un proceso bloqueado, si hay alguno
-    PCB * pcb = sem_remove(semaphore->blocked);
-    if (pcb != NULL) {
-        unblock_process(pcb->pid);
+    pid_t pid = sem_remove(semaphore->blocked);
+    if (pid > 1) {
+        unblock_process(pid);
         release(&semaphore->lock);
         return 0;
     }

@@ -1,7 +1,7 @@
 #include "../include/usr_sys_calls.h"
 #include "test_util.h"
 #include "../include/lib.h"
-#include "test_sync.h"
+#include "./test_sync.h"
 
 #define SEM_ID 3
 #define TOTAL_PAIR_PROCESSES 2
@@ -13,6 +13,7 @@ void slowInc(int64_t *p, int64_t inc) {
   call_nice(); // This makes the race condition highly probable
   aux += inc;
   *p = aux;
+  //print(0xFFFFFF," %d ", *p);
 }
 
 uint64_t my_process_inc(uint64_t argc, char *argv[]) {
@@ -60,7 +61,7 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
   global = 0;
 
   if(satoi(argv[2])){
-    if(call_sem_init(SEM_ID, satoi(argv[1])) == -1){
+    if(call_sem_init(SEM_ID, 1) == -1){
         print(0xFFFFFF, "test_sync: ERROR creating semaphore\n");
         return -1;
     }
@@ -72,10 +73,12 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
     pids[i + TOTAL_PAIR_PROCESSES] = call_create_process(my_process_inc, 1, 4, argvInc, 0);
   }
 
+
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
     call_waitpid(pids[i]);
     call_waitpid(pids[i + TOTAL_PAIR_PROCESSES]);
   }
+
 
   if(global < 0){
     print(0xFFFFFF,"COLOMBIANA");
