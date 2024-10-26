@@ -31,7 +31,7 @@ void test_prio()
    uint64_t i;
 
    for (i = 0; i < TOTAL_PROCESSES; i++)
-      pids[i] = call_create_process(endless_loop_print, 1, 2, mem_loc[i]);
+      pids[i] = call_create_process(endless_loop_print, 1, 2, mem_loc[i], 0);
 
    bussy_wait(WAIT);
 
