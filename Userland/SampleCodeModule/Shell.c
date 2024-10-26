@@ -204,12 +204,16 @@ void prio_test()
 }
 
 void sync(){
-    char ** argv_aux = (char **)(uintptr_t)call_malloc(2 *sizeof(char *));
-    argv_aux[0] = (char *)call_malloc(sizeof(char) * (str_len("sync") + 1));
-    str_cpy(argv_aux[0], "sync");
-    call_create_process(test_sync, 1, 1, argv_aux, 1);
-    cmd_ps();
-    print(0xFFFFF, "ACA");
+    char ** argv_sync = (char **)(uintptr_t)call_malloc(4 *sizeof(char *));
+    argv_sync[0] = (char *)call_malloc(sizeof(char) * (str_len("sync") + 1));
+    argv_sync[1] = (char *)call_malloc(sizeof(char));
+    argv_sync[2] = (char *)call_malloc(sizeof(char));
+    argv_sync[3] = (char *)call_malloc(sizeof(char));
+    str_cpy(argv_sync[0], "sync");
+    str_cpy(argv_sync[1], "1");
+    str_cpy(argv_sync[2], "3");
+    str_cpy(argv_sync[3], "0");
+    call_create_process(test_sync, 1, 4, argv_sync, 0);
 }
 
 void cmd_help(char *args)

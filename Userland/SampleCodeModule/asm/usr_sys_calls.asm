@@ -34,6 +34,7 @@ GLOBAL call_sem_open
 GLOBAL call_sem_close
 GLOBAL call_sem_wait
 GLOBAL call_sem_post
+GLOBAL call_sem_init
 
 
 section .text
@@ -123,6 +124,8 @@ call_sem_wait:
     call_to_handler 34
 call_sem_post:
     call_to_handler 35
+call_sem_init:
+    call_to_handler 36
 
 
 invalid_op_asm:

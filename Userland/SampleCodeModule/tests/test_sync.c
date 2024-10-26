@@ -20,18 +20,18 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
   int8_t inc;
   int8_t use_sem;
 
-  if (argc != 3)
+  if (argc != 4)
     return -1;
 
-  if ((n = satoi(argv[0])) <= 0)
+  if ((n = satoi(argv[1])) <= 0)
     return -1;
-  if ((inc = satoi(argv[1])) == 0)
+  if ((inc = satoi(argv[2])) == 0)
     return -1;
-  if ((use_sem = satoi(argv[2])) < 0)
+  if ((use_sem = satoi(argv[3])) < 0)
     return -1;
 
   if (use_sem)
-    if (!call_sem_open(SEM_ID, 1)) {
+    if (call_sem_open(SEM_ID)== -1) {
       print(0xFFFFFF,"test_sync: ERROR opening semaphore\n");
       return -1;
     }
@@ -45,39 +45,47 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
       call_sem_post(SEM_ID);
   }
 
-  if (use_sem)
-    call_sem_close(SEM_ID);
-
   return 0;
 }
 
 uint64_t test_sync(uint64_t argc, char *argv[]) {
     
-     //{n, use_sem, 0}
+     //{name,n, use_sem, 0}
 
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
 
-  if (argc != 2)
+  if (argc != 4)
     return -1;
 
-  char *argvDec[] = {argv[0], "-1", argv[1], NULL};
-  char *argvInc[] = {argv[0], "1", argv[1], NULL};
+int use_sem = satoi(argv[2]);
+int n = satoi(argv[1]);
+
+if(use_sem){
+    if(call_sem_init(SEM_ID, n) == -1){
+        print(0xFFFFFF,"test_sync: ERROR creating semaphore\n");
+        return -1;
+    }
+}
+
+  char *argvDec[] = {"dec", argv[1], "-1", argv[2], NULL};
+  char *argvInc[] = {"inc", argv[1], "1", argv[2], NULL};
 
   global = 0;
 
   uint64_t i;
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-    pids[i] = call_create_process(my_process_inc, 1, 3, argvDec, 1);
-    pids[i + TOTAL_PAIR_PROCESSES] = call_create_process(my_process_inc, 1, 3, argvInc, 1);
+    pids[i] = call_create_process(my_process_inc, 1, 4, argvDec, 0);
+    pids[i + TOTAL_PAIR_PROCESSES] = call_create_process(my_process_inc, 1, 4, argvInc, 0);
   }
 
-
-  print(0xFFFFFF,"AcA\n");
-  
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
     call_waitpid(pids[i]);
     call_waitpid(pids[i + TOTAL_PAIR_PROCESSES]);
   }
+
+  if (use_sem)
+    call_sem_close(SEM_ID);
+
 
   print(0xFFFFFF,"Final value: %d\n", global);
 

@@ -12,16 +12,17 @@ typedef struct{
     int id;
     linked_list_ADT blocked;
     int n;
-    uint64_t * lock;
+    uint64_t lock;
 }sem;
 
 typedef struct sem_manager_cdt * sem_manager_adt;
 
-void my_sem_init();
-int my_sem_open(int id, int n);
+void sem_manager();
+int my_sem_open(int id);
 int my_sem_wait(int id);
 int my_sem_post(int id);
 int my_sem_close(int id);
 void my_sem_free(int id);
+int my_sem_init(int id, int n);
 
 #endif

@@ -66,7 +66,7 @@ int main()
 	load_idt();
 	mm_init((void *)0x600000, 0x2700000);
 	scheduler_init();
-	my_sem_init();
+	sem_manager();
 	shell();
 
 	while (1)

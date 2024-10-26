@@ -23,7 +23,7 @@ typedef struct sem_manager_cdt{
 sem_manager_adt manager = NULL;
 
 
-void my_sem_init(){
+void sem_manager(){
     manager = (sem_manager_adt) mm_malloc(sizeof(sem_manager_cdt));
     for(int i = 0; i < MAX_SEMAPHORES; i++)
         manager->semaphores[i] = NULL;
@@ -33,51 +33,64 @@ sem * my_sem_create(int n){
     sem * semaphore = (sem *) mm_malloc(sizeof(sem));
     semaphore->n = n;
     semaphore->blocked = ll_init();
+    semaphore->lock = 0;
     return semaphore;
 }
 
 
-int my_sem_open(int id, int n){
-    drawWord1("aca");
+int my_sem_init(int id, int n){
     if(manager->semaphores[id] != NULL){
+        drawWord1("INVALID SEMAPHORE TO INIT ");
         return -1;
     }
 
-    drawWord1("opened");
+    drawWord1("INIT ");
     manager->semaphores[id] = my_sem_create(n);
+    return 0;
+}
+
+int my_sem_open(int id){
+    if(manager->semaphores[id] == NULL){
+        drawWord1("INVALID SEMAPHORE TO OPEN ");
+        return -1;
+    }
+    drawWord1("OPENED ");
     return 0;
 }
 
 
 int my_sem_close(int id){
     if(manager->semaphores[id] == NULL){
+        drawWord1("INVALID SEMAPHORE TO CLOSE ");
         return -1;
     }
-    drawWord1("closed");
-    my_sem_free(id);
+    drawWord1("CLOSED ");
+    //my_sem_free(id);
     manager->semaphores[id] = NULL;
     return 0;
 }
 
 int my_sem_wait(int id){
-    if(manager->semaphores[id] != NULL){
+    if(manager->semaphores[id] == NULL){
+        drawWord1("INVALID SEMAPHORE TO WAIT ");
         return -1;
     }
-    drawWord1("wait");
+    drawWord1("WAITED ");
     return wait(manager->semaphores[id]);
 };
 
 int my_sem_post(int id){
-    if(manager->semaphores[id] != NULL){
+    if(manager->semaphores[id] == NULL){
+        drawWord1("INVALID SEMAPHORE TO POST ");
         return -1;
     }
-    drawWord1("post");
+    drawWord1("POSTED ");
     return post(manager->semaphores[id]);
 };
 
 void my_sem_free(int id){
      if(manager->semaphores[id] != NULL){
-        drawWord1("INVALID SEMAPHORE ID");
+        drawWord1("INVALID SEMAPHORE TO FREE ");
         return;
     }
 
@@ -86,27 +99,28 @@ void my_sem_free(int id){
 
 
 int wait(sem *semaphore) {
-    acquire(semaphore->lock);
+    drawNumber(semaphore->lock);
+    acquire(&semaphore->lock);
     
     if (semaphore->n <= 0) {
         sem_insert(find_pcb(running_process()), semaphore->blocked);
         
         do {
-            release(semaphore->lock);
+            release(&semaphore->lock);
             block_process(running_process());
             
-            acquire(semaphore->lock);
+            acquire(&semaphore->lock);
         } while (semaphore->n <= 0);
     }
     
     semaphore->n--;
-    release(semaphore->lock);
+    release(&semaphore->lock);
     return 0;
 }
 
 
-int post(sem *semaphore) {
-    acquire(semaphore->lock);
+int post(sem * semaphore) {
+    acquire(&semaphore->lock);
     
     semaphore->n++;
     
@@ -116,6 +130,6 @@ int post(sem *semaphore) {
         unblock_process(pcb->pid);
     }
     
-    release(semaphore->lock);
+    release(&semaphore->lock);
     return 0;
 }

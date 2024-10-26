@@ -121,7 +121,7 @@ void mm_free(void * ptr) {
     uint32_t index = (ptr - mm->start) / BLOCK_SIZE;
 
     if (index > mm->blocks || mm->bitmap[index] != START) {
-        drawWord1("INVALID MEMORY ADDRESS TO FREE");
+        //drawWord1("INVALID MEMORY ADDRESS TO FREE");
         return;
     }
 
