@@ -4,7 +4,7 @@
 #include "./test_sync.h"
 
 #define SEM_ID 3
-#define TOTAL_PAIR_PROCESSES 2
+#define TOTAL_PAIR_PROCESSES 1
 
 int64_t global; // shared memory
 
@@ -13,6 +13,7 @@ void slowInc(int64_t *p, int64_t inc) {
   call_nice(); // This makes the race condition highly probable
   aux += inc;
   *p = aux;
+
   if(inc > 0)
     print(0xFFFFFF," + ");
     else 
