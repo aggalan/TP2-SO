@@ -104,7 +104,7 @@ command_t commands[] = {
     {"process_test", process_test, "Runs the process test."},
     {"prio_test", prio_test, "Runs the priority test."},
     {"mem_test", mm_test, "Runs the memory test."},
-    {"sync_test", sync, "Runs the sync test."},
+    {"sync_test", sync, "Runs the sync test. (usage: sync_test sem || sync_test)"},
     {"ps", cmd_ps, "Displays the processes in the system."},
     {"time", cmd_time, "Displays the current time."},
     {"set_font", cmd_set_font, "Sets the font size."},
@@ -211,9 +211,29 @@ void sync(){
     argv_sync[3] = (char *)call_malloc(sizeof(char));
     str_cpy(argv_sync[0], "sync");
     str_cpy(argv_sync[1], "6");
-    str_cpy(argv_sync[2], "0");
+    // str_cpy(argv_sync[2], "1");
     str_cpy(argv_sync[3], "0");
+    char *str = buffer + str_len("sync_test ");
+    if (str_cmp(str, "sem") == 0)
+    {
+        str_cpy(argv_sync[2], "1");
+        // if(str_cmp(str, "sem &") == 0)
+        // call_create_process(test_sync, 1, 4, argv_sync, 0);
+        // else
+        // call_create_process(test_sync, 1, 4, argv_sync, 1);
+    }
+    else
+    {
+        str_cpy(argv_sync[2], "0");
+        // if(str_cmp(str, "&") == 0)
+        // call_create_process(test_sync, 1, 4, argv_sync, 0);
+        // else
+        // call_create_process(test_sync, 1, 4, argv_sync, 1);
+        
+    }
+
     call_create_process(test_sync, 1, 4, argv_sync, 0);
+
 }
 
 void cmd_help(char *args)

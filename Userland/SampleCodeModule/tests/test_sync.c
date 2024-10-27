@@ -4,7 +4,7 @@
 #include "./test_sync.h"
 
 #define SEM_ID 3
-#define TOTAL_PAIR_PROCESSES 1
+#define TOTAL_PAIR_PROCESSES 2
 
 int64_t global; // shared memory
 
@@ -14,10 +14,6 @@ void slowInc(int64_t *p, int64_t inc) {
   print(0xFFFFFF,"BEFORE  %d   ", aux);
   aux += inc;
   *p = aux;
-  if(inc > 0)
-    print(0xFFFFFF," + ");
-    else 
-    print(0xFFFFFF," - "); 
   print(0xFFFFFF," %d ", inc);
   print(0xFFFFFF," = %d\n", *p);
 }
@@ -75,8 +71,8 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
 
   uint64_t i;
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-    pids[i] = call_create_process(my_process_inc, 5, 4, argvDec, 0);
-    pids[i + TOTAL_PAIR_PROCESSES] = call_create_process(my_process_inc, 5, 4, argvInc, 0);
+    pids[i] = call_create_process(my_process_inc, 1, 4, argvDec, 0);
+    pids[i + TOTAL_PAIR_PROCESSES] = call_create_process(my_process_inc, 1, 4, argvInc, 0);
   }
 
 
