@@ -80,7 +80,6 @@ int str_cpy(char * dest, const char * src){
 
 void idle(){
 	while(1){
-//        drawWord1("\nniggers\n");
 		_hlt();
 	}
 }
