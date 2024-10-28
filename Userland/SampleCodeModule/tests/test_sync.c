@@ -11,11 +11,11 @@ int64_t global; // shared memory
 void slowInc(int64_t *p, int64_t inc) {
   uint64_t aux = *p;
   call_nice(); // This makes the race condition highly probable
-  print(0xFFFFFF,"BEFORE  %d   ", aux);
+//  print(0xFFFFFF,"BEFORE  %d   ", aux);
   aux += inc;
   *p = aux;
-  print(0xFFFFFF," %d ", inc);
-  print(0xFFFFFF," = %d\n", *p);
+//  print(0xFFFFFF," %d ", inc);
+//  print(0xFFFFFF," = %d\n", *p);
 }
 
 uint64_t my_process_inc(uint64_t argc, char *argv[]) {
@@ -41,11 +41,13 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
 
   uint64_t i;
   for (i = 0; i < n; i++) {
-    if (use_sem)
-      call_sem_wait(SEM_ID);
+    if (use_sem) {
+        call_sem_wait(SEM_ID);
+    }
     slowInc(&global, inc);
-    if (use_sem)
-      call_sem_post(SEM_ID);
+    if (use_sem) {
+        call_sem_post(SEM_ID);
+    }
   }
 
   return 0;
@@ -76,21 +78,19 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
   }
 
 
+    pid_t waited;
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-    call_waitpid(pids[i]);
-    call_waitpid(pids[i + TOTAL_PAIR_PROCESSES]);
-  }
-
-
-  if(global < 0){
-    print(0xFFFFFF,"COLOMBIANA");
+    waited = call_waitpid(pids[i]);
+      print(0xffffff,"I HAVE WAITED FOR: %d\n", waited);
+    waited = call_waitpid(pids[i + TOTAL_PAIR_PROCESSES]);
+      print(0xffffff,"I HAVE WAITED FOR: %d\n", waited);
   }
 
     print(0xFFFFFF,"\nFinal value: %d\n", global);
 
     if (satoi(argv[2]))
-    call_sem_close(SEM_ID);
+        call_sem_close(SEM_ID);
 
 
-  return 0;
+  return 1;
 }

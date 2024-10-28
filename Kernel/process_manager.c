@@ -50,6 +50,7 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv, int 
     pcb->is_waited = 0;
     pcb->child = NULL;
     pcb->ground = ground;
+    pcb->updated = 0;
 
     pcb->base = (uint64_t)mm_malloc(STACK);
     if ((void *)pcb->base == NULL)
@@ -152,39 +153,35 @@ pid_t kill_process_pid(pid_t pid)
     {
         int is_waited = pcb->is_waited;
         remove_child(parent, pid);
+        if (is_waited && parent->state == WAITING) {
+            parent->state = READY;
+        }
         _cli();
         remove_process(pid);
         remove_pcb(pid);
         _sti();
-        if (is_waited) {
-            parent->state = READY;
-        }
         if (state == RUNNING)
         {
             nice();
         }
         return pid;
     }
-    else
-    {
-        pcb->state = ZOMBIE;
-        // aca en linux se libera la mayoria de las cosas y te quedas con el return status para que lo levante el padre
-        // cabe aclarar que nuestro waitpid solo le pasamos pid creo entonces el parent nunca va a levantar el return status de hijo pero lo disenamos para que si quisiera lo pueda hacer
-    }
+
 
     if (pcb->is_waited)
     {
-            remove_child(parent, pid);
-            parent->state = READY;
-            _cli();
-            remove_process(pid);
-            remove_pcb(pid);
-            _sti();
+        remove_child(parent, pid);
+        parent->state = READY;
+        _cli();
+        remove_process(pid);
+        remove_pcb(pid);
+        _sti();
+    } else {
+        _cli();
+        pcb->state = ZOMBIE;
+        remove_process(pid);
+        _sti();
     }
-
-    _cli();
-    remove_process(pid);
-    _sti();
 
     if (state == RUNNING)
     {
@@ -255,6 +252,7 @@ pid_t block_process(pid_t pid)
         return -1;
     }
 
+    pcb->updated = 0;
     pcb->state = BLOCKED;
     pid_t process = running_process();
     if (pcb->pid == process)
@@ -295,6 +293,7 @@ pid_t wait_pid(pid_t pid_to_wait)
     if (pcb->state != ZOMBIE)
     {
         PCB *to_wait = get_current();
+        to_wait->updated = 0;
         to_wait->state = WAITING;
         nice();
     } else {

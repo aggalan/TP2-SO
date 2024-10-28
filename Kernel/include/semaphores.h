@@ -8,9 +8,9 @@
 #include "../collections/include/collections.h"
 
 
-typedef struct{
+typedef struct sem{
     int id;
-    linked_list_ADT blocked;
+    queue_sem_ADT blocked;
     int n;
     uint64_t lock;
 }sem;

@@ -214,25 +214,27 @@ void sync(){
     // str_cpy(argv_sync[2], "1");
     str_cpy(argv_sync[3], "0");
     char *str = buffer + str_len("sync_test ");
-    if (str_cmp(str, "sem") == 0)
+    if (str_cmp(cut_string(str), "sem") == 0)
     {
+        print(WHITE, "USING SEMAPHORES\n");
         str_cpy(argv_sync[2], "1");
-        // if(str_cmp(str, "sem &") == 0)
-        // call_create_process(test_sync, 1, 4, argv_sync, 0);
-        // else
-        // call_create_process(test_sync, 1, 4, argv_sync, 1);
+         if(str_cmp(str, "sem &") == 0)
+            call_create_process(test_sync, 1, 4, argv_sync, 0);
+         else
+            call_create_process(test_sync, 1, 4, argv_sync, 1);
     }
     else
     {
+        print(WHITE, "NOT USING SEMAPHORES\n");
         str_cpy(argv_sync[2], "0");
-        // if(str_cmp(str, "&") == 0)
-        // call_create_process(test_sync, 1, 4, argv_sync, 0);
-        // else
-        // call_create_process(test_sync, 1, 4, argv_sync, 1);
+         if(str_cmp(str, "&") == 0)
+         call_create_process(test_sync, 1, 4, argv_sync, 0);
+         else
+         call_create_process(test_sync, 1, 4, argv_sync, 1);
         
     }
 
-    call_create_process(test_sync, 1, 4, argv_sync, 0);
+//    call_create_process(test_sync, 1, 4, argv_sync, 1);
 
 }
 

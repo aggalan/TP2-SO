@@ -69,7 +69,7 @@ int my_sem_close(int id) {
         unblock_process(pid);
     }
     
-    my_sem_free(semaphore);
+    my_sem_free(id);
     manager->semaphores[id] = NULL;
     release(&semaphore->lock);
     
