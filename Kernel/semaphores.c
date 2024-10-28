@@ -11,11 +11,11 @@
 
 int wait(sem *semaphore);
 int post(sem *semaphore);
-sem *my_sem_create(int n);
+sem * my_sem_create(int n);
 
 typedef struct sem_manager_cdt
 {
-    sem *semaphores[MAX_SEMAPHORES];
+    sem * semaphores[MAX_SEMAPHORES];
 } sem_manager_cdt;
 
 sem_manager_adt manager = NULL;
@@ -76,9 +76,7 @@ int my_sem_close(int id)
     }
 
     my_sem_free(id);
-    manager->semaphores[id] = NULL;
     release(&semaphore->lock);
-
     return 0;
 }
 
@@ -102,13 +100,14 @@ int my_sem_post(int id)
 
 void my_sem_free(int id)
 {
-    if (manager->semaphores[id] != NULL)
+    if (manager->semaphores[id] == NULL)
     {
         return;
     }
 
     mm_free(manager->semaphores[id]->blocked);
     mm_free(manager->semaphores[id]);
+    manager->semaphores[id] = NULL;
 }
 
 int wait(sem *semaphore)
@@ -132,7 +131,6 @@ int post(sem *semaphore)
 {
     acquire(&semaphore->lock);
 
-    // Intentar despertar un proceso bloqueado, si hay alguno
     pid_t pid = sem_remove(semaphore->blocked);
     if (pid > 1)
     {
