@@ -43,48 +43,26 @@ void put_string(const char *s, uint32_t hex_color)
     call_sys_write(STDOUT, s, str_len(s), hex_color);
 }
 
-void print(uint32_t hexColor, const char *str, ...)
-{
+void print(int color, const char *format, ...) {
     va_list args;
-    va_start(args, str);
+    va_start(args, format);
 
-    while (*str != '\0')
-    {
-        if (*str == '%')
-        {
-            str++;
-
-            switch (*str)
-            {
-            case 'c':
-            {
-                char c = va_arg(args, int);
-                putC(c, hexColor);
-                break;
+    while (*format) {
+        if (*format == '%' && *(format + 1) == 'd') {
+            int num = va_arg(args, int);
+            if (num < 0) {
+                putC('-', 0xFFFFFF);
+                num = -num;
             }
-            case 'd':
-            {
-                int d = va_arg(args, int);
-                put_int(d, hexColor);
-                break;
-            }   
-            case 's':
-            {
-                char *s = va_arg(args, char *);
-                put_string(s, hexColor);
-                break;
-            }
-            }
+            put_int(num, 0xFFFFFF); // Assuming print_number is a function that prints positive numbers
+            format += 2;
+        } else {
+            putC(*format, 0xFFFFFF);
+            format++;
         }
-        else
-        {
-            putC(*str, hexColor);
-        }
-        str++;
     }
 
     va_end(args);
-    return;
 }
 
 int str_len(const char *str)
@@ -155,5 +133,11 @@ void str_to_upper(char *str)
     {
         *str = TO_UPPER(*str);
         str++;
+    }
+}
+
+void loop() {
+    while(1) {
+        ;
     }
 }

@@ -86,8 +86,12 @@ uint64_t schedule(uint64_t rsp) {
     } else if (processes->current->data->state != ZOMBIE && processes->current->data->state != READY) { // CREO QUE ZOMBIES NUNCA VAN A ESTAR PERO BUENO
         if (processes->current->data->state == RUNNING) {
             processes->current->data->state = READY;
+            processes->current->data->rsp = rsp;
+        }else if (!processes->current->data->updated) {
+            processes->current->data->rsp = rsp;
+            processes->current->data->updated = 1;
         }
-        processes->current->data->rsp = rsp;
+
     }
 
     node_t * aux = processes->current;

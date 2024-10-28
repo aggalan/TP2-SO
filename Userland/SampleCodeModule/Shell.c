@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "tests/test_processes.h"
 #include "tests/test_util.h"
+#include "tests/test_sync.h"
 #define WHITE 0xFFFFFFFF
 
 typedef void (*command_func_t)(char *args);
@@ -92,6 +93,8 @@ void cmd_set_font(char *args);
 void cmd_print_registers();
 void cmd_exit();
 void cmd_ps();
+void sync();
+void busy_wait();
 
 command_t commands[] = {
     {"help", cmd_help, "Displays this help message."},
@@ -102,6 +105,7 @@ command_t commands[] = {
     {"process_test", process_test, "Runs the process test."},
     {"prio_test", prio_test, "Runs the priority test."},
     {"mem_test", mm_test, "Runs the memory test."},
+    {"sync_test", sync, "Runs the sync test. (usage: sync_test sem || sync_test)"},
     {"ps", cmd_ps, "Displays the processes in the system."},
     {"time", cmd_time, "Displays the current time."},
     {"set_font", cmd_set_font, "Sets the font size."},
@@ -113,7 +117,9 @@ command_t commands[] = {
     {"div_0", call_div0, "Generates a division by zero exception."},
     {"invalid_op", call_invalid_op, "Generates an invalid operation exception."},
     {"get_registers", cmd_print_registers, "Prints the registers of the current process."},
-    {"exit", cmd_exit, "Exits the shell."}};
+    {"exit", cmd_exit, "Exits the shell."},
+    {"loop", busy_wait, "Creates a process whose purpose is to be monitored"}
+    };
 
 void line_read(char *buffer)
 {
@@ -200,13 +206,66 @@ void prio_test()
     }
 }
 
+void sync(){
+    char ** argv_sync = (char **)(uintptr_t)call_malloc(4 *sizeof(char *));
+    argv_sync[0] = (char *)call_malloc(sizeof(char) * (str_len("sync") + 1));
+    argv_sync[1] = (char *)call_malloc(sizeof(char));
+    argv_sync[2] = (char *)call_malloc(sizeof(char));
+    argv_sync[3] = (char *)call_malloc(sizeof(char));
+    str_cpy(argv_sync[0], "sync");
+    str_cpy(argv_sync[1], "6");
+    // str_cpy(argv_sync[2], "1");
+    str_cpy(argv_sync[3], "0");
+    char *str = buffer + str_len("sync_test ");
+    if (str_cmp(cut_string(str), "sem") == 0)
+    {
+        print(WHITE, "USING SEMAPHORES\n");
+        str_cpy(argv_sync[2], "1");
+         if(str_cmp(str, "sem &") == 0)
+            call_create_process(test_sync, 1, 4, argv_sync, 0);
+         else
+            call_create_process(test_sync, 1, 4, argv_sync, 1);
+    }
+    else
+    {
+        print(WHITE, "NOT USING SEMAPHORES\n");
+        str_cpy(argv_sync[2], "0");
+         if(str_cmp(str, "&") == 0)
+         call_create_process(test_sync, 1, 4, argv_sync, 0);
+         else
+         call_create_process(test_sync, 1, 4, argv_sync, 1);
+        
+    }
+
+//    call_create_process(test_sync, 1, 4, argv_sync, 1);
+
+}
+
+void busy_wait() {
+    char ** argv_loop = (char **)(uintptr_t)call_malloc(sizeof(char *));
+    argv_loop[0] = (char *)call_malloc(sizeof(char) * (str_len("loop") + 1));
+    str_cpy(argv_loop[0], "loop");
+    call_create_process(loop, 1, 1, argv_loop, 0);
+}
+
 void cmd_help(char *args)
 {
     put_string("The following commands may be used: \n", WHITE);
+    int max_len = 0;
+    int aux = 0;
+    for (int j = 0; j < sizeof(commands)/sizeof(commands[0]); j++) {
+        if ((aux = str_len(commands[j].command)) > max_len) {
+            max_len = aux;
+        }
+    }
+    max_len += 2;
     for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
     {
         put_string(commands[i].command, WHITE);
         put_string(": ", WHITE);
+        for (int z = 0; z < (max_len - str_len(commands[i].command)); z++) {
+            put_string(" ", WHITE);
+        }
         put_string(commands[i].description, WHITE);
         put_string("\n", WHITE);
     }

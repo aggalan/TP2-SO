@@ -37,6 +37,7 @@ typedef struct PCB{
     int ground;
     int state;
     int priority;
+    int updated;
     int is_waited;
     struct child_node * child;
 }PCB;

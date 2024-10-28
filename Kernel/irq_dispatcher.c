@@ -12,6 +12,7 @@
 #include "./memory_manager/include/memory_manager.h"
 #include "include/process_manager.h"
 #include "include/scheduler.h"
+#include "include/semaphores.h"
 
 static void irq_write(uint64_t rsi, char *rdx, uint64_t rcx, uint64_t r8);
 static void irq_read(uint64_t rsi, char *rdx, uint64_t rcx);
@@ -43,6 +44,12 @@ static pid_t irq_create_process(uint64_t rsi, uint8_t rdx, uint64_t rcx, char **
 static int irq_print_processes();
 static pid_t irq_get_current_pid();
 static pid_t irq_kill_process();
+static void irq_nice();
+static int irq_sem_open(int rsi);
+static int irq_sem_close(int rsi);
+static int irq_sem_wait(int rsi);
+static int irq_sem_post(int rsi, int rdx);
+static int irq_sem_init(int rsi, int rdx);
 
 
 typedef uint64_t (*syscall_func_t)(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t);
@@ -78,6 +85,12 @@ syscall_func_t syscalls[] = {
     [28] = (syscall_func_t) irq_print_processes,
     [29] = (syscall_func_t) irq_get_current_pid,
     [30] = (syscall_func_t) irq_kill_process,
+    [31] = (syscall_func_t) irq_nice,
+    [32] = (syscall_func_t) irq_sem_open,
+    [33] = (syscall_func_t) irq_sem_close,
+    [34] = (syscall_func_t) irq_sem_wait,
+    [35] = (syscall_func_t) irq_sem_post,
+    [36] = (syscall_func_t) irq_sem_init
 };
 
 static void int_20();
@@ -249,6 +262,30 @@ static pid_t irq_get_current_pid() {
 
 static pid_t irq_kill_process() {
     return kill_process();
+}
+
+static void irq_nice(){
+    nice();
+}
+
+static int irq_sem_open(int rsi){
+    return my_sem_open(rsi);
+}
+
+static int irq_sem_close(int rsi){
+    return my_sem_close(rsi);
+}
+
+static int irq_sem_wait(int rsi){
+    return my_sem_wait(rsi);
+}
+
+static int irq_sem_post(int rsi, int rdx){
+    return my_sem_post(rsi);
+}
+
+static int irq_sem_init(int rsi, int rdx){
+    return my_sem_init(rsi, rdx);
 }
 
 

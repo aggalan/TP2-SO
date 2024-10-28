@@ -133,6 +133,7 @@ getRegisters:
 
 nice:
 	int 0x20
+	ret
 
 getFlag:
 	movzx rax, byte[flag]

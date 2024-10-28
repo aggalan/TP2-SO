@@ -16,7 +16,6 @@ linked_list_ADT ll_init() {
     list_ptr->first = NULL;
     list_ptr->last = NULL;
     list_ptr->current = NULL;
-//    list_ptr->total_size = 0;
     return list_ptr;
 }
 
@@ -188,6 +187,4 @@ node_t * find(pid_t pid_find, linked_list_ADT list) {
     }while (aux != list->last);
     return NULL;
 }
-
-
 

@@ -29,6 +29,12 @@ GLOBAL call_ps
 GLOBAL call_kill_process
 GLOBAL call_get_current_pid
 GLOBAL call_annihilate
+GLOBAL call_nice
+GLOBAL call_sem_open
+GLOBAL call_sem_close
+GLOBAL call_sem_wait
+GLOBAL call_sem_post
+GLOBAL call_sem_init
 
 
 section .text
@@ -108,6 +114,18 @@ call_get_current_pid:
     call_to_handler 29
 call_kill_process:
     call_to_handler 30
+call_nice:
+    call_to_handler 31
+call_sem_open:
+    call_to_handler 32
+call_sem_close:
+    call_to_handler 33
+call_sem_wait:
+    call_to_handler 34
+call_sem_post:
+    call_to_handler 35
+call_sem_init:
+    call_to_handler 36
 
 
 invalid_op_asm:

@@ -41,7 +41,8 @@ void put_int(uint64_t num, uint32_t hexColor);
 
 // Prints the formatted string passed as the second argument in the color specified by the hexadecimal color code passed as the first argument. 
 // Similar to c standarlibrary functino printf.
-void print(uint32_t hexColor, const char * format, ...);
+
+void print(int color, const char *format, ...);  
 
 // Compares two strings. 
 // Returns 0 if the strings are equal, a positive integer if the first string is greater, or a negative integer if the second string is greater.
@@ -67,5 +68,9 @@ int get_buffer(char * buf);
 
 // Converts all lowercase characters in the string passed as the argument to uppercase.
 void str_to_upper(char *str);
+
+// its purpose is to be monitored
+void loop();
+
 
 #endif // TPE_LIB_H

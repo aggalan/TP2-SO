@@ -5,31 +5,33 @@ GLOBAL getMinutes
 GLOBAL getSeconds
 GLOBAL inb
 GLOBAL outb
+GLOBAL acquire
+GLOBAL release
 section .text
-	
+    
 cpuVendor:
-	push rbp
-	mov rbp, rsp
+    push rbp
+    mov rbp, rsp
 
-	push rbx
+    push rbx
 
-	mov rax, 0
-	cpuid
+    mov rax, 0
+    cpuid
 
 
-	mov [rdi], ebx
-	mov [rdi + 4], edx
-	mov [rdi + 8], ecx
+    mov [rdi], ebx
+    mov [rdi + 4], edx
+    mov [rdi + 8], ecx
 
-	mov byte [rdi+13], 0
+    mov byte [rdi+13], 0
 
-	mov rax, rdi
+    mov rax, rdi
 
-	pop rbx
+    pop rbx
 
-	mov rsp, rbp
-	pop rbp
-	ret
+    mov rsp, rbp
+    pop rbp
+    ret
 
 getKey:
   push rbp
@@ -42,8 +44,8 @@ _good:
   ret
 
  getHours:
-  	push rbp
-  	mov rbp, rsp
+      push rbp
+      mov rbp, rsp
       xor rax, rax
         xor rdi, rdi
         mov al, 0x0B
@@ -51,17 +53,17 @@ _good:
         in al, 71h
         or al, 0x04
         out 71h, al
-  	mov al, 4
-  	out 0x70, al
-  	in al, 0x71
+      mov al, 4
+      out 0x70, al
+      in al, 0x71
 
-  	mov rsp, rbp
-  	pop rbp
-  	ret
+      mov rsp, rbp
+      pop rbp
+      ret
 
   getMinutes:
-  	push rbp
-  	mov rbp, rsp
+      push rbp
+      mov rbp, rsp
      xor rax, rax
        xor rdi, rdi
        mov al, 0x0B
@@ -69,17 +71,17 @@ _good:
        in al, 71h
        or al, 0x04
        out 71h, al
-  	mov al, 2
-  	out 0x70, al
-  	in al, 0x71
+      mov al, 2
+      out 0x70, al
+      in al, 0x71
 
-  	mov rsp, rbp
-  	pop rbp
-  	ret
+      mov rsp, rbp
+      pop rbp
+      ret
 
   getSeconds:
-  	push rbp
-  	mov rbp, rsp
+      push rbp
+      mov rbp, rsp
     xor rax, rax
       xor rdi, rdi
       mov al, 0x0B
@@ -87,35 +89,49 @@ _good:
       in al, 71h
       or al, 0x04
       out 71h, al
-  	mov al, 0
-  	out 0x70, al
-  	in al, 0x71
+      mov al, 0
+      out 0x70, al
+      in al, 0x71
 
-  	mov rsp, rbp
-  	pop rbp
-  	ret
+      mov rsp, rbp
+      pop rbp
+      ret
 
 
-inb:				; Funciones para el correcto funcionamiento del soundDriver
-	push rbp
-	mov rbp, rsp
+inb:                ; Funciones para el correcto funcionamiento del soundDriver
+    push rbp
+    mov rbp, rsp
 
     mov rdx,rdi
-    in al,dx		; pasaje en 8 bits
+    in al,dx        ; pasaje en 8 bits
 
-	mov rsp, rbp
-	pop rbp
-	ret
+    mov rsp, rbp
+    pop rbp
+    ret
 
 outb:
-	push rbp
-	mov rbp, rsp
+    push rbp
+    mov rbp, rsp
 
     mov rax, rsi    
     mov rdx, rdi
-	out dx, al		; pasaje en 8 bits
+    out dx, al        ; pasaje en 8 bits
 
-	mov rsp, rbp
-	pop rbp
-	ret
+    mov rsp, rbp
+    pop rbp
+    ret
 
+
+acquire:
+    mov al, 0
+.loop:
+    xchg [rdi], al
+    test al, al
+    jz .loop
+    ret
+
+release:
+    mov byte [rdi], 1
+    ret
+
+;revisar size
