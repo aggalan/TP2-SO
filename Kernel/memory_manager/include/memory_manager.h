@@ -7,16 +7,12 @@
 #define HEAP_SIZE       0x10000000  // 256MB heap
 #define BLOCK_SIZE      32        //  bytes per block
 
-
-typedef struct memory_manager {
-    void * start;
-    uint32_t blocks;
-    uint32_t used;
-    uint32_t * bitmap;
-    size_t current;
-} memory_manager;
-
-typedef struct memory_manager * memory_manager_ADT;
+typedef struct memory_status_t
+{
+    uint64_t total_memory;
+    uint64_t used_memory;
+    uint64_t free_memory;
+} memory_status_t;
 
 typedef enum BlockStatus {
     FREE,

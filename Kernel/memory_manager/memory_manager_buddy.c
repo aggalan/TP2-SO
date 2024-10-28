@@ -14,13 +14,6 @@ typedef struct Block
     BlockStatus status;
 } Block;
 
-typedef struct memory_status_t
-{
-    uint64_t total_memory;
-    uint64_t used_memory;
-    uint64_t free_memory;
-} memory_status_t;
-
 Block *free_lists[AMOUNT_OF_ORDERS];
 void *base_address;
 uint64_t total_memory_size;
