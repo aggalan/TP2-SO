@@ -159,10 +159,8 @@ pid_t kill_process_pid(pid_t pid)
         if (is_waited && parent->state == WAITING) {
             parent->state = READY;
         }
-        _cli();
         remove_process(pid);
         remove_pcb(pid);
-        _sti();
         if (state == RUNNING)
         {
             nice();
@@ -175,15 +173,11 @@ pid_t kill_process_pid(pid_t pid)
     {
         remove_child(parent, pid);
         parent->state = READY;
-        _cli();
         remove_process(pid);
         remove_pcb(pid);
-        _sti();
     } else {
-        _cli();
         pcb->state = ZOMBIE;
         remove_process(pid);
-        _sti();
     }
 
     if (state == RUNNING)
