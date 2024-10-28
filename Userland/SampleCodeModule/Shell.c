@@ -101,7 +101,7 @@ command_t tests[] = {
     {"mem", mm_test, "Runs the memory test."},
     {"process", process_test, "Runs the process test."},
     {"prio", prio_test, "Runs the priority test."},
-    {"sync", sync_test, "Runs the sync test. (usage: sync [-sem])"}};
+    {"sync", sync_test, "Runs the sync test. (usage: sync [-nosem])"}};
 
 command_t commands[] = {
     {"help", cmd_help, "Displays this help message."},
@@ -224,7 +224,7 @@ void sync_test()
     str_cpy(argv_sync[1], "6");
     str_cpy(argv_sync[3], "0");
     char *str = buffer + str_len("sync ");
-    if (str_cmp(cut_string(str), "-sem") == 0)
+    if (str_cmp(cut_string(str), "") == 0)
     {
         print(WHITE, "USING SEMAPHORES\n");
         str_cpy(argv_sync[2], "1");
@@ -233,7 +233,7 @@ void sync_test()
         else
             call_create_process(test_sync, 1, 4, argv_sync, 1);
     }
-    else
+    else if(str_cmp(str, "-nosem") == 0)
     {
         print(WHITE, "NOT USING SEMAPHORES\n");
         str_cpy(argv_sync[2], "0");
@@ -241,6 +241,10 @@ void sync_test()
             call_create_process(test_sync, 1, 4, argv_sync, 0);
         else
             call_create_process(test_sync, 1, 4, argv_sync, 1);
+    }
+    else
+    {
+        print(WHITE, "Invalid flag\n");
     }
 
 }

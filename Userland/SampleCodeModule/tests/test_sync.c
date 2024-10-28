@@ -8,17 +8,19 @@
 
 int64_t global; // shared memory
 
-void slowInc(int64_t *p, int64_t inc) {
+void slowInc(int64_t *p, int64_t inc)
+{
   uint64_t aux = *p;
   call_nice(); // This makes the race condition highly probable
-//  print(0xFFFFFF,"BEFORE  %d   ", aux);
+               //  print(0xFFFFFF,"BEFORE  %d   ", aux);
   aux += inc;
   *p = aux;
-//  print(0xFFFFFF," %d ", inc);
-//  print(0xFFFFFF," = %d\n", *p);
+  //  print(0xFFFFFF," %d ", inc);
+  //  print(0xFFFFFF," = %d\n", *p);
 }
 
-uint64_t my_process_inc(uint64_t argc, char *argv[]) {
+uint64_t my_process_inc(uint64_t argc, char *argv[])
+{
   uint64_t n;
   int8_t inc;
   int8_t use_sem;
@@ -34,26 +36,31 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
     return -1;
 
   if (use_sem)
-    if (call_sem_open(SEM_ID) == -1) {
-      print(0xFFFFFF,"test_sync: ERROR opening semaphore\n");
+    if (call_sem_open(SEM_ID) == -1)
+    {
+      print(0xFFFFFF, "test_sync: ERROR opening semaphore\n");
       return -1;
     }
 
   uint64_t i;
-  for (i = 0; i < n; i++) {
-    if (use_sem) {
-        call_sem_wait(SEM_ID);
+  for (i = 0; i < n; i++)
+  {
+    if (use_sem)
+    {
+      call_sem_wait(SEM_ID);
     }
     slowInc(&global, inc);
-    if (use_sem) {
-        call_sem_post(SEM_ID);
+    if (use_sem)
+    {
+      call_sem_post(SEM_ID);
     }
   }
 
   return 0;
 }
 
-uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
+uint64_t test_sync(uint64_t argc, char *argv[])
+{ //{n, use_sem, 0}
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
 
   if (argc != 4)
@@ -64,33 +71,33 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
 
   global = 0;
 
-  if(satoi(argv[2])){
-    if(call_sem_init(SEM_ID, 1) == -1){
-        print(0xFFFFFF, "test_sync: ERROR creating semaphore\n");
-        return -1;
+  if (satoi(argv[2]))
+  {
+    if (call_sem_init(SEM_ID, 1) == -1)
+    {
+      print(0xFFFFFF, "test_sync: ERROR creating semaphore\n");
+      return -1;
     }
   }
 
   uint64_t i;
-  for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
+  for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
+  {
     pids[i] = call_create_process(my_process_inc, 1, 4, argvDec, 0);
     pids[i + TOTAL_PAIR_PROCESSES] = call_create_process(my_process_inc, 1, 4, argvInc, 0);
   }
 
-
-    pid_t waited;
-  for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-    waited = call_waitpid(pids[i]);
-      print(0xffffff,"I HAVE WAITED FOR: %d\n", waited);
-    waited = call_waitpid(pids[i + TOTAL_PAIR_PROCESSES]);
-      print(0xffffff,"I HAVE WAITED FOR: %d\n", waited);
+  pid_t waited;
+  for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
+  {
+    call_waitpid(pids[i]);
+    call_waitpid(pids[i + TOTAL_PAIR_PROCESSES]);
   }
 
-    print(0xFFFFFF,"\nFinal value: %d\n", global);
+  print(0xFFFFFF, "Final value: %d\n", global);
 
-    if (satoi(argv[2]))
-        call_sem_close(SEM_ID);
-
+  if (satoi(argv[2]))
+    call_sem_close(SEM_ID);
 
   return 1;
 }
