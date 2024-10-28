@@ -1,11 +1,11 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+// PVS-Studio Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include "Drivers/include/video_driver.h"
 #include "include/syscalls.h"
 #include "include/keyboard_buffer.h"
 #include "include/libasm.h"
 #include <naive_console.h>
-#include <stdio.h>
+
 #define MIN(x, y) x < y ? x : y
 
 void sys_write(int descriptor, const char *str, int len, uint32_t hexColor)
@@ -56,4 +56,204 @@ void twoChars(char *first, int j, char *app)
     {
         first[j + i] = app[i];
     }
+}
+
+void irq_write(uint64_t rsi, char *rdx, uint64_t rcx, uint64_t r8)
+{
+    sys_write(rsi, rdx, rcx, r8);
+}
+
+void irq_read(uint64_t rsi, char *rdx, uint64_t rcx)
+{
+    sys_read(rsi, rdx, rcx);
+}
+
+void irq_clock(char *rsi)
+{
+    clock(rsi);
+}
+
+int irq_print_registers(uint32_t rsi)
+{
+    if (getFlag() || rsi == 1)
+    {
+        if (getFlag() == 0)
+        {
+            drawWord(0x00FF0000, "You must take a screenshot first, press : and try again.\n");
+            return 0;
+        }
+        printRegisters(getRegisters(), 0x00ffffff);
+    }
+    printRegisters(getRegisters(), rsi);
+    return 0;
+}
+
+int irq_clear()
+{
+    clear();
+    return 0;
+}
+
+int irq_ticks_elapsed()
+{
+    return ticks_elapsed();
+}
+
+uint16_t irq_getHeight()
+{
+    return getHeight();
+}
+
+uint16_t irq_getWidth()
+{
+    return getWidth();
+}
+
+int irq_moveCursorX(uint16_t rsi)
+{
+    moveCursorX(rsi);
+    return 0;
+}
+
+int irq_moveCursorY(uint16_t rsi)
+{
+    moveCursorY(rsi);
+    return 0;
+}
+
+int irq_drawRectangle(uint32_t rsi, uint32_t rdx, uint32_t rcx, uint32_t r8, uint32_t r9)
+{
+    drawRectangle(rsi, rdx, rcx, r8, r9);
+    return 0;
+}
+
+int irq_sleepms(uint32_t rsi)
+{
+    sleepms(rsi);
+    return 0;
+}
+
+int irq_setFontSize(uint32_t rsi)
+{
+    return (int)setFontSize(rsi);
+}
+
+int irq_beep()
+{
+    beep();
+    return 0;
+}
+
+int irq_mm_status()
+{
+    mm_status();
+    return 0;
+}
+
+int case_17()
+{
+    return 0;
+}
+
+int case_18()
+{
+    return 0;
+}
+
+int irq_annihilate()
+{
+    annihilate();
+    return 0;
+}
+
+pid_t irq_block_process(pid_t rsi)
+{
+    return block_process(rsi);
+}
+
+pid_t irq_unblock_process(pid_t rsi)
+{
+    return unblock_process(rsi);
+}
+
+pid_t irq_kill_process_pid(pid_t rsi)
+{
+    return kill_process_pid(rsi);
+}
+
+int case_22()
+{
+    return 0;
+}
+
+pid_t irq_wait_pid(pid_t rsi)
+{
+    return wait_pid(rsi);
+}
+
+int irq_change_priority(pid_t rsi, uint8_t rdx)
+{
+    return change_priority(rsi, rdx);
+}
+
+uint64_t irq_mm_malloc(uint32_t rsi)
+{
+    return (uint64_t)mm_malloc(rsi);
+}
+
+int irq_mm_free(void *rsi)
+{
+    mm_free(rsi);
+    return 0;
+}
+
+pid_t irq_create_process(uint64_t rsi, uint8_t rdx, uint64_t rcx, char **r8, int r9)
+{
+    return create_process(rsi, rdx, rcx, r8, r9);
+}
+
+int irq_print_processes()
+{
+    print_processes();
+    return 0;
+}
+
+pid_t irq_get_current_pid()
+{
+    return get_current_pid();
+}
+
+pid_t irq_kill_process()
+{
+    return kill_process();
+}
+
+void irq_nice()
+{
+    nice();
+}
+
+int irq_sem_open(int rsi)
+{
+    return my_sem_open(rsi);
+}
+
+int irq_sem_close(int rsi)
+{
+    return my_sem_close(rsi);
+}
+
+int irq_sem_wait(int rsi)
+{
+    return my_sem_wait(rsi);
+}
+
+int irq_sem_post(int rsi, int rdx)
+{
+    return my_sem_post(rsi);
+}
+
+int irq_sem_init(int rsi, int rdx)
+{
+    return my_sem_init(rsi, rdx);
 }
