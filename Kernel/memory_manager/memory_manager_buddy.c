@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #ifdef BUDDY
 #include "./include/memory_manager.h"
 #include "../Drivers/include/video_driver.h"
@@ -169,7 +171,8 @@ void mm_free(void *ptr)
     free_lists[order - MIN_ORDER] = block;
 }
 
-void mm_status() {
+void mm_status()
+{
     drawWord1("Running on Buddy System");
     newLine();
     drawWord1("Memory Status:");

@@ -1,10 +1,11 @@
- /*
+/*
  *   interrupts.h
  *
  *  Created on: Apr 18, 2010
  *      Author: anizzomc
  */
-
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #ifndef INTERRUPS_H_
 #define INTERRUPS_H_
 
@@ -24,7 +25,7 @@ void _exception0Handler(void);
 void _exception6Handler(void);
 void _cli(void);
 void saveRegisters();
- uint64_t * getRegisters();
+uint64_t *getRegisters();
 short getFlag();
 void printRegistersAsm(uint32_t colour);
 
@@ -36,7 +37,7 @@ void picMasterMask(uint8_t mask);
 
 void picSlaveMask(uint8_t mask);
 
-//Termina la ejecución de la cpu.
+// Termina la ejecución de la cpu.
 void haltcpu(void);
 
 void nice();

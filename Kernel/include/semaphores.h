@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #ifndef SEMAPHORE_H
 #define SEMAPHORE_H
 
@@ -7,15 +9,15 @@
 #include "libasm.h"
 #include "../collections/include/collections.h"
 
-
-typedef struct sem{
+typedef struct sem
+{
     int id;
     queue_sem_ADT blocked;
     int n;
     uint64_t lock;
-}sem;
+} sem;
 
-typedef struct sem_manager_cdt * sem_manager_adt;
+typedef struct sem_manager_cdt *sem_manager_adt;
 
 void sem_manager();
 int my_sem_open(int id);

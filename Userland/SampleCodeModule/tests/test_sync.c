@@ -89,7 +89,6 @@ uint64_t test_sync(uint64_t argc, char *argv[])
     pids[i + TOTAL_PAIR_PROCESSES] = call_create_process(my_process_inc, 1, 4, argvInc, 0);
   }
 
-  pid_t waited;
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
   {
     call_waitpid(pids[i]);

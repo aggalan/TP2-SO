@@ -1,10 +1,11 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include "include/video_driver.h"
 #include "include/fonts.h"
 #include "../include/naive_console.h"
 #include <naive_console.h>
 #include <lib.h>
 #include "../include/keyboard_buffer.h"
-#include "include/scan_code.h"
 #include "../include/lib.h"
 struct vbe_mode_info_structure
 {

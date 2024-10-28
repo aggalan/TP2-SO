@@ -95,7 +95,7 @@ void call_free(void *ptr);
 
 pid_t call_create_process(void *entryPoint, int prio, int argc, char *argv[], int ground);
 
-PCB_t *call_ps();
+void call_ps();
 
 pid_t call_get_current_pid();
 

@@ -1,13 +1,12 @@
 #include <naive_console.h>
 
-
-static char buffer[64] = { '0' };
-static uint8_t * const video = (uint8_t*)0xB8000;
-static uint8_t * currentVideo = (uint8_t*)0xB8000;
+static char buffer[64] = {'0'};
+static uint8_t *const video = (uint8_t *)0xB8000;
+static uint8_t *currentVideo = (uint8_t *)0xB8000;
 static const uint32_t width = 80;
-static const uint32_t height = 25 ;
+static const uint32_t height = 25;
 
-void ncPrint(const char * string)
+void ncPrint(const char *string)
 {
 	int i;
 
@@ -26,8 +25,7 @@ void ncNewline()
 	do
 	{
 		ncPrintChar(' ');
-	}
-	while((uint64_t)(currentVideo - video) % (width * 2) != 0);
+	} while ((uint64_t)(currentVideo - video) % (width * 2) != 0);
 }
 
 void ncPrintDec(uint64_t value)
@@ -47,8 +45,8 @@ void ncPrintBin(uint64_t value)
 
 void ncPrintBase(uint64_t value, uint32_t base)
 {
-    uintToBase(value, buffer, base);
-    ncPrint(buffer);
+	uintToBase(value, buffer, base);
+	ncPrint(buffer);
 }
 
 void ncClear()
@@ -63,37 +61,35 @@ void ncClear()
 int getHours();
 int getMinutes();
 int getSeconds();
-int gmtM3(int hours){
-	hours=(hours + 21) % 24;
+int gmtM3(int hours)
+{
+	hours = (hours + 21) % 24;
 	return hours;
 }
-void clock(char * buffer){
- 	int digits = uintToBase(gmtM3(getHours()), buffer, 10);
+void clock(char *buffer)
+{
+	int digits = uintToBase(gmtM3(getHours()), buffer, 10);
 	buffer[digits++] = ':';
-	digits += uintToBase(getMinutes(), buffer+digits, 10);
+	digits += uintToBase(getMinutes(), buffer + digits, 10);
 	buffer[digits++] = ':';
-	digits += uintToBase(getSeconds(), buffer+digits, 10);
-	buffer[digits++] ='\0';
+	digits += uintToBase(getSeconds(), buffer + digits, 10);
+	buffer[digits++] = '\0';
 }
 
-uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base)
+uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)
 {
 	char *p = buffer;
 	char *p1, *p2;
 	uint32_t digits = 0;
 
-	
 	do
 	{
 		uint32_t remainder = value % base;
 		*p++ = (remainder < 10) ? remainder + '0' : remainder + 'A' - 10;
 		digits++;
-	}
-	while (value /= base);
+	} while (value /= base);
 
-	
 	*p = 0;
-
 
 	p1 = buffer;
 	p2 = p - 1;

@@ -1,8 +1,9 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include "include/keyboard_driver.h"
 #include "../include/keyboard_buffer.h"
 #include "../include/interrupts.h"
 #include <stdio.h>
-#include "include/scan_code.h"
 #include "include/video_driver.h"
 #include "libasm.h"
 #include "../include/process_manager.h"
@@ -47,21 +48,29 @@ void keyboard_handler()
 {
   uint16_t code = getKey();
 
-  if (code == CTRL) {
+  if (code == CTRL)
+  {
+    control_pressed = 1;
+    return;
+  }
+  else if (code == CTRL_RLS)
+  {
+    control_pressed = 0;
+    return;
+  }
+  else if (code == EXTENDED_KEY)
+  {
+    code = getKey();
+    if (code == CTRL)
+    {
       control_pressed = 1;
       return;
-  } else if (code == CTRL_RLS) {
+    }
+    else if (code == CTRL_RLS)
+    {
       control_pressed = 0;
       return;
-  } else if (code == EXTENDED_KEY) {
-      code = getKey();
-      if (code == CTRL) {
-          control_pressed = 1;
-          return;
-      } else if(code == CTRL_RLS) {
-          control_pressed = 0;
-          return;
-      }
+    }
   }
 
   if (code < 0x80)
@@ -71,13 +80,15 @@ void keyboard_handler()
     if (code == LEFT_SHIFT || code == RIGHT_SHIFT)
     {
       keyMapRow = 1;
-    } else if(control_pressed)
+    }
+    else if (control_pressed)
     {
-        if (keyMap[keyMapRow][code] == 'c' || keyMap[keyMapRow][code] == 'C') {
-            pid_t pid_to_stop = get_current_pid();
-            kill_process_pid(pid_to_stop);
-            return;
-        }
+      if (keyMap[keyMapRow][code] == 'c' || keyMap[keyMapRow][code] == 'C')
+      {
+        pid_t pid_to_stop = get_current_pid();
+        kill_process_pid(pid_to_stop);
+        return;
+      }
     }
     else if (keyMap[keyMapRow][code] != 0)
     {

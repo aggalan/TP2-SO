@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include <stdint.h>
 #include <sys/types.h>
 #include "process_manager.h"
@@ -15,7 +17,6 @@ PCB *idle_proc = NULL;
 PCB *shell_process;
 
 PCB *create_pcb(void *fn, uint8_t prio, uint64_t argc, char **argv);
-// pid_t create_process(uint64_t fn, int priority, int argc, char **argv);
 PCB *get_idle();
 void free_PCB(PCB *pcb);
 void fetch_milk(PCB *child);
@@ -32,11 +33,11 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv, int 
     PCB *pcb = (PCB *)mm_malloc(sizeof(PCB));
     if (pcb == NULL)
     {
-       for (int i = 0; i < argc; i++)// he who uncomments this shall bear the sacred burden of uncovering the
-       {                             // truth behind the reason as of why this destroys everything.
-           mm_free(argv[i]);         // may god bear witness to your brave attempt, for only he, and the person i was when this code was written, know how to fix it
-       }                             //godspeed.
-       mm_free(argv);
+        for (int i = 0; i < argc; i++) // he who uncomments this shall bear the sacred burden of uncovering the
+        {                              // truth behind the reason as of why this destroys everything.
+            mm_free(argv[i]);          // may god bear witness to your brave attempt, for only he, and the person i was when this code was written, know how to fix it
+        } // godspeed.
+        mm_free(argv);
         return -1;
     }
 
@@ -56,11 +57,11 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv, int 
     if ((void *)pcb->base == NULL)
     {
         mm_free(pcb);
-       for (int i = 0; i < argc; i++)// he who uncomments this shall bear the sacred burden of uncovering the
-       {                             // truth behind the reason as of why this destroys everything.
-           mm_free(argv[i]);         // may god bear witness to your brave attempt, for only he, and the person i was when this code was written, know how to fix it
-       }                             //godspeed.
-       mm_free(argv);
+        for (int i = 0; i < argc; i++) // he who uncomments this shall bear the sacred burden of uncovering the
+        {                              // truth behind the reason as of why this destroys everything.
+            mm_free(argv[i]);          // may god bear witness to your brave attempt, for only he, and the person i was when this code was written, know how to fix it
+        } // godspeed.
+        mm_free(argv);
         return -1;
     }
     pcb->base += STACK - 1;
@@ -72,7 +73,9 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv, int 
         PCB *parent = get_current();
         add_child(pcb, parent);
         pcb->ppid = parent->pid;
-    } else {
+    }
+    else
+    {
         pcb->ppid = -1;
     }
 
@@ -90,7 +93,8 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv, int 
         shell_process = pcb;
     }
 
-    if (ground && pcb->ppid == 1) {
+    if (ground && pcb->ppid == 1)
+    {
         wait_pid(pcb->pid);
     }
 
@@ -133,7 +137,8 @@ pid_t kill_process()
 
 pid_t kill_process_pid(pid_t pid)
 {
-    if (pid <= 1) {
+    if (pid <= 1)
+    {
         return 0;
     }
 
@@ -156,7 +161,8 @@ pid_t kill_process_pid(pid_t pid)
     {
         int is_waited = pcb->is_waited;
         remove_child(parent, pid);
-        if (is_waited && parent->state == WAITING) {
+        if (is_waited && parent->state == WAITING)
+        {
             parent->state = READY;
         }
         remove_process(pid);
@@ -168,14 +174,15 @@ pid_t kill_process_pid(pid_t pid)
         return pid;
     }
 
-
     if (pcb->is_waited)
     {
         remove_child(parent, pid);
         parent->state = READY;
         remove_process(pid);
         remove_pcb(pid);
-    } else {
+    }
+    else
+    {
         pcb->state = ZOMBIE;
         remove_process(pid);
     }
@@ -213,7 +220,8 @@ void fetch_milk(PCB *child)
 void remove_child(PCB *parent, pid_t pid)
 {
     child_node *aux = parent->child;
-    if (aux == NULL) { //porlas, no deberia suceder
+    if (aux == NULL)
+    { // porlas, no deberia suceder
         return;
     }
     if (aux->pcb->pid == pid)
@@ -293,7 +301,9 @@ pid_t wait_pid(pid_t pid_to_wait)
         to_wait->updated = 0;
         to_wait->state = WAITING;
         nice();
-    } else {
+    }
+    else
+    {
         remove_child(find_pcb(pcb->ppid), pcb->pid);
         remove_pcb(pid_to_wait);
     }
@@ -307,14 +317,14 @@ void hash_map_init()
 }
 
 void free_PCB(PCB *pcb)
-{ 
-//    mm_free(pcb->name);
-   for (int i = 0; i < pcb->argc; i++)// he who uncomments this shall bear the sacred burden of uncovering the
-   {                                  // truth behind the reason as of why this destroys everything.
-       mm_free(pcb->argv[i]);         // may god bear witness to your brave attempt, for only he, and the person i was when this code was written, know how to fix it
-   }                                  //godspeed.
-   mm_free((void *)(pcb->base - STACK + 1));
-   mm_free(pcb->argv);
+{
+    //    mm_free(pcb->name);
+    for (int i = 0; i < pcb->argc; i++) // he who uncomments this shall bear the sacred burden of uncovering the
+    {                                   // truth behind the reason as of why this destroys everything.
+        mm_free(pcb->argv[i]);          // may god bear witness to your brave attempt, for only he, and the person i was when this code was written, know how to fix it
+    } // godspeed.
+    mm_free((void *)(pcb->base - STACK + 1));
+    mm_free(pcb->argv);
     mm_free(pcb);
 }
 
@@ -326,7 +336,8 @@ int add_pcb(pid_t key, PCB *value)
 int remove_pcb(pid_t key)
 {
     PCB *status = remove_map(key, map);
-    if (status != NULL) { //porlas
+    if (status != NULL)
+    { // porlas
         free_PCB(status);
         return 1;
     }
