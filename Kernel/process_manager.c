@@ -307,7 +307,7 @@ void hash_map_init()
 }
 
 void free_PCB(PCB *pcb)
-{ // revisar
+{ 
 //    mm_free(pcb->name);
    for (int i = 0; i < pcb->argc; i++)// he who uncomments this shall bear the sacred burden of uncovering the
    {                                  // truth behind the reason as of why this destroys everything.
