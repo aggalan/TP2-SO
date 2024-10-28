@@ -135,3 +135,9 @@ void str_to_upper(char *str)
         str++;
     }
 }
+
+void loop() {
+    while(1) {
+        ;
+    }
+}

@@ -69,4 +69,8 @@ int get_buffer(char * buf);
 // Converts all lowercase characters in the string passed as the argument to uppercase.
 void str_to_upper(char *str);
 
+// its purpose is to be monitored
+void loop();
+
+
 #endif // TPE_LIB_H

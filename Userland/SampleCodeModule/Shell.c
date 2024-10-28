@@ -94,6 +94,7 @@ void cmd_print_registers();
 void cmd_exit();
 void cmd_ps();
 void sync();
+void busy_wait();
 
 command_t commands[] = {
     {"help", cmd_help, "Displays this help message."},
@@ -116,7 +117,9 @@ command_t commands[] = {
     {"div_0", call_div0, "Generates a division by zero exception."},
     {"invalid_op", call_invalid_op, "Generates an invalid operation exception."},
     {"get_registers", cmd_print_registers, "Prints the registers of the current process."},
-    {"exit", cmd_exit, "Exits the shell."}};
+    {"exit", cmd_exit, "Exits the shell."},
+    {"loop", busy_wait, "Creates a process whose purpose is to be monitored"}
+    };
 
 void line_read(char *buffer)
 {
@@ -238,13 +241,31 @@ void sync(){
 
 }
 
+void busy_wait() {
+    char ** argv_loop = (char **)(uintptr_t)call_malloc(sizeof(char *));
+    argv_loop[0] = (char *)call_malloc(sizeof(char) * (str_len("loop") + 1));
+    str_cpy(argv_loop[0], "loop");
+    call_create_process(loop, 1, 1, argv_loop, 0);
+}
+
 void cmd_help(char *args)
 {
     put_string("The following commands may be used: \n", WHITE);
+    int max_len = 0;
+    int aux = 0;
+    for (int j = 0; j < sizeof(commands)/sizeof(commands[0]); j++) {
+        if ((aux = str_len(commands[j].command)) > max_len) {
+            max_len = aux;
+        }
+    }
+    max_len += 2;
     for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
     {
         put_string(commands[i].command, WHITE);
         put_string(": ", WHITE);
+        for (int z = 0; z < (max_len - str_len(commands[i].command)); z++) {
+            put_string(" ", WHITE);
+        }
         put_string(commands[i].description, WHITE);
         put_string("\n", WHITE);
     }
