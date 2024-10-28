@@ -5,11 +5,17 @@
 #include "include/scan_code.h"
 #include "include/video_driver.h"
 #include "libasm.h"
+#include "../include/process_manager.h"
+#include "../include/scheduler.h"
 
 #define LEFT_SHIFT 0x2A
 #define RIGHT_SHIFT 0x36
+#define CTRL 0x1D
+#define CTRL_RLS 0x9D
+#define EXTENDED_KEY 0xE0
 
 static uint8_t keyMapRow = 0;
+static uint8_t control_pressed = 0;
 
 static uint8_t scancodeToAscii[] = {
 
@@ -40,6 +46,24 @@ static uint8_t *keyMap[] = {scancodeToAscii, scancodeShiftToAscii};
 void keyboard_handler()
 {
   uint16_t code = getKey();
+
+  if (code == CTRL) {
+      control_pressed = 1;
+      return;
+  } else if (code == CTRL_RLS) {
+      control_pressed = 0;
+      return;
+  } else if (code == EXTENDED_KEY) {
+      code = getKey();
+      if (code == CTRL) {
+          control_pressed = 1;
+          return;
+      } else if(code == CTRL_RLS) {
+          control_pressed = 0;
+          return;
+      }
+  }
+
   if (code < 0x80)
   { // Key pressed
     char *buff = getBufferAddress();
@@ -47,6 +71,13 @@ void keyboard_handler()
     if (code == LEFT_SHIFT || code == RIGHT_SHIFT)
     {
       keyMapRow = 1;
+    } else if(control_pressed)
+    {
+        if (keyMap[keyMapRow][code] == 'c' || keyMap[keyMapRow][code] == 'C') {
+            pid_t pid_to_stop = get_current_pid();
+            kill_process_pid(pid_to_stop);
+            return;
+        }
     }
     else if (keyMap[keyMapRow][code] != 0)
     {

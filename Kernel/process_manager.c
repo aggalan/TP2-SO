@@ -133,6 +133,9 @@ pid_t kill_process()
 
 pid_t kill_process_pid(pid_t pid)
 {
+    if (pid <= 1) {
+        return 0;
+    }
 
     PCB *pcb = find_pcb(pid);
     if (pcb == NULL)
