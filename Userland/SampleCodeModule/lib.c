@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include "include/lib.h"
 #include "include/usr_sys_calls.h"
 #include <stdarg.h>
@@ -43,20 +45,26 @@ void put_string(const char *s, uint32_t hex_color)
     call_sys_write(STDOUT, s, str_len(s), hex_color);
 }
 
-void print(int color, const char *format, ...) {
+void print(int color, const char *format, ...)
+{
     va_list args;
     va_start(args, format);
 
-    while (*format) {
-        if (*format == '%' && *(format + 1) == 'd') {
+    while (*format)
+    {
+        if (*format == '%' && *(format + 1) == 'd')
+        {
             int num = va_arg(args, int);
-            if (num < 0) {
+            if (num < 0)
+            {
                 putC('-', 0xFFFFFF);
                 num = -num;
             }
             put_int(num, 0xFFFFFF); // Assuming print_number is a function that prints positive numbers
             format += 2;
-        } else {
+        }
+        else
+        {
             putC(*format, 0xFFFFFF);
             format++;
         }
@@ -75,13 +83,15 @@ int str_len(const char *str)
     return length;
 }
 
-void str_cpy(char *dest, const char *src) {
-    while (*src != '\0') {
+void str_cpy(char *dest, const char *src)
+{
+    while (*src != '\0')
+    {
         *dest = *src;
         dest++;
         src++;
     }
-    *dest = '\0';  // Add the null terminator
+    *dest = '\0'; // Add the null terminator
 }
 
 int str_cmp(char *str1, char *str2)
@@ -136,8 +146,10 @@ void str_to_upper(char *str)
     }
 }
 
-void loop() {
-    while(1) {
+void loop()
+{
+    while (1)
+    {
         ;
     }
 }

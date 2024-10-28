@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include "../include/usr_sys_calls.h"
 #include "test_util.h"
 #include "../include/lib.h"
@@ -25,17 +27,15 @@ int64_t test_processes(uint64_t argc, char *argv[])
   uint8_t alive = 0;
   uint8_t action;
   uint64_t max_processes;
-//  char *argvAux[] = {0};
-
 
   if (argc != 2)
   {
-      return -1;
+    return -1;
   }
 
   if ((max_processes = satoi(argv[1])) <= 0)
   {
-      return -1;
+    return -1;
   }
 
   p_rq p_rqs[max_processes];
@@ -45,22 +45,24 @@ int64_t test_processes(uint64_t argc, char *argv[])
     // Create max_processes processes
     for (rq = 0; rq < max_processes; rq++)
     {
-        char ** argvAux = (char **)(uintptr_t) call_malloc(sizeof(char *));
+      char **argvAux = (char **)(uintptr_t)call_malloc(sizeof(char *));
 
-        if (argvAux == 0) {
-            print(0xFFFFFF, "\nNo room for arguments\n");
-            return -1;
-        }
+      if (argvAux == 0)
+      {
+        print(0xFFFFFF, "\nNo room for arguments\n");
+        return -1;
+      }
 
-        argvAux[0] = (char *) call_malloc(sizeof(char)* str_len("endless loop")+1);
+      argvAux[0] = (char *)call_malloc(sizeof(char) * str_len("endless loop") + 1);
 
-        if (argvAux[0] == 0) {
-            print(0xFFFFFF, "\nNo room for arguments\n");
-            call_free(argvAux); //just dont. you risk the integrity of the entire project just by uncommenting this line. fuck off
-            return -1;
-        }
+      if (argvAux[0] == 0)
+      {
+        print(0xFFFFFF, "\nNo room for arguments\n");
+        call_free(argvAux); 
+        return -1;
+      }
 
-        str_cpy(argvAux[0], "endless loop");
+      str_cpy(argvAux[0], "endless loop");
 
       p_rqs[rq].pid = call_create_process(endless_loop, 1, 1, argvAux, 0);
 
@@ -94,7 +96,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
               print(0xFFFFFF, "test_processes: ERROR killing process\n");
               return -1;
             }
-//            call_waitpid(p_rqs[rq].pid); si queres que corra para siempre descoment esto y anda joya
+            //            call_waitpid(p_rqs[rq].pid); si queres que corra para siempre descoment esto y anda joya
             p_rqs[rq].state = KILLED;
             alive--;
           }

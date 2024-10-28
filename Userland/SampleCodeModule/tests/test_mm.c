@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include "test_util.h"
 #include "../include/usr_sys_calls.h"
 #include "../include/lib.h"
@@ -27,8 +29,8 @@ uint64_t test_mm(uint64_t argc, char *argv[])
   if ((max_memory = satoi(argv[1])) <= 0)
     return -1;
 
- while (1)
- {
+  while (1)
+  {
     rq = 0;
     total = 0;
 
@@ -72,5 +74,5 @@ uint64_t test_mm(uint64_t argc, char *argv[])
         call_free(mm_rqs[i].address);
       }
     }
- }
+  }
 }

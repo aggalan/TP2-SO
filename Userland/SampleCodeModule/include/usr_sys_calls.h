@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include "stdint.h"
 #include "sys/types.h"
 #include "lib.h"
@@ -36,19 +38,19 @@ void call_put_square(uint32_t x, uint32_t y, uint32_t size, uint64_t hexColor);
 // Pauses the program execution for a specified number of milliseconds
 void call_sleepms(int mseconds);
 
-// Sets the font size for text 
+// Sets the font size for text
 int call_set_font_size(uint32_t size);
 
 // Draws a word on a graphics screen with specified color at a given position
-void call_draw_word_color_at(uint64_t hexColor, char* word, uint32_t x, uint32_t y);
+void call_draw_word_color_at(uint64_t hexColor, char *word, uint32_t x, uint32_t y);
 
 // Draws a character  with specified color at a given position
 void call_character_at(uint64_t hexColor, char c, uint32_t x, uint32_t y);
 
-// Produces a beep 
+// Produces a beep
 void call_beep();
 
-// Clears the screen 
+// Clears the screen
 void call_clear();
 
 // Handles an invalid operation in assembly language
@@ -83,18 +85,17 @@ pid_t call_unblock(pid_t pid);
 
 pid_t call_kill(pid_t pid);
 
-
 pid_t call_waitpid(pid_t pid_to_wait);
 
 int call_change_priority(int pid, int newPrio);
 
-void * call_malloc(uint64_t size);
+void *call_malloc(uint64_t size);
 
-void call_free(void * ptr);
+void call_free(void *ptr);
 
-pid_t call_create_process(void * entryPoint, int prio, int argc, char * argv[], int ground);
+pid_t call_create_process(void *entryPoint, int prio, int argc, char *argv[], int ground);
 
-PCB_t * call_ps();
+PCB_t *call_ps();
 
 pid_t call_get_current_pid();
 

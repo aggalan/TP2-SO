@@ -1,3 +1,8 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+#ifndef TEST_UTIL_H
+#define TEST_UTIL_H
+
 #include <stdint.h>
 
 uint32_t get_uint();
@@ -10,3 +15,5 @@ void test_prio();
 void bussy_wait(uint64_t n);
 void endless_loop();
 void endless_loop_print(uint64_t wait);
+
+#endif

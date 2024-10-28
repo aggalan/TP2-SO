@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include <stdint.h>
 #include <stdio.h>
 #include "../include/lib.h"
@@ -74,7 +76,7 @@ void endless_loop()
     ;
 }
 
-void endless_loop_print(uint64_t argc, char ** argv)
+void endless_loop_print(uint64_t argc, char **argv)
 {
   uint64_t wait = satoi(argv[1]);
   int64_t pid = call_get_current_pid();
@@ -84,5 +86,4 @@ void endless_loop_print(uint64_t argc, char ** argv)
     print(0xFFFFFF, "%d ", pid);
     bussy_wait(wait);
   }
-  
 }
