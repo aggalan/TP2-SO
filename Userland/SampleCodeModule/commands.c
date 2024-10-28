@@ -82,23 +82,44 @@ void sync_test(char *args)
     str_cpy(argv_sync[1], "6");
     str_cpy(argv_sync[3], "0");
     char *str = args + str_len("sync ");
-    if (str_cmp(cut_string(str), "") == 0)
-    {
-        print(WHITE, "USING SEMAPHORES\n");
-        str_cpy(argv_sync[2], "1");
-        if (str_cmp(str, "sem &") == 0)
-            call_create_process(test_sync, 1, 4, argv_sync, 0);
-        else
-            call_create_process(test_sync, 1, 4, argv_sync, 1);
+    int aux = str_len(cut_string(str));
+    char * n = cut_string(str);
+    if (str_to_int(n) < 1) {
+        print(WHITE,"INVALID N VALUE");
+        for (int i = 0; i < 4; i++) {
+            call_free(argv_sync[i]);
+        }
+        call_free(argv_sync);
+        print(WHITE, "hello");
+        return;
     }
-    else if (str_cmp(str, "-nosem") == 0)
+    str_cpy(argv_sync[1], n);
+    str += aux + 1;
+    if (str_cmp(cut_string(str), "-no-sem") == 0)
     {
         print(WHITE, "NOT USING SEMAPHORES\n");
         str_cpy(argv_sync[2], "0");
-        if (str_cmp(str, "&") == 0)
+        if (str_cmp(str, "-no-sem &") == 0)
+        {
             call_create_process(test_sync, 1, 4, argv_sync, 0);
+        }
         else
+        {
             call_create_process(test_sync, 1, 4, argv_sync, 1);
+        }
+
+    }
+    else if (str_cmp(cut_string(str), "&") == 0 )
+    {
+        print(WHITE, "USING SEMAPHORES\n");
+        str_cpy(argv_sync[2], "1");
+        call_create_process(test_sync, 1, 4, argv_sync, 0);
+    }
+    else if (*str == 0)
+    {
+        print(WHITE, "USING SEMAPHORES\n");
+        str_cpy(argv_sync[2], "1");
+        call_create_process(test_sync, 1, 4, argv_sync, 0);
     }
     else
     {
