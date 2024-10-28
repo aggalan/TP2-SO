@@ -17,11 +17,11 @@ Sigue los pasos a continuación para compilar y ejecutar el proyecto correctamen
     ```
 4. Para compilar el proyecto utilizando el gestor de memoria basado en **bitmap**, ejecuta:
     ```bash
-    make all
+    make all MM=BITMAP
     ```
 5. Para compilar el proyecto utilizando el gestor de memoria basado en **buddy**, ejecuta:
     ```bash
-    make all buddy
+    make all BUDDY MM=BUDDY
     ```
 6. Corre el programa ejecutando el siguiente script:
     ```bash
