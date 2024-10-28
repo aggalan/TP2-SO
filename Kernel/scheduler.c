@@ -149,7 +149,7 @@ pid_t get_active_pid()
 
 int change_priority(pid_t pid_to_nice, uint8_t priority)
 {
-    if (pid_to_nice == 1)
+    if (pid_to_nice == 1 || priority > 4 || priority < 0)
     {
         return -1;
     }

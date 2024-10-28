@@ -74,32 +74,40 @@ void prio_test(char *args)
 void sync_test(char *args)
 {
     char **argv_sync = (char **)(uintptr_t)call_malloc(4 * sizeof(char *));
+
     argv_sync[0] = (char *)call_malloc(sizeof(char) * (str_len("sync test") + 1));
     argv_sync[1] = (char *)call_malloc(sizeof(char));
     argv_sync[2] = (char *)call_malloc(sizeof(char));
     argv_sync[3] = (char *)call_malloc(sizeof(char));
+
     str_cpy(argv_sync[0], "sync test");
     str_cpy(argv_sync[1], "6");
     str_cpy(argv_sync[3], "0");
+
     char *str = args + str_len("sync ");
     int aux = str_len(cut_string(str));
     char * n = cut_string(str);
+
     if (str_to_int(n) < 1) {
         print(WHITE,"INVALID N VALUE");
         for (int i = 0; i < 4; i++) {
             call_free(argv_sync[i]);
         }
         call_free(argv_sync);
-        print(WHITE, "hello");
         return;
     }
+
     str_cpy(argv_sync[1], n);
+    
     str += aux + 1;
+
+    char * aux2 = str + str_len(cut_string(str)) + 1;
+
     if (str_cmp(cut_string(str), "-no-sem") == 0)
     {
-        print(WHITE, "NOT USING SEMAPHORES\n");
         str_cpy(argv_sync[2], "0");
-        if (str_cmp(str, "-no-sem &") == 0)
+
+        if (str_cmp(aux2, "&") == 0)
         {
             call_create_process(test_sync, 1, 4, argv_sync, 0);
         }
@@ -111,15 +119,14 @@ void sync_test(char *args)
     }
     else if (str_cmp(cut_string(str), "&") == 0 )
     {
-        print(WHITE, "USING SEMAPHORES\n");
         str_cpy(argv_sync[2], "1");
+
         call_create_process(test_sync, 1, 4, argv_sync, 0);
     }
     else if (*str == 0)
     {
-        print(WHITE, "USING SEMAPHORES\n");
         str_cpy(argv_sync[2], "1");
-        call_create_process(test_sync, 1, 4, argv_sync, 0);
+        call_create_process(test_sync, 1, 4, argv_sync, 1);
     }
     else
     {
