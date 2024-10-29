@@ -85,11 +85,8 @@ void keyboard_handler()
     {
       if (keyMap[keyMapRow][code] == 'c' || keyMap[keyMapRow][code] == 'C')
       {
-        PCB * to_stop = get_current();
-        if (to_stop->ground == 1) {
-            kill_process_pid(to_stop->pid);
-        }
-        return;
+          kill_foreground_process();
+          return;
       }
     }
     else if (keyMap[keyMapRow][code] != 0)

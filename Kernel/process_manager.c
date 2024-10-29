@@ -13,8 +13,9 @@
 hash_map_ADT map;
 static pid_t pids = 0;
 
-PCB *idle_proc = NULL;
-PCB *shell_process;
+PCB * idle_proc = NULL;
+PCB * shell_process;
+PCB * foreground_process = NULL;
 
 PCB *create_pcb(void *fn, uint8_t prio, uint64_t argc, char **argv);
 PCB *get_idle();
@@ -95,6 +96,7 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv, int 
 
     if (ground && pcb->ppid == 1)
     {
+        foreground_process = pcb;
         wait_pid(pcb->pid);
     }
 
@@ -151,6 +153,9 @@ pid_t kill_process_pid(pid_t pid)
     if (state == ZOMBIE)
     {
         return 0;
+    }
+    if (pcb->ground) {
+        foreground_process = NULL;
     }
 
     abandon_children(pcb); // the children have been abandoned, the shell adopted them.
@@ -347,6 +352,12 @@ int remove_pcb(pid_t key)
 PCB *find_pcb(pid_t key)
 {
     return find_map(key, map);
+}
+
+void kill_foreground_process() {
+    if (foreground_process != NULL) {
+        kill_process_pid(foreground_process->pid);
+    }
 }
 
 void print_processes()

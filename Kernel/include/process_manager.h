@@ -75,4 +75,6 @@ PCB *find_pcb(pid_t key);
 
 void print_processes();
 
+void kill_foreground_process();
+
 #endif
