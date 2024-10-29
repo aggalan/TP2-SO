@@ -19,7 +19,7 @@ PCB *shell_process;
 PCB *create_pcb(void *fn, uint8_t prio, uint64_t argc, char **argv);
 PCB *get_idle();
 void free_PCB(PCB *pcb);
-void fetch_milk(PCB *child);
+void abandon_children(PCB *child);
 void remove_child(PCB *parent, pid_t pid);
 
 PCB *get_idle()
@@ -153,7 +153,7 @@ pid_t kill_process_pid(pid_t pid)
         return 0;
     }
 
-    fetch_milk(pcb); // the parent of the children goes out for some milk... he never came back.
+    abandon_children(pcb); // the children have been abandoned, the shell adopted them.
 
     PCB *parent = find_pcb(pcb->ppid);
 
@@ -194,7 +194,7 @@ pid_t kill_process_pid(pid_t pid)
     return pid;
 }
 
-void fetch_milk(PCB *child)
+void abandon_children(PCB *child)
 {
     child_node *aux = child->child;
     child_node *to_change = aux;
@@ -204,7 +204,7 @@ void fetch_milk(PCB *child)
         aux = aux->next;
         if (to_change->pcb->state == ZOMBIE)
         {
-            fetch_milk(to_change->pcb);
+            abandon_children(to_change->pcb);
             remove_pcb(to_change->pcb->pid);
             mm_free(to_change);
         }
@@ -221,7 +221,7 @@ void remove_child(PCB *parent, pid_t pid)
 {
     child_node *aux = parent->child;
     if (aux == NULL)
-    { // porlas, no deberia suceder
+    {
         return;
     }
     if (aux->pcb->pid == pid)
@@ -318,7 +318,7 @@ void hash_map_init()
 
 void free_PCB(PCB *pcb)
 {
-    //    mm_free(pcb->name);
+
     for (int i = 0; i < pcb->argc; i++) // he who uncomments this shall bear the sacred burden of uncovering the
     {                                   // truth behind the reason as of why this destroys everything.
         mm_free(pcb->argv[i]);          // may god bear witness to your brave attempt, for only he, and the person i was when this code was written, know how to fix it
@@ -337,11 +337,11 @@ int remove_pcb(pid_t key)
 {
     PCB *status = remove_map(key, map);
     if (status != NULL)
-    { // porlas
+    {
         free_PCB(status);
         return 1;
     }
-    return 0; // por ahora ya fue el return status se lo dejo asi aunque ni lo use
+    return 0; // RECORDAR: VER SI FALLA EL REMOVE PCB CHEQUEAR
 }
 
 PCB *find_pcb(pid_t key)
@@ -385,17 +385,15 @@ void print_processes()
                 {
                     drawWord1(" ");
                 }
-                // name
                 drawWord1(aux->value->name);
                 for (int z = 0; z < 14 - str_len(aux->value->name); z++)
                 {
                     drawWord1(" ");
                 }
 
-                // name
                 drawNumber(aux->value->priority);
                 drawWord1("          ");
-                address_to_string((void *)aux->value->base); // legal porque base es uint64_t
+                address_to_string((void *)aux->value->base);
 
                 unsigned long beaut2 = aux->value->base;
                 m = 0;
@@ -409,7 +407,7 @@ void print_processes()
                     drawWord1(" ");
                 }
 
-                address_to_string((void *)aux->value->rsp); // legal porque rsp es uint64_t
+                address_to_string((void *)aux->value->rsp);
 
                 beaut2 = aux->value->base;
                 m = 0;

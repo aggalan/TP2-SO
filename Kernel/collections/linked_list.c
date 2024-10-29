@@ -85,23 +85,14 @@ int insert(PCB *data, uint8_t priority, linked_list_ADT list)
     return 1;
 }
 
-int remove(pid_t pid_remove, linked_list_ADT list)
+int remove(pid_t pid_remove, linked_list_ADT list) //modularizar esta funcion
 {
 
-    node_t *node = find(pid_remove, list); // uso este y no el del hashmap porq me sirve mas
+    node_t *node = find(pid_remove, list); 
     if (node == NULL)
     {
         return 0;
     }
-
-    //    if (list->size == 1) {
-    //        mm_free(list->first);
-    //        list->first = NULL;
-    //        list->last = NULL;
-    //        list->current = NULL;
-    //        list->size = 0;
-    //        return 1;
-    //    }
 
     uint8_t priority = node->next->data->priority;
     list->size -= priority;
@@ -123,7 +114,7 @@ int remove(pid_t pid_remove, linked_list_ADT list)
             }
             if (list->last == to_remove)
             {
-                list->last = node; // y ya en la linea anterior nos encargamos de que siga siendo circular la lista
+                list->last = node; 
             }
             mm_free(to_remove);
             priority--;
@@ -143,7 +134,7 @@ int remove(pid_t pid_remove, linked_list_ADT list)
 
 int remove_times(pid_t pid_remove, int times, linked_list_ADT list)
 {
-    node_t *node = find(pid_remove, list); // uso este y no el del hashmap porq me sirve mas
+    node_t *node = find(pid_remove, list); 
     if (node == NULL)
     {
         return 0;
@@ -154,14 +145,6 @@ int remove_times(pid_t pid_remove, int times, linked_list_ADT list)
         remove(pid_remove, list);
     }
 
-    //    if (list->size == 1) {
-    //        mm_free(list->first);
-    //        list->first = NULL;
-    //        list->last = NULL;
-    //        list->current = NULL;
-    //        list->size = 0;
-    //        return 1;
-    //    }
 
     list->size -= times;
 
@@ -182,7 +165,7 @@ int remove_times(pid_t pid_remove, int times, linked_list_ADT list)
             }
             if (list->last == to_remove)
             {
-                list->last = node; // y ya en la linea anterior nos encargamos de que siga siendo circular la lista
+                list->last = node;
             }
             mm_free(to_remove);
             times--;

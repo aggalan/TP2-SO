@@ -81,7 +81,6 @@ void sync_test(char *args)
     argv_sync[3] = (char *)call_malloc(sizeof(char));
 
     str_cpy(argv_sync[0], "sync test");
-    str_cpy(argv_sync[1], "6");
     str_cpy(argv_sync[3], "0");
 
     char *str = args + str_len("sync ");
@@ -90,7 +89,7 @@ void sync_test(char *args)
 
     if (str_to_int(n) < 1)
     {
-        print(WHITE, "INVALID N VALUE");
+        print(WHITE, "INVALID N VALUE\n");
         for (int i = 0; i < 4; i++)
         {
             call_free(argv_sync[i]);
@@ -103,7 +102,7 @@ void sync_test(char *args)
 
     str += aux + 1;
 
-    char *aux2 = str + str_len(cut_string(str)) + 1;
+    char * aux2 = str + str_len(cut_string(str)) + 1;
 
     if (str_cmp(cut_string(str), "-no-sem") == 0)
     {

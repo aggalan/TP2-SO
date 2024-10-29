@@ -97,12 +97,12 @@ uint64_t schedule(uint64_t rsp)
     }
 
     if (process_has_run == IDLE)
-    { // ESTE ORDEN DE COASAS SOLO ES VALIDO PORQ LA SHELL AUNQUE ESTE BLOQUEADA QUEDA EN LA LISTA, SI CAMBIA ESO ESTO EXPLOTA MAL, PENSA Y HACE MEMORIA JOSE DEL FUTURO A VER A QUE ME REFIERO !!!
+    { 
         idle_p->rsp = rsp;
         idle_p->state = READY;
     }
     else if (processes->current->data->state != ZOMBIE && processes->current->data->state != READY)
-    { // CREO QUE ZOMBIES NUNCA VAN A ESTAR PERO BUENO
+    { 
         if (processes->current->data->state == RUNNING)
         {
             processes->current->data->state = READY;
@@ -117,9 +117,9 @@ uint64_t schedule(uint64_t rsp)
 
     node_t *aux = processes->current;
     if (aux == NULL)
-    { // BIEN A FUTURO ESTA ESTO, PERO MAL LA POSICION VA MAS ARRIBA, RELACIONADO CON EL COMENTARIO DE ARRIBA JOSE DEL FUTURO !
+    { 
         process_has_run = IDLE;
-        idle_p->state = RUNNING; // el timer tick se llama cada 20 ms o algo asi, si queremos ahorrar lineas para eficiencia es al pedo actualizar estado de idle
+        idle_p->state = RUNNING; 
         return idle_p->rsp;
     }
     processes->current = processes->current->next;

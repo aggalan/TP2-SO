@@ -14,7 +14,6 @@ void slowInc(int64_t *p, int64_t inc)
 {
   uint64_t aux = *p;
   call_nice(); // This makes the race condition highly probable
-               //  print(0xFFFFFF,"BEFORE  %d   ", aux);
   aux += inc;
   *p = aux;
   //  print(0xFFFFFF," %d ", inc);
