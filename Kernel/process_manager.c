@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include "process_manager.h"
 #include "./memory_manager/include/memory_manager.h"
-#include "scheduler.h"
+#include "include/scheduler.h"
 #include "lib.h"
 #include "interrupts.h"
 #include "../Drivers/include/video_driver.h"
@@ -264,7 +264,7 @@ pid_t block_process(pid_t pid)
 
     pcb->updated = 0;
     pcb->state = BLOCKED;
-    pid_t process = running_process();
+    pid_t process = get_current_pid();
     if (pcb->pid == process)
     {
         nice();
@@ -274,11 +274,6 @@ pid_t block_process(pid_t pid)
 
 pid_t unblock_process(pid_t pid)
 {
-
-    if (pid == 1)
-    {
-        return -1;
-    }
 
     PCB *pcb = find_pcb(pid);
     if (pcb == NULL || pcb->state != BLOCKED)
@@ -314,6 +309,22 @@ pid_t wait_pid(pid_t pid_to_wait)
     }
 
     return pcb->pid;
+}
+
+void block_shell_read() {
+    if (shell_process->state == RUNNING || shell_process->state == READY) {
+        shell_process->updated = 0;
+        shell_process->state = BLOCKED;
+        if (shell_process->state == RUNNING) {
+            nice();
+        }
+    }
+}
+
+void wake_up_shell() {
+    if (shell_process->state == BLOCKED) {
+        shell_process->state = READY;
+    }
 }
 
 void hash_map_init()

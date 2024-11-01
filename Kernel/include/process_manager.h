@@ -77,4 +77,8 @@ void print_processes();
 
 void kill_foreground_process();
 
+void block_shell_read();
+
+void wake_up_shell();
+
 #endif

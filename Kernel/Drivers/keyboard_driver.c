@@ -105,5 +105,7 @@ void keyboard_handler()
     }
   }
 
+  wake_up_shell();
+
   return;
 }

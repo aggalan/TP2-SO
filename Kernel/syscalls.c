@@ -8,6 +8,8 @@
 
 #define MIN(x, y) x < y ? x : y
 
+int shell_read(char *save, int len);
+
 void sys_write(int descriptor, const char *str, int len, uint32_t hexColor)
 {
     switch (descriptor)
@@ -26,10 +28,25 @@ void sys_write(int descriptor, const char *str, int len, uint32_t hexColor)
 int sys_read(int descriptor, char *save, int len)
 {
 
-    if (descriptor != STDIN)
-    {
-        drawWord(0x00ff0000, "no such descriptor");
+    switch (descriptor) {
+        case STDIN:
+            return shell_read(save, len);
+        default:
+            drawWord(0x00ff0000, "no such descriptor");
+            break;
     }
+
+//    if (descriptor != STDIN)
+//    {
+//        drawWord(0x00ff0000, "no such descriptor");
+//    }
+
+
+}
+
+int shell_read(char *save, int len) {
+
+    block_shell_read();
 
     int n = getBufferPosition();
 

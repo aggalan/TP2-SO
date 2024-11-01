@@ -60,7 +60,7 @@ void prio_test(char *args)
     char **argv_priority = (char **)(uintptr_t)call_malloc(sizeof(char *));
     argv_priority[0] = (char *)call_malloc(sizeof(char) * (str_len("priority test") + 1));
     str_cpy(argv_priority[0], "priority test");
-    char *str = args + str_len("priority ");
+    char *str = args + str_len("prio ");
     if (*str == '&')
     {
         call_create_process(test_prio, 1, 1, argv_priority, 0);
