@@ -5,10 +5,10 @@
 #include "../include/lib.h"
 #include "./test_sync.h"
 
-#define SEM_ID 3
 #define TOTAL_PAIR_PROCESSES 2
 
 int64_t global; // shared memory
+int sem_id = -1;
 
 void slowInc(int64_t *p, int64_t inc)
 {
@@ -37,7 +37,7 @@ uint64_t my_process_inc(uint64_t argc, char *argv[])
     return -1;
 
   if (use_sem)
-    if (call_sem_open(SEM_ID) == -1)
+    if (call_sem_open(sem_id) == -1)
     {
       print(0xFFFFFF, "test_sync: ERROR opening semaphore\n");
       return -1;
@@ -48,12 +48,12 @@ uint64_t my_process_inc(uint64_t argc, char *argv[])
   {
     if (use_sem)
     {
-      call_sem_wait(SEM_ID);
+      call_sem_wait(sem_id);
     }
     slowInc(&global, inc);
     if (use_sem)
     {
-      call_sem_post(SEM_ID);
+      call_sem_post(sem_id);
     }
   }
 
@@ -74,7 +74,7 @@ uint64_t test_sync(uint64_t argc, char *argv[])
 
   if (satoi(argv[2]))
   {
-    if (call_sem_init(SEM_ID, 1) == -1)
+    if ((sem_id = call_sem_init(1)) == -1)
     {
       print(0xFFFFFF, "test_sync: ERROR creating semaphore\n");
       return -1;
@@ -97,7 +97,7 @@ uint64_t test_sync(uint64_t argc, char *argv[])
   print(0xFFFFFF, "Final value: %d\n", global);
 
   if (satoi(argv[2]))
-    call_sem_close(SEM_ID);
+    call_sem_close(sem_id);
 
   return 1;
 }

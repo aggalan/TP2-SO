@@ -15,6 +15,7 @@ char *cpuVendor(char *result);
 void sleepms(int ms);
 int str_len(char *str);
 int str_cpy(char *dest, char *src);
+int str_cmp(char *str1, char *str2);
 void idle();
 void exit_process(int status);
 #endif

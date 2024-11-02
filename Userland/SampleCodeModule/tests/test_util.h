@@ -12,6 +12,7 @@ int64_t satoi(char *str);
 uint64_t test_mm(uint64_t argc, char *argv[]);
 // int64_t test_processes(uint64_t argc, char *argv[]);
 void test_prio();
+int main_test_pipes();
 void bussy_wait(uint64_t n);
 void endless_loop();
 void endless_loop_print(uint64_t wait);

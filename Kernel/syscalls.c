@@ -5,6 +5,8 @@
 #include "include/keyboard_buffer.h"
 #include "include/libasm.h"
 #include <naive_console.h>
+#include "include/fd_manager.h"
+#include "include/pipe_manager.h"
 
 #define MIN(x, y) x < y ? x : y
 
@@ -12,6 +14,8 @@ int shell_read(char *save, int len);
 
 void sys_write(int descriptor, const char *str, int len, uint32_t hexColor)
 {
+//    fd_entry * entry = fd_get_entry(descriptor); //agregar chequeo de error, y ver porq aca misticamente no anda
+//    drawNumber(entry->fd_type);
     switch (descriptor)
     {
     case STDOUT:
@@ -27,10 +31,12 @@ void sys_write(int descriptor, const char *str, int len, uint32_t hexColor)
 
 int sys_read(int descriptor, char *save, int len)
 {
-
-    switch (descriptor) {
+    fd_entry * entry = fd_get_entry(descriptor);
+    switch (entry->fd_type) { //aca deberia switcher en algo como fd_table[fd]->type. pafa ver si es pipe u otra cosa
         case STDIN:
             return shell_read(save, len);
+        case FD_TYPE_PIPE:
+            return pipe_read(descriptor, save, len);
         default:
             drawWord(0x00ff0000, "no such descriptor");
             break;
@@ -41,7 +47,7 @@ int sys_read(int descriptor, char *save, int len)
 //        drawWord(0x00ff0000, "no such descriptor");
 //    }
 
-
+    return -1;
 }
 
 int shell_read(char *save, int len) {
@@ -270,7 +276,27 @@ int irq_sem_post(int rsi, int rdx)
     return my_sem_post(rsi);
 }
 
-int irq_sem_init(int rsi, int rdx)
+int irq_sem_init(int rsi)
 {
-    return my_sem_init(rsi, rdx);
+    return my_sem_init(rsi);
+}
+int irq_named_pipe_create(char * rsi)
+{
+    return named_pipe_create(rsi);
+}
+int irq_named_pipe_open(char * rsi)
+{
+    return named_pipe_open(rsi);
+}
+void irq_named_pipe_close(int rsi)
+{
+    named_pipe_close(rsi);
+}
+ssize_t irq_pipe_read(int rsi, char * rdx, size_t rcx)
+{
+    return pipe_read(rsi, rdx, rcx);
+}
+ssize_t irq_pipe_write(int rsi, char * rdx, size_t rcx)
+{
+    return pipe_write(rsi, rdx, rcx);
 }

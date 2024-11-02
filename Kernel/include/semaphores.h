@@ -25,6 +25,6 @@ int my_sem_wait(int id);
 int my_sem_post(int id);
 int my_sem_close(int id);
 void my_sem_free(int id);
-int my_sem_init(int id, int n);
+int my_sem_init(int n);
 
 #endif

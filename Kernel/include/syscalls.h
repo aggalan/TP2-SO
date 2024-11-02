@@ -62,6 +62,11 @@ int irq_sem_open(int rsi);
 int irq_sem_close(int rsi);
 int irq_sem_wait(int rsi);
 int irq_sem_post(int rsi, int rdx);
-int irq_sem_init(int rsi, int rdx);
+int irq_sem_init(int rsi);
+int irq_named_pipe_create(char * rsi);
+int irq_named_pipe_open(char * rsi);
+void irq_named_pipe_close(int rsi);
+ssize_t irq_pipe_read(int rsi, char * rdx, size_t rcx);
+ssize_t irq_pipe_write(int rsi, char * rdx, size_t rcx);
 
 #endif // TPE_SYSCALLS_H

@@ -7,7 +7,7 @@
 #include "../Drivers/include/video_driver.h"
 #include "./collections/include/collections.h"
 #include "process_manager.h"
-#define MAX_SEMAPHORES 10
+#define MAX_SEMAPHORES 20
 
 int wait(sem *semaphore);
 int post(sem *semaphore);
@@ -32,22 +32,31 @@ sem *my_sem_create(int n)
     sem *semaphore = (sem *)mm_malloc(sizeof(sem));
     semaphore->n = n;
     semaphore->blocked = qs_init();
-    if (n > 0)
-        semaphore->lock = 1;
-    else
-        semaphore->lock = 0;
+//    if (n > 0)
+//        semaphore->lock = 1;
+//    else
+//        semaphore->lock = 0;
+    semaphore->lock = 1;
     return semaphore;
 }
 
-int my_sem_init(int id, int n)
+int my_sem_init(int n)
 {
-    if (manager->semaphores[id] != NULL)
+    int id = -1;
+    for (int i = 0; i < MAX_SEMAPHORES; i++) {
+        if (manager->semaphores[i] == NULL) {
+            id = i;
+            break;
+        }
+    }
+
+    if (id == -1)
     {
-        return -1;
+        return id;
     }
 
     manager->semaphores[id] = my_sem_create(n);
-    return 0;
+    return id;
 }
 
 int my_sem_open(int id)
@@ -68,7 +77,6 @@ int my_sem_close(int id)
 
     sem *semaphore = manager->semaphores[id];
     acquire(&semaphore->lock);
-
     pid_t pid;
     while ((pid = sem_remove(semaphore->blocked)) > 0)
     {

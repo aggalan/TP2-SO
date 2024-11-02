@@ -83,6 +83,16 @@ int str_cpy(char *dest, const char *src)
 	return i;
 }
 
+int str_cmp(char *str1, char *str2)
+{
+    while (*str1 && *str2 && *str1 == *str2)
+    {
+        str1++;
+        str2++;
+    }
+    return *(unsigned char *)str1 - *(unsigned char *)str2;
+}
+
 void idle()
 {
 	while (1)

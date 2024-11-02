@@ -12,6 +12,8 @@
 #include "process_manager.h"
 #include "scheduler.h"
 #include "semaphores.h"
+#include "include/pipe_manager.h"
+#include "include/fd_manager.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -69,6 +71,8 @@ int main()
 	mm_init((void *)0x600000, 0x2700000);
 	scheduler_init();
 	sem_manager();
+    pipe_table_init();
+    fd_init();
 	shell();
 
 	while (1)

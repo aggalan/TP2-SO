@@ -111,6 +111,17 @@ int call_sem_wait(int id);
 
 int call_sem_post(int id);
 
-int call_sem_init(int id, int n);
+int call_sem_init(int n);
+
+int call_named_pipe_create(char *name);
+
+int call_named_pipe_open(char *name);
+
+void call_named_pipe_close(int fd);
+
+ssize_t call_pipe_read(int fd, char * buff, size_t bytes_r);
+
+ssize_t call_pipe_write(int fd, char * buff, size_t bytes_w);
+
 
 #endif /* USERSYSCALLS_H */

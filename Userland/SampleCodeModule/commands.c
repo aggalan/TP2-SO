@@ -134,6 +134,22 @@ void sync_test(char *args)
     }
 }
 
+int pipe_test(char *args) {
+    char ** argv_pipes = (char **) call_malloc(sizeof(char *));
+    argv_pipes[0] = (char *) call_malloc(sizeof(char) * (str_len("pipes test") + 1));
+    str_cpy(argv_pipes[0], "pipes test");
+    char *str = args + str_len("pipes ");
+    if (*str == '&')
+    {
+        call_create_process(main_test_pipes, 1, 1, argv_pipes, 0);
+    }
+    else
+    {
+        call_create_process(main_test_pipes, 1, 1, argv_pipes, 1);
+    }
+    return 0;
+}
+
 void busy_wait()
 {
     char **argv_loop = (char **)(uintptr_t)call_malloc(sizeof(char *));

@@ -82,7 +82,8 @@ command_t tests[] = {
     {"mem", mm_test, "Runs the memory test."},
     {"process", process_test, "Runs the process test."},
     {"prio", prio_test, "Runs the priority test."},
-    {"sync", sync_test, "Runs the sync test. (usage: sync <N value> [-no-sem])"}};
+    {"sync", sync_test, "Runs the sync test. (usage: sync <N value> [-no-sem])"},
+    {"pipes", pipe_test, "Runs the pipes test."}};
 
 command_t commands[] = {
     {"help", cmd_help, "Displays this help message."},

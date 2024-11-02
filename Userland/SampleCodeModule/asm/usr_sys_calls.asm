@@ -35,6 +35,11 @@ GLOBAL call_sem_close
 GLOBAL call_sem_wait
 GLOBAL call_sem_post
 GLOBAL call_sem_init
+GLOBAL call_named_pipe_create
+GLOBAL call_named_pipe_open
+GLOBAL call_named_pipe_close
+GLOBAL call_pipe_read
+GLOBAL call_pipe_write
 
 
 section .text
@@ -126,6 +131,17 @@ call_sem_post:
     call_to_handler 35
 call_sem_init:
     call_to_handler 36
+call_named_pipe_create:
+    call_to_handler 37
+call_named_pipe_open:
+    call_to_handler 38
+call_named_pipe_close:
+    call_to_handler 39
+call_pipe_read:
+    call_to_handler 40
+call_pipe_write:
+    call_to_handler 41
+
 
 
 invalid_op_asm:
