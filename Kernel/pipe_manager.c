@@ -44,7 +44,7 @@ int named_pipe_create(char *name) {
 
 int named_pipe_open(char *name) {
     for (int i = 0; i < MAX_PIPES; i++) {
-        if (global_pipe_table[i] != NULL && str_cmp(global_pipe_table[i]->name, name) == 0&& str_cmp(global_pipe_table[i]->name, name) == 0) {
+        if (global_pipe_table[i] != NULL && (str_cmp(global_pipe_table[i]->name, name) == 0)) {
             global_pipe_table[i]->ref_count++;
             return global_pipe_table[i]->fd;
         }

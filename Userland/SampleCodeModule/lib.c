@@ -57,22 +57,27 @@ void print(int color, const char *format, ...)
             int num = va_arg(args, int);
             if (num < 0)
             {
-                putC('-', 0xFFFFFF);
+                putC('-', color);
                 num = -num;
             }
-            put_int(num, 0xFFFFFF); // Assuming print_number is a function that prints positive numbers
+            put_int(num, color); // Assuming put_int is a function that prints positive numbers
+            format += 2;
+        }
+        else if (*format == '%' && *(format + 1) == 's')
+        {
+            const char *str = va_arg(args, const char *);
+            put_string(str, color);
             format += 2;
         }
         else
         {
-            putC(*format, 0xFFFFFF);
+            putC(*format, color);
             format++;
         }
     }
 
     va_end(args);
 }
-
 int str_len(const char *str)
 {
     int length = 0;
