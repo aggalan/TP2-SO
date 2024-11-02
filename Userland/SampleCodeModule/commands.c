@@ -134,7 +134,7 @@ void sync_test(char *args)
     }
 }
 
-int pipe_test(char *args) {
+void pipe_test(char *args) {
     char ** argv_pipes = (char **) call_malloc(sizeof(char *));
     argv_pipes[0] = (char *) call_malloc(sizeof(char) * (str_len("pipes test") + 1));
     str_cpy(argv_pipes[0], "pipes test");
@@ -147,7 +147,6 @@ int pipe_test(char *args) {
     {
         call_create_process(main_test_pipes, 1, 1, argv_pipes, 1);
     }
-    return 0;
 }
 
 void busy_wait()
@@ -311,7 +310,6 @@ void filter(){
 void wc(){
     int lines = 0;
     char c;
-    int in_word = 0;
 
     while(getC(&c) != '\n'){ // TRABAJ CON EOF
         if(c == '\n'){

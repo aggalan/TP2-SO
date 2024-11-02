@@ -27,7 +27,6 @@ int register_flag = 0;
 
 void line_read(char *buffer);
 void cmd_exit(char *args);
-
 void starting_line()
 {
     char *starting_line = "$>";

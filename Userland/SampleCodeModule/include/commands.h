@@ -16,7 +16,7 @@ void cmd_changeprio(char *args);
 void mm_test(char *args);
 void process_test(char *args);
 void prio_test(char *args);
-int pipe_test(char *args);
+void pipe_test(char *args);
 void cmd_set_font(char *args);
 void cmd_print_registers();
 void cmd_ps();

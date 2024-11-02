@@ -158,8 +158,8 @@ void str_to_upper(char *str)
 
 void loop()
 {
-    int flag = 1;
-    int ticks = 0;
+    // int flag = 1;
+    // int ticks = 0;
     while (1)
     {
         // ticks = call_get_ticks();
