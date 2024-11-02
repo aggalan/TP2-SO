@@ -25,5 +25,9 @@ void busy_wait();
 void call_div0();
 void call_invalid_op();
 char re_size(char *buffer);
+void cat();
+int is_vowel(char c);
+void filter();
+void wc();
 
 #endif

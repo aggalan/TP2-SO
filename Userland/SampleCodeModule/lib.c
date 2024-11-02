@@ -158,8 +158,22 @@ void str_to_upper(char *str)
 
 void loop()
 {
+    int flag = 1;
+    int ticks = 0;
     while (1)
     {
+        // ticks = call_get_ticks();
+        // if (ticks % 100 == 0 && flag)
+        // {
+        //     print(0xFFFFFF, "Loop PID = %d\n", call_get_current_pid());
+        //     flag = 0;
+        // }
+        // else if (ticks % 18 == 1 && !flag)
+        // {
+        //     flag = 1;
+        // }
+        // ESTO QUEDA FEO, DESCOMENTARLO PARA ENTREGAR FINAL O PREGUNTar
         ;
+
     }
 }

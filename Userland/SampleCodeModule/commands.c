@@ -284,3 +284,43 @@ void call_div0()
     int b = 0;
     a = a / b;
 }
+
+void cat(){
+    char c;
+    while(getC(&c) != '\n'){ // TRABAJR CON EOF
+        putC(c, WHITE);
+    }
+    putC('\n', WHITE);
+}
+
+int is_vowel(char c){
+    return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
+           c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
+}
+
+void filter(){
+    char c;
+    while(getC(&c) != '\n'){ // TRABAJAR CON EOF
+        if(is_vowel(c)){
+            putC(c, WHITE);
+        }
+    }
+    putC('\n', WHITE);
+}
+
+void wc(){
+    int lines = 0;
+    char c;
+    int in_word = 0;
+
+    while(getC(&c) != '\n'){ // TRABAJ CON EOF
+        if(c == '\n'){
+            lines++;
+        }
+        putC(c, WHITE);
+    }
+    putC('\n', WHITE);
+    put_string("Lines: ", WHITE);
+    put_int(lines, WHITE);
+    put_string("\n", WHITE);
+}
