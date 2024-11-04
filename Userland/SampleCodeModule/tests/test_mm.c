@@ -3,7 +3,6 @@
 #include "test_util.h"
 #include "../include/usr_sys_calls.h"
 #include "../include/lib.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 

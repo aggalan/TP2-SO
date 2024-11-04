@@ -5,11 +5,11 @@
 #include "include/lib.h"
 #include "include/usr_sys_calls.h"
 #include "include/eliminator.h"
-#include <stdio.h>
 #include "tests/test_processes.h"
 #include "tests/test_util.h"
 #include "tests/test_sync.h"
 #include "include/commands.h"
+#include <stddef.h>
 #define WHITE 0xFFFFFFFF
 
 typedef void (*command_func_t)(char *args);

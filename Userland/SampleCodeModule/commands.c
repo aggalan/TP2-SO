@@ -317,7 +317,7 @@ void call_div0()
 void cat()
 {
     char c;
-    while (getC(&c) != '\n')
+    while (getC(&c) != EOF)
     { // TRABAJR CON EOF
         putC(c, WHITE);
     }
@@ -333,7 +333,7 @@ int is_vowel(char c)
 void filter()
 {
     char c;
-    while (getC(&c) != '\n')
+    while (getC(&c) != EOF)
     { // TRABAJAR CON EOF
         if (is_vowel(c))
         {
@@ -348,7 +348,7 @@ void wc()
     int lines = 0;
     char c;
 
-    while (getC(&c) != '\n')
+    while (getC(&c) != EOF)
     { // TRABAJ CON EOF
         if (c == '\n')
         {

@@ -3,11 +3,12 @@
 #include "include/keyboard_driver.h"
 #include "../include/keyboard_buffer.h"
 #include "../include/interrupts.h"
-#include <stdio.h>
+
 #include "include/video_driver.h"
 #include "libasm.h"
 #include "../include/process_manager.h"
 #include "../include/scheduler.h"
+#include "../include/pipe_manager.h"
 
 #define LEFT_SHIFT 0x2A
 #define RIGHT_SHIFT 0x36
@@ -86,6 +87,11 @@ void keyboard_handler()
       if (keyMap[keyMapRow][code] == 'c' || keyMap[keyMapRow][code] == 'C')
       {
           kill_foreground_process();
+          return;
+      }
+      else if(keyMap[keyMapRow][code] == 'd' || keyMap[keyMapRow][code] == 'D')
+      {
+          send_eof_signal();
           return;
       }
     }

@@ -194,7 +194,9 @@ void redirect_std(pid_t pid_in, int fd_in,pid_t pid_out, int fd_out) {
 
 }
 
-
+void send_eof_signal(){
+    //aca deberia buscar el pipe y hacer que is_finished_writing = 1
+}
 
 
 

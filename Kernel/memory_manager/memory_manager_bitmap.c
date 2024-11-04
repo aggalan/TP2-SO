@@ -3,7 +3,6 @@
 #ifdef BITMAP
 #include "./include/memory_manager.h"
 #include "../Drivers/include/video_driver.h"
-#include <stdio.h>
 #include "scheduler.h"
 
 typedef struct memory_manager

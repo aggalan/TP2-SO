@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include "sys/types.h"
 
+#define EOF -1
 
 // Reads a character from input and saves it in the pointer c.
 // Returns the number of characters saved.

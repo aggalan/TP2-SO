@@ -41,4 +41,6 @@ ssize_t pipe_write(int fd, const char * buff, size_t bytes_w);
 
 void free_entry(int fd);
 
+void send_eof_signal();
+
 #endif

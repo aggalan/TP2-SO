@@ -3,6 +3,8 @@
 #ifndef _COMMANDS_H_
 #define _COMMANDS_H_
 
+#define EOF -1
+
 void cmd_help(char *args);
 void cmd_tests();
 void cmd_eliminator(char *args);

@@ -3,11 +3,12 @@
 #include "include/lib.h"
 #include "include/usr_sys_calls.h"
 #include <stdarg.h>
+
 #define TO_UPPER(c) (((c) >= 'a' && (c) <= 'z') ? ((c) - ('a' - 'A')) : (c))
 
 int getC(char *c)
 {
-    return call_sys_read(STDIN, c, 1);
+    return call_sys_read(STDIN, c, 1) == 1 ? 1 : EOF;
 }
 int get_buffer(char *buf)
 {
