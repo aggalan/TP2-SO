@@ -401,7 +401,7 @@ void print_processes()
 
     drawWord1("STATE    ");
 
-    drawWord1("IS FOREGROUND");
+    drawWord1("GROUND");
     newLine();
     for (int i = 0, j = 0; j < map->size && i < MAX_MAP_SIZE; i++)
     {
@@ -487,7 +487,14 @@ void print_processes()
                     drawWord1(" ");
                 }
 
-                drawWord1("FALSE");
+                switch (aux->value->state) {
+                    case 0:
+                        drawWord1("BACKGROUND");
+                        break;
+                    case 1:
+                        drawWord1("FOREGROUND");
+                        break;
+                }
                 newLine();
                 j++;
                 aux = aux->next;
