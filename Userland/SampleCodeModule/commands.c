@@ -382,3 +382,25 @@ static int ampersen_searcher(char *input)
     // Return true if there's exactly one '&' at the end
     return ampersand_count == 1;
 }
+
+void cat_process()
+{
+    char **argv = (char **)(uintptr_t)call_malloc(sizeof(char *));
+    argv[0] = (char *)call_malloc(sizeof(char) * (str_len("cat") + 1));
+    str_cpy(argv[0], "cat");
+    call_create_process(cat, 1, 1, argv, 1);
+}
+
+void filter_process(){
+    char **argv = (char **)(uintptr_t)call_malloc(sizeof(char *));
+    argv[0] = (char *)call_malloc(sizeof(char) * (str_len("filter") + 1));
+    str_cpy(argv[0], "filter");
+    call_create_process(filter, 1, 1, argv, 0);
+}
+
+void wc_process(){
+    char **argv = (char **)(uintptr_t)call_malloc(sizeof(char *));
+    argv[0] = (char *)call_malloc(sizeof(char) * (str_len("wc") + 1));
+    str_cpy(argv[0], "wc");
+    call_create_process(wc, 1, 1, argv, 0);
+}

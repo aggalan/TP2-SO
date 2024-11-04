@@ -105,7 +105,10 @@ command_t commands[] = {
     {"invalid_op", call_invalid_op, "Generates an invalid operation exception."},
     {"get_registers", cmd_print_registers, "Prints the registers of the current process."},
     {"exit", cmd_exit, "Exits the shell."},
-    {"loop", busy_wait, "Creates a process whose purpose is to be monitored"}};
+    {"loop", busy_wait, "Creates a process whose purpose is to be monitored"},
+    {"cat", cat_process, "Prints the input received."},
+    {"filter", filter_process, "Filters the input received."},
+    {"wc", wc_process, "Counts the words in the input received."}};
 
 void line_read(char *buffer)
 {
