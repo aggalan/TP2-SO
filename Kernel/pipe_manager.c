@@ -30,6 +30,9 @@ int named_pipe_create(char *name) {
             pipe->name = mm_malloc(sizeof(char) * (str_len(name) + 1));
             str_cpy(pipe->name, name);
             pipe->buff = (char *)mm_malloc(BUFFER_SIZE);
+            for (int i = 0; i < BUFFER_SIZE; i++) {
+                pipe->buff[i] = 0;
+            }
             pipe->write_pos = 0;
             pipe->read_pos = 0;
             pipe->write_sem = my_sem_init(1);
@@ -39,9 +42,11 @@ int named_pipe_create(char *name) {
             pipe->read_pid = -1;
             pipe->write_pid = -1;
 
+            pipe->is_finished_writing = 0;
+
             pipe->fd = fd_allocate(pipe, FD_TYPE_PIPE);
             global_pipe_table[i] = pipe;
-            return pipe->fd;
+            return 1;
         }
     }
     return -1;
@@ -77,8 +82,10 @@ void named_pipe_close(int fd) {
 
     if (pipe->write_pid == pid) {
         pipe->write_pid = -1;
+        my_sem_post(pipe->read_sem); //just in case
     } else if (pipe->read_pid == pid) {
         pipe->read_pid = -1;
+        my_sem_post(pipe->write_sem); // just in case i think necessary
     } else {
         return;
     }
@@ -90,12 +97,6 @@ void named_pipe_close(int fd) {
         my_sem_close(pipe->write_sem);
         my_sem_close(pipe->read_sem);
         mm_free(pipe->name);
-//        for (int i = 0; i < MAX_PIPES; i++) {
-//            if (global_pipe_table[i] == pipe) {
-//                global_pipe_table[i] = NULL;
-//                break;
-//            }
-//        }
         fd_free(pipe->fd);
         global_pipe_table[pipe->index] = NULL;
         mm_free(pipe);
@@ -119,7 +120,14 @@ ssize_t pipe_read(int fd, char * buff, size_t bytes_r) {
     my_sem_wait(pipe->read_sem);
 
     size_t bytes_read = 0;
-    while (bytes_read < bytes_r && pipe->read_pos != pipe->write_pos) {
+    while (bytes_read < bytes_r) {
+        if (pipe->read_pos == pipe->write_pos) {
+            if (pipe->write_pid == -1 || pipe->is_finished_writing) {
+                break;
+            }
+            my_sem_post(pipe->write_sem);
+            my_sem_wait(pipe->read_sem);
+        }
         buff[bytes_read++] = pipe->buff[pipe->read_pos];
         pipe->read_pos = (pipe->read_pos + 1) % BUFFER_SIZE;
     }
@@ -130,14 +138,14 @@ ssize_t pipe_read(int fd, char * buff, size_t bytes_r) {
 
 ssize_t pipe_write(int fd, char * buff, size_t bytes_w) {
     fd_entry * entry = fd_get_entry(fd);
-    if (entry == NULL) {
+    if (entry == NULL || bytes_w <= 0) {
         return -1;
     }
     named_pipe_t * pipe = entry->resource;
 
     pid_t pid = get_current_pid();
 
-    if (pipe->write_pid != pid) {
+    if (pipe->write_pid != pid || pipe->read_pid == -1) {
         return -1;
     }
 
@@ -147,12 +155,16 @@ ssize_t pipe_write(int fd, char * buff, size_t bytes_w) {
     while (bytes_written < bytes_w) {
         // Check if buffer would be full after write
         if (((pipe->write_pos + 1) % BUFFER_SIZE) == pipe->read_pos) {
+            pipe->is_finished_writing = 0;
+            my_sem_post(pipe->read_sem);
             my_sem_wait(pipe->write_sem);
             continue;
         }
         pipe->buff[pipe->write_pos] = buff[bytes_written++];
         pipe->write_pos = (pipe->write_pos + 1) % BUFFER_SIZE;
     }
+
+    pipe->is_finished_writing = 1;
 
     my_sem_post(pipe->read_sem);
     return bytes_written;
