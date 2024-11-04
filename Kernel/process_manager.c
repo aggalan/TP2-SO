@@ -327,17 +327,21 @@ pid_t wait_pid(pid_t pid_to_wait)
 }
 
 void block_shell_read() {
-    if (shell_process->state == RUNNING || shell_process->state == READY) {
+    if (foreground_process != NULL && (foreground_process->state == RUNNING || foreground_process->state == READY)) {
+        foreground_process->updated = 0;
+        foreground_process->state = BLOCKED_IO;
+        nice();
+    } else if (shell_process->state == RUNNING || shell_process->state == READY) {
         shell_process->updated = 0;
-        shell_process->state = BLOCKED;
-        if (shell_process->state == RUNNING) {
-            nice();
-        }
+        shell_process->state = BLOCKED_IO;
+        nice();
     }
 }
 
 void wake_up_shell() {
-    if (shell_process->state == BLOCKED) {
+    if (foreground_process->state == BLOCKED_IO) {
+        foreground_process->state = READY;
+    } else if (shell_process->state == BLOCKED_IO) {
         shell_process->state = READY;
     }
 }

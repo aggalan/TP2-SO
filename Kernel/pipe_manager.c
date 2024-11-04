@@ -162,7 +162,6 @@ ssize_t pipe_write(int fd, const char * buff, size_t bytes_w) {
 
     size_t bytes_written = 0;
     while (bytes_written < bytes_w) {
-        // Check if buffer would be full after write
         if (((pipe->write_pos + 1) % BUFFER_SIZE) == pipe->read_pos && (bytes_written + 1) < bytes_w) {
             pipe->buff[pipe->write_pos] = buff[bytes_written++];
             pipe->write_pos = (pipe->write_pos + 1) % BUFFER_SIZE;

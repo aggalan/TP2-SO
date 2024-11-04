@@ -18,7 +18,8 @@ enum State
     ZOMBIE,
     KILLED,
     WAITING,
-    EXITED
+    EXITED,
+    BLOCKED_IO
 };
 
 typedef struct child_node child_node;
