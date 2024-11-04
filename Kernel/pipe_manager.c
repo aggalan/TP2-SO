@@ -54,8 +54,6 @@ int named_pipe_create(char *name) {
             pipe->read_pid = -1;
             pipe->write_pid = -1;
 
-            pipe->is_finished_writing = 0;
-
             pipe->fd = fd_allocate(pipe, FD_TYPE_PIPE);
             global_pipe_table[i] = pipe;
             return 1;
@@ -94,10 +92,10 @@ void named_pipe_close(int fd) {
 
     if (pipe->write_pid == pid) {
         pipe->write_pid = -1;
-        my_sem_post(pipe->read_sem); //just in case i think necessary
+//        my_sem_post(pipe->read_sem); //just in case i think necessary
     } else if (pipe->read_pid == pid) {
         pipe->read_pid = -1;
-        my_sem_post(pipe->write_sem); // just in case i think necessary
+//        my_sem_post(pipe->write_sem); // just in case i think necessary
     } else {
         return;
     }
@@ -168,7 +166,6 @@ ssize_t pipe_write(int fd, const char * buff, size_t bytes_w) {
         if (((pipe->write_pos + 1) % BUFFER_SIZE) == pipe->read_pos && (bytes_written + 1) < bytes_w) {
             pipe->buff[pipe->write_pos] = buff[bytes_written++];
             pipe->write_pos = (pipe->write_pos + 1) % BUFFER_SIZE;
-//            pipe->is_finished_writing = 0;
             my_sem_post(pipe->read_sem);
             my_sem_wait(pipe->write_sem);
             continue;
@@ -177,22 +174,18 @@ ssize_t pipe_write(int fd, const char * buff, size_t bytes_w) {
         pipe->write_pos = (pipe->write_pos + 1) % BUFFER_SIZE;
     }
 
-//    pipe->is_finished_writing = 1;
-
     my_sem_post(pipe->read_sem);
     return bytes_written;
 }
 
-void redirect_std(pid_t pid_in, int fd_in,pid_t pid_out, int fd_out) {
-    PCB * pcb_in = find_pcb(pid_in);
-    PCB * pcb_out = find_pcb(pid_out);
+void redirect_std(pid_t pid, int fd, int std) {
+    PCB * pcb = find_pcb(pid);
 
-    if (pcb_in == NULL || pcb_out == NULL) {
+    if (pcb == NULL) {
         return;
     }
 
-    pcb_in->fds[STDIN] = fd_in;
-    pcb_out->fds[STDOUT] = fd_out;
+    pcb->fds[std] = fd;
 
 }
 

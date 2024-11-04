@@ -24,7 +24,6 @@ typedef struct named_pipe_t {
     pid_t read_pid;
     pid_t write_pid;
     int ref_count;
-    int is_finished_writing;
 }named_pipe_t;
 
 void pipe_table_init();
@@ -42,5 +41,7 @@ ssize_t pipe_write(int fd, const char * buff, size_t bytes_w);
 void free_entry(int fd);
 
 void send_eof_signal();
+
+void redirect_std(pid_t pid, int fd, int std);
 
 #endif
