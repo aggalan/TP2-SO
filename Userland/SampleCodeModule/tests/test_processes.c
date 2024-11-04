@@ -47,7 +47,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
     {
       char **argvAux = (char **)(uintptr_t)call_malloc(sizeof(char *));
 
-      if (argvAux == 0)
+      if (argvAux == (void *)0)
       {
         print(0xFFFFFF, "\nNo room for arguments\n");
         return -1;
@@ -55,7 +55,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
 
       argvAux[0] = (char *)call_malloc(sizeof(char) * str_len("endless loop") + 1);
 
-      if (argvAux[0] == 0)
+      if (argvAux[0] == (void *)0)
       {
         print(0xFFFFFF, "\nNo room for arguments\n");
         call_free(argvAux); 

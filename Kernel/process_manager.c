@@ -71,12 +71,13 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv, int 
     pcb->base = (uint64_t)mm_malloc(STACK);
     if ((void *)pcb->base == NULL)
     {
-        mm_free(pcb);
         for (int i = 0; i < argc; i++) // he who uncomments this shall bear the sacred burden of uncovering the
         {                              // truth behind the reason as of why this destroys everything.
             mm_free(argv[i]);          // may god bear witness to your brave attempt, for only he, and the person i was when this code was written, know how to fix it
         } // godspeed.
         mm_free(argv);
+        mm_free(pcb->fds);
+        mm_free(pcb);
         return -1;
     }
     pcb->base += STACK - 1;
