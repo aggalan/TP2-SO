@@ -6,8 +6,8 @@
 #define TEST_STRING "Hello through the pipe! Let's make this longer in order to test correctly!"
 #define PIPE_NAME "test_pipe"
 #define NUM_MESSAGES 5
-#define WRITE 1
 #define READ 0
+#define WRITE 1
 
 // Process that writes to the pipe
 uint64_t writer_process(uint64_t argc, char *argv[]) {
@@ -71,8 +71,8 @@ uint64_t reader_process(uint64_t argc, char *argv[]) {
     return 0;
 }
 
-void test_pipe_creation() {
-    print(0xFFFFFF, "Testing pipe creation...\n");
+void test_pipe_creation_and_modes() {
+    print(0xFFFFFF, "Testing pipe creation and mode restrictions...\n");
 
     // Test basic pipe creation
     int fd = call_named_pipe_create(PIPE_NAME);
@@ -90,7 +90,7 @@ void test_pipe_creation() {
     }
     print(0xFFFFFF, "PASS: Duplicate pipe creation correctly failed\n");
 
-    // Test opening pipe in read mode
+    // Test single process trying to open both modes (should fail)
     int read_fd = call_named_pipe_open(PIPE_NAME, READ);
     if (read_fd < 3) {
         print(0xFFFFFF, "FAIL: Opening pipe in read mode failed\n");
@@ -98,13 +98,13 @@ void test_pipe_creation() {
     }
     print(0xFFFFFF, "PASS: Successfully opened pipe in read mode\n");
 
-    // Test opening pipe in write mode
+    // Try to open write mode from same process (should fail)
     int write_fd = call_named_pipe_open(PIPE_NAME, WRITE);
-    if (write_fd < 3) {
-        print(0xFFFFFF, "FAIL: Opening pipe in write mode failed\n");
+    if (write_fd != -1) {
+        print(0xFFFFFF, "FAIL: Same process shouldn't be able to open both read and write modes\n");
         return;
     }
-    print(0xFFFFFF, "PASS: Successfully opened pipe in write mode\n");
+    print(0xFFFFFF, "PASS: Correctly prevented same process from opening both modes\n");
 
     // Test duplicate reader (should fail)
     int duplicate_read_fd = call_named_pipe_open(PIPE_NAME, READ);
@@ -116,73 +116,7 @@ void test_pipe_creation() {
 
 //    call_named_pipe_close(fd);
     call_named_pipe_close(read_fd);
-    call_named_pipe_close(write_fd);
-    print(0xFFFFFF, "Pipe creation tests passed!\n\n");
-}
-
-void test_pipe_io() {
-    print(0xFFFFFF, "Testing pipe I/O...\n");
-
-    // Create the pipe
-    int create_fd = call_named_pipe_create(PIPE_NAME);
-    if (create_fd < 3) {
-        print(0xFFFFFF, "FAIL: Pipe creation failed\n");
-        return;
-    }
-
-    // Open for reading and writing
-    int read_fd = call_named_pipe_open(PIPE_NAME, READ);
-    int write_fd = call_named_pipe_open(PIPE_NAME, WRITE);
-    if (read_fd < 3 || write_fd < 3) {
-        print(0xFFFFFF, "FAIL: Opening pipe failed\n");
-        return;
-    }
-
-    char write_buffer[TEST_BUFFER_SIZE];
-    char read_buffer[TEST_BUFFER_SIZE];
-    str_cpy(write_buffer, TEST_STRING);
-
-    // Test writing
-    ssize_t bytes_written = call_pipe_write(write_fd, write_buffer, str_len(TEST_STRING) + 1);
-    if (bytes_written != str_len(TEST_STRING) + 1) {
-        print(0xFFFFFF, "FAIL: Write operation failed\n");
-        return;
-    }
-    print(0xFFFFFF, "PASS: Written %d bytes to pipe\n", bytes_written);
-
-    // Test reading
-    ssize_t bytes_read = call_pipe_read(read_fd, read_buffer, TEST_BUFFER_SIZE);
-    if (bytes_read != str_len(TEST_STRING) + 1) {
-        print(0xFFFFFF, "FAIL: Read operation failed\n");
-        return;
-    }
-    print(0xFFFFFF, "PASS: Read %d bytes from pipe\n", bytes_read);
-
-    // Verify data
-    if (str_cmp(write_buffer, read_buffer) != 0) {
-        print(0xFFFFFF, "FAIL: Data mismatch\n");
-        return;
-    }
-    print(0xFFFFFF, "PASS: Data verification passed\n");
-
-    // Test writing to read fd (should fail)
-    if (call_pipe_write(read_fd, write_buffer, str_len(TEST_STRING) + 1) != -1) {
-        print(0xFFFFFF, "FAIL: Writing to read fd should have failed\n");
-        return;
-    }
-    print(0xFFFFFF, "PASS: Writing to read fd correctly failed\n");
-
-    // Test reading from write fd (should fail)
-    if (call_pipe_read(write_fd, read_buffer, TEST_BUFFER_SIZE) != -1) {
-        print(0xFFFFFF, "FAIL: Reading from write fd should have failed\n");
-        return;
-    }
-    print(0xFFFFFF, "PASS: Reading from write fd correctly failed\n");
-
-//    call_named_pipe_close(create_fd);
-    call_named_pipe_close(read_fd);
-    call_named_pipe_close(write_fd);
-    print(0xFFFFFF, "Pipe I/O tests passed!\n\n");
+    print(0xFFFFFF, "Pipe creation and mode tests passed!\n\n");
 }
 
 void test_pipe_concurrent_processes() {
@@ -195,15 +129,24 @@ void test_pipe_concurrent_processes() {
         return;
     }
 
-    char *empty_args[] = {"name"};
+    char *empty_args[] = {NULL};
 
     // Create reader and writer processes
     uint64_t reader_pid = call_create_process(reader_process, 1, 1, empty_args, 0);
-    uint64_t writer_pid = call_create_process(writer_process, 1, 1, empty_args, 0);
-
-    if (writer_pid == -1 || reader_pid == -1) {
-        print(0xFFFFFF, "FAIL: Failed to create processes\n");
+    if (reader_pid == -1) {
+        print(0xFFFFFF, "FAIL: Failed to create reader process\n");
         call_named_pipe_close(create_fd);
+        return;
+    }
+
+    // Give reader a moment to start
+    call_nice();
+
+    uint64_t writer_pid = call_create_process(writer_process, 1, 1, empty_args, 0);
+    if (writer_pid == -1) {
+        print(0xFFFFFF, "FAIL: Failed to create writer process\n");
+        call_named_pipe_close(create_fd);
+        call_waitpid(reader_pid);
         return;
     }
 
@@ -215,11 +158,43 @@ void test_pipe_concurrent_processes() {
     print(0xFFFFFF, "PASS: Concurrent processes test completed\n\n");
 }
 
+void test_invalid_operations() {
+    print(0xFFFFFF, "Testing invalid operations...\n");
+
+    int fd = call_named_pipe_create(PIPE_NAME);
+    if (fd < 3) {
+        print(0xFFFFFF, "FAIL: Pipe creation failed\n");
+        return;
+    }
+
+    // Open pipe in read mode
+    int read_fd = call_named_pipe_open(PIPE_NAME, READ);
+    if (read_fd < 3) {
+        print(0xFFFFFF, "FAIL: Opening pipe in read mode failed\n");
+        call_named_pipe_close(fd);
+        return;
+    }
+
+    // Try to write to read fd (should fail)
+    char buffer[] = "test";
+    if (call_pipe_write(read_fd, buffer, str_len(buffer)) != -1) {
+        print(0xFFFFFF, "FAIL: Writing to read fd should have failed\n");
+        call_named_pipe_close(fd);
+        call_named_pipe_close(read_fd);
+        return;
+    }
+    print(0xFFFFFF, "PASS: Writing to read fd correctly failed\n");
+
+//    call_named_pipe_close(fd);
+    call_named_pipe_close(read_fd);
+    print(0xFFFFFF, "Invalid operations tests passed!\n\n");
+}
+
 int main_test_pipes() {
     print(0xFFFFFF, "Starting named pipe tests...\n\n");
 
-    test_pipe_creation();
-    test_pipe_io();
+    test_pipe_creation_and_modes();
+    test_invalid_operations();
     test_pipe_concurrent_processes();
 
     print(0xFFFFFF, "All tests completed!\n");

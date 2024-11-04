@@ -20,7 +20,6 @@ void pipe_table_init() {
 int named_pipe_create(char *name) {
     for (int i = 0; i < MAX_PIPES; i++) {
         if (global_pipe_table[i] != NULL && str_cmp(global_pipe_table[i]->name, name) == 0) {
-            drawWord1(" WHYYYYYY ");
             return -1;
         }
     }
@@ -53,9 +52,9 @@ int named_pipe_open(char *name, int mode) {
         if (global_pipe_table[i] != NULL && (str_cmp(global_pipe_table[i]->name, name) == 0)) {
             pid_t pid = get_current_pid();
 
-            if (mode == READ && global_pipe_table[i]->read_pid == -1) {
+            if (mode == READ && global_pipe_table[i]->read_pid == -1 && global_pipe_table[i]->write_pid != pid) {
                 global_pipe_table[i]->read_pid = pid;
-            } else if (mode == WRITE && global_pipe_table[i]->write_pid == -1) {
+            } else if (mode == WRITE && global_pipe_table[i]->write_pid == -1 && global_pipe_table[i]->read_pid != pid) {
                 global_pipe_table[i]->write_pid = pid;
             } else {
                 return -1;
