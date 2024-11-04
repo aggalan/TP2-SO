@@ -330,9 +330,7 @@ void block_shell_read() {
     if (shell_process->state == RUNNING || shell_process->state == READY) {
         shell_process->updated = 0;
         shell_process->state = BLOCKED;
-        if (shell_process->state == RUNNING) {
-            nice();
-        }
+        nice();
     }
 }
 

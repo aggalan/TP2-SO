@@ -8,6 +8,7 @@
 #include "include/fd_manager.h"
 #include "include/pipe_manager.h"
 #include "include/scheduler.h"
+#define EOF -1
 
 #define MIN(x, y) x < y ? x : y
 
@@ -75,6 +76,13 @@ int shell_read(char *save, int len) {
         *save = 0;
         return 0;
     }
+
+    if(getCharAt(n) == EOF){
+        *save = EOF;
+        consumeBufferAt(n);
+        return EOF;
+    }
+    
 
     int length = MIN(len, getBufferLen());
 

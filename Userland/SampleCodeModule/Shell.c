@@ -44,7 +44,7 @@ void buffer_control()
         char c;
         getC(&c);
 
-        if (c != 0 && c != '\t')
+        if (c != 0 && c != '\t' && c != EOF)
         {
             if (c == '\n')
             {

@@ -8,7 +8,7 @@
 
 int getC(char *c)
 {
-    return call_sys_read(STDIN, c, 1) == 1 ? 1 : EOF;
+    return call_sys_read(STDIN, c, 1);
 }
 int get_buffer(char *buf)
 {
