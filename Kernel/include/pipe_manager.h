@@ -9,7 +9,7 @@
 #define MAX_OPEN_PID 10
 #define READ 0
 #define WRITE 1
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 1024
 
 
 typedef struct named_pipe_t {
@@ -24,6 +24,7 @@ typedef struct named_pipe_t {
     pid_t read_pid;
     pid_t write_pid;
     int ref_count;
+    int is_finished_writing;
 }named_pipe_t;
 
 void pipe_table_init();
