@@ -147,7 +147,7 @@ ssize_t pipe_read(int fd, char * buff, size_t bytes_r) {
     return bytes_read;
 }
 
-ssize_t pipe_write(int fd, char * buff, size_t bytes_w) {
+ssize_t pipe_write(int fd, const char * buff, size_t bytes_w) {
     fd_entry * entry = fd_get_entry(fd);
     if (entry == NULL || bytes_w <= 0) {
         return -1;
@@ -179,6 +179,19 @@ ssize_t pipe_write(int fd, char * buff, size_t bytes_w) {
 
     my_sem_post(pipe->read_sem);
     return bytes_written;
+}
+
+void redirect_std(pid_t pid_in, int fd_in,pid_t pid_out, int fd_out) {
+    PCB * pcb_in = find_pcb(pid_in);
+    PCB * pcb_out = find_pcb(pid_out);
+
+    if (pcb_in == NULL || pcb_out == NULL) {
+        return;
+    }
+
+    pcb_in->fds[STDIN] = fd_in;
+    pcb_out->fds[STDOUT] = fd_out;
+
 }
 
 

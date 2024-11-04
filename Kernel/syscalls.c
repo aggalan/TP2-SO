@@ -14,18 +14,21 @@ int shell_read(char *save, int len);
 
 void sys_write(int descriptor, const char *str, int len, uint32_t hexColor)
 {
-//    fd_entry * entry = fd_get_entry(descriptor); //agregar chequeo de error, y ver porq aca misticamente no anda
-//    drawNumber(entry->fd_type);
-    switch (descriptor)
+    fd_entry * entry = fd_get_entry(descriptor); //agregar chequeo de error, y ver porq aca misticamente no anda
+    switch (entry->fd_type)
     {
-    case STDOUT:
-        drawWordLen(hexColor, str, len);
-        return;
-    case ERROUT:
-        drawWordLen(0x00ff0000, str, len);
-    default:
-        drawWord(0x00ff0000, "no such descriptor");
-        return;
+        case STDOUT:
+            drawWordLen(hexColor, str, len);
+            return;
+        case ERROUT:
+            drawWordLen(0x00ff0000, str, len);
+            return;
+        case FD_TYPE_PIPE:
+            pipe_write(descriptor, str, len);
+            return;
+        default:
+            drawWord(0x00ff0000, "no such descriptor");
+            return;
     }
 }
 

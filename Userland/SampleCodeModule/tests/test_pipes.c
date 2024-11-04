@@ -52,7 +52,7 @@ uint64_t full_buffer_reader(uint64_t argc, char *argv[]) {
     }
 
     char buffer[2001];
-    ssize_t bytes_read = call_pipe_read(fd, buffer, 2001);
+    ssize_t bytes_read = call_sys_read(fd, buffer, 2001);
     if (bytes_read != 2000 + 1) {
         print(0xFFFFFF, "Full Buffer Reader: Read failed or incomplete (read %d bytes)\n", bytes_read);
         call_named_pipe_close(fd);
@@ -197,7 +197,7 @@ uint64_t reader_process(uint64_t argc, char *argv[]) {
 
     char buffer[TEST_BUFFER_SIZE_NORMAL];
     for (int i = 0; i < NUM_MESSAGES; i++) {
-        ssize_t bytes_read = call_pipe_read(fd, buffer, TEST_BUFFER_SIZE_NORMAL);
+        ssize_t bytes_read = call_sys_read(fd, buffer, TEST_BUFFER_SIZE_NORMAL);
         if (bytes_read <= 0) {
             print(0xFFFFFF, "Reader: Read failed\n");
             call_named_pipe_close(fd);

@@ -37,7 +37,7 @@ void named_pipe_close(int fd);
 
 ssize_t pipe_read(int fd, char * buff, size_t bytes_r);
 
-ssize_t pipe_write(int fd, char * buff, size_t bytes_w);
+ssize_t pipe_write(int fd, const char * buff, size_t bytes_w);
 
 void free_entry(int fd);
 
