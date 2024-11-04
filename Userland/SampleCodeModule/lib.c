@@ -13,9 +13,9 @@ int get_buffer(char *buf)
 {
     return call_sys_read(STDIN, buf, 100);
 }
-void putC(char c, uint32_t hex_color)
+int putC(char c, uint32_t hex_color)
 {
-    call_sys_write(STDOUT, &c, 1, hex_color);
+    return call_sys_write(STDOUT, &c, 1, hex_color);
 }
 
 void put_int(uint64_t num, uint32_t hex_color)
@@ -40,9 +40,9 @@ void put_int(uint64_t num, uint32_t hex_color)
         divisor /= 10;
     }
 }
-void put_string(const char *s, uint32_t hex_color)
+ssize_t put_string(const char *s, uint32_t hex_color)
 {
-    call_sys_write(STDOUT, s, str_len(s), hex_color);
+    return call_sys_write(STDOUT, s, str_len(s), hex_color);
 }
 
 void print(int color, const char *format, ...)

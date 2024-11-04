@@ -22,10 +22,10 @@
 #define ERROUT 2
 
 // writes in the file descriptor received the string, of length len in a color of HexColor
-void sys_write(int descriptor, const char *str, int len, uint32_t hexColor);
+ssize_t sys_write(int descriptor, const char *str, int len, uint32_t hexColor);
 
 // reads from the character buffer until reaching the amount of characters len or emptying the buffer and saves the chars at save
-int sys_read(int descriptor, char *save, int len);
+ssize_t sys_read(int descriptor, char *save, int len);
 
 void irq_write(uint64_t rsi, char *rdx, uint64_t rcx, uint64_t r8);
 void irq_read(uint64_t rsi, char *rdx, uint64_t rcx);

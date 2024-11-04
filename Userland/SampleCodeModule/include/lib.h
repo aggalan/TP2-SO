@@ -11,7 +11,7 @@
 int getC(char *c);
 
 // Prints the character passed as the first argument in the color specified by the second argument.
-void putC(char c, uint32_t hexColor);
+int putC(char c, uint32_t hexColor);
 
 // Prints the integer number passed as the first argument in the color specified by the second argument.
 void put_int(uint64_t num, uint32_t hexColor);
@@ -37,7 +37,7 @@ char *cut_string(char *str);
 int str_len(const char *str);
 
 // Prints the string passed as the first argument in the color specified by the second argument.
-void put_string(const char *s, uint32_t hexColor);
+ssize_t put_string(const char *s, uint32_t hexColor);
 
 // Converts the string passed as the argument to an integer and returns value.
 int str_to_int(char *s);

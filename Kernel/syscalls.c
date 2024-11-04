@@ -12,27 +12,26 @@
 
 int shell_read(char *save, int len);
 
-void sys_write(int descriptor, const char *str, int len, uint32_t hexColor)
+ssize_t sys_write(int descriptor, const char *str, int len, uint32_t hexColor)
 {
     fd_entry * entry = fd_get_entry(descriptor); //agregar chequeo de error, y ver porq aca misticamente no anda
     switch (entry->fd_type)
     {
         case STDOUT:
             drawWordLen(hexColor, str, len);
-            return;
+            return len;
         case ERROUT:
             drawWordLen(0x00ff0000, str, len);
-            return;
+            return len;
         case FD_TYPE_PIPE:
-            pipe_write(descriptor, str, len);
-            return;
+            return pipe_write(descriptor, str, len);
         default:
             drawWord(0x00ff0000, "no such descriptor");
-            return;
+            return -1;
     }
 }
 
-int sys_read(int descriptor, char *save, int len)
+ssize_t sys_read(int descriptor, char *save, int len)
 {
     fd_entry * entry = fd_get_entry(descriptor);
     switch (entry->fd_type) { //aca deberia switcher en algo como fd_table[fd]->type. pafa ver si es pipe u otra cosa

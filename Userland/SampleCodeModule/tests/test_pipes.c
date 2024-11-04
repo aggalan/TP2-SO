@@ -29,7 +29,7 @@ uint64_t full_buffer_writer(uint64_t argc, char *argv[]) {
     huge_message[2000] = '\0';
 
     // Try to write the full buffer
-    ssize_t written = call_pipe_write(fd, huge_message, 2000 + 1);
+    ssize_t written = call_sys_write(fd, huge_message, 2000 + 1, 0xffffff);
     if (written != 2000 + 1) {
         print(0xFFFFFF, "Full Buffer Writer: Write failed or incomplete (wrote %d bytes)\n", written);
         call_named_pipe_close(fd);
@@ -88,7 +88,7 @@ uint64_t overflow_writer(uint64_t argc, char *argv[]) {
     huge_message[TEST_BUFFER_SIZE * 2 - 1] = '\0';
 
     // Attempt to write oversized message
-    ssize_t written = call_pipe_write(fd, huge_message, TEST_BUFFER_SIZE * 2);
+    ssize_t written = call_sys_write(fd, huge_message, TEST_BUFFER_SIZE * 2, 0xffffff);
     print(0xFFFFFF, "Overflow Writer: Attempted write returned %d, (should be -1 since there is no reader active, this test makes no sense)\n", written);
 
     call_named_pipe_close(fd);
@@ -170,7 +170,7 @@ uint64_t writer_process(uint64_t argc, char *argv[]) {
     };
 
     for (int i = 0; i < NUM_MESSAGES; i++) {
-        ssize_t written = call_pipe_write(fd, messages[i], str_len(messages[i]) + 1);
+        ssize_t written = call_sys_write(fd, messages[i], str_len(messages[i]) + 1, 0xffffff);
         if (written != str_len(messages[i]) + 1) {
             print(0xFFFFFF, "Writer: Write failed\n");
             call_named_pipe_close(fd);
@@ -276,7 +276,7 @@ void test_invalid_operations() {
 
     // Try to write to read fd (should fail)
     char buffer[] = "test";
-    if (call_pipe_write(read_fd, buffer, str_len(buffer)) != -1) {
+    if (call_sys_write(read_fd, buffer, str_len(buffer), 0xffffff) != -1) {
         print(0xFFFFFF, "FAIL: Writing to read fd should have failed\n");
         call_named_pipe_close(read_fd);
         return;

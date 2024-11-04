@@ -12,10 +12,10 @@
 #define STDERR 2
 
 // Reads data from a file descriptor into the kernels buffer
-int call_sys_read(int fd, char *buf, int size);
+ssize_t call_sys_read(int fd, char *buf, int size);
 
 // Writes data from the  kernels buffer to a file descriptor with a specified color
-void call_sys_write(int fd, const char *buf, int size, uint32_t hexColor);
+ssize_t call_sys_write(int fd, const char *buf, int size, uint32_t hexColor);
 
 // Gets the current time and stores it in a buffer
 void call_time_clock(char *buf);
