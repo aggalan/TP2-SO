@@ -121,6 +121,21 @@ char *cut_string(char *str)
     return str;
 }
 
+char * str_chr(const char *s, int c) {
+    while (*s != '\0') {
+        if (*s == (char)c) {
+            return (char *)s;
+        }
+        s++;
+    }
+    
+    if (c == '\0') {
+        return (char *)s;
+    }
+    
+    return (void *)0;
+}
+
 int pow(int base, int pow)
 {
     int toR = 1;

@@ -25,6 +25,8 @@ static char buffer[BUFFER_SIZE] = {0};
 int exit_flag = 0;
 int register_flag = 0;
 
+void normalize_whitespace(char * str);
+int isspace(char c);
 void line_read(char *buffer);
 void cmd_exit(char *args);
 void starting_line()
@@ -107,12 +109,20 @@ command_t commands[] = {
 
 void line_read(char *buffer)
 {
-    char *command = cut_string(buffer);
+    normalize_whitespace(buffer);
+    char * command_copy = (char *)call_malloc(sizeof(char) * (str_len(buffer) + 1));
+    if(command_copy == NULL){
+        put_string("Error: malloc failed\n", WHITE);
+        return;
+    }
+    str_cpy(command_copy, buffer);
+    char *command = cut_string(command_copy);
     for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
     {
         if (str_cmp(command, commands[i].command) == 0)
         {
             commands[i].func(buffer);
+            call_free(command_copy);
             return;
         }
     }
@@ -122,12 +132,15 @@ void line_read(char *buffer)
         if (str_cmp(command, tests[i].command) == 0)
         {
             tests[i].func(buffer);
+            call_free(command_copy);
             return;
         }
     }
+
     put_string(buffer, WHITE);
     put_string(": command not found", WHITE);
     put_string("\n", WHITE);
+    call_free(command_copy);
 }
 
 int shell_init()
@@ -201,4 +214,36 @@ void cmd_exit(char *args)
     exit_flag = 1;
     call_clear();
     clear_buffer(args);
+}
+
+void normalize_whitespace(char *str) {
+    int i = 0, j = 0;
+    int space_found = 0;
+
+    while (isspace((unsigned char)str[i])) {
+        i++;
+    }
+
+    while (str[i] != '\0') {
+        if (!isspace((unsigned char)str[i])) {
+            str[j++] = str[i];
+            space_found = 0;
+        } else if (!space_found) {
+            str[j++] = ' ';
+            space_found = 1;
+        }
+        i++;
+    }
+
+
+    if (j > 0 && str[j - 1] == ' ') {
+        j--;
+    }
+
+
+    str[j] = '\0';
+}
+
+int isspace(char c) {
+    return c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r';
 }

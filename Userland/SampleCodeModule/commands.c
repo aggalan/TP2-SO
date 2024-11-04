@@ -10,6 +10,8 @@
 
 #define WHITE 0xFFFFFFFF
 
+static int ampersen_searcher(char *str);
+
 void cmd_ps()
 {
     call_ps();
@@ -27,8 +29,15 @@ void mm_test(char *args)
     str_cpy(argv_mm[0], "mem test");
     argv_mm[1] = (char *)call_malloc(sizeof(char) * (str_len("266240") + 1));
     str_cpy(argv_mm[1], "266240");
-    char *str = args + str_len("mem ");
-    if (*str == '&')
+
+    int ampersen = ampersen_searcher(args);
+
+    if (ampersen == -1)
+    {
+        print(WHITE, "Syntax error on or near '&'\n");
+        return;
+    }
+    else if (ampersen)
     {
         call_create_process(test_mm, 1, 2, argv_mm, 0);
     }
@@ -45,8 +54,15 @@ void process_test(char *args)
     str_cpy(argv_process[0], "process test");
     argv_process[1] = (char *)call_malloc(sizeof(char) * (str_len("10") + 1));
     str_cpy(argv_process[1], "10");
-    char *str = args + str_len("process ");
-    if (*str == '&')
+
+    int ampersen = ampersen_searcher(args);
+
+    if (ampersen == -1)
+    {
+        print(WHITE, "Syntax error on or near '&'\n");
+        return;
+    }
+    else if (ampersen)
     {
         call_create_process(test_processes, 1, 2, argv_process, 0);
     }
@@ -60,8 +76,14 @@ void prio_test(char *args)
     char **argv_priority = (char **)(uintptr_t)call_malloc(sizeof(char *));
     argv_priority[0] = (char *)call_malloc(sizeof(char) * (str_len("priority test") + 1));
     str_cpy(argv_priority[0], "priority test");
-    char *str = args + str_len("prio ");
-    if (*str == '&')
+    int ampersen = ampersen_searcher(args);
+
+    if (ampersen == -1)
+    {
+        print(WHITE, "Syntax error on or near '&'\n");
+        return;
+    }
+    else if (ampersen)
     {
         call_create_process(test_prio, 1, 1, argv_priority, 0);
     }
@@ -102,13 +124,13 @@ void sync_test(char *args)
 
     str += aux + 1;
 
-    char * aux2 = str + str_len(cut_string(str)) + 1;
+    char *aux2 = str + str_len(cut_string(str)) + 1;
 
     if (str_cmp(cut_string(str), "-no-sem") == 0)
     {
         str_cpy(argv_sync[2], "0");
 
-        if (str_cmp(aux2, "&") == 0)
+        if (ampersen_searcher(aux2))
         {
             call_create_process(test_sync, 1, 4, argv_sync, 0);
         }
@@ -134,12 +156,20 @@ void sync_test(char *args)
     }
 }
 
-void pipe_test(char *args) {
-    char ** argv_pipes = (char **) call_malloc(sizeof(char *));
-    argv_pipes[0] = (char *) call_malloc(sizeof(char) * (str_len("pipes test") + 1));
+void pipe_test(char *args)
+{
+    char **argv_pipes = (char **)call_malloc(sizeof(char *));
+    argv_pipes[0] = (char *)call_malloc(sizeof(char) * (str_len("pipes test") + 1));
     str_cpy(argv_pipes[0], "pipes test");
-    char *str = args + str_len("pipes ");
-    if (*str == '&')
+
+    int ampersen = ampersen_searcher(args);
+
+    if (ampersen == -1)
+    {
+        print(WHITE, "Syntax error on or near '&'\n");
+        return;
+    }
+    else if (ampersen)
     {
         call_create_process(main_test_pipes, 1, 1, argv_pipes, 0);
     }
@@ -284,35 +314,44 @@ void call_div0()
     a = a / b;
 }
 
-void cat(){
+void cat()
+{
     char c;
-    while(getC(&c) != '\n'){ // TRABAJR CON EOF
+    while (getC(&c) != '\n')
+    { // TRABAJR CON EOF
         putC(c, WHITE);
     }
     putC('\n', WHITE);
 }
 
-int is_vowel(char c){
+int is_vowel(char c)
+{
     return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
            c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
 }
 
-void filter(){
+void filter()
+{
     char c;
-    while(getC(&c) != '\n'){ // TRABAJAR CON EOF
-        if(is_vowel(c)){
+    while (getC(&c) != '\n')
+    { // TRABAJAR CON EOF
+        if (is_vowel(c))
+        {
             putC(c, WHITE);
         }
     }
     putC('\n', WHITE);
 }
 
-void wc(){
+void wc()
+{
     int lines = 0;
     char c;
 
-    while(getC(&c) != '\n'){ // TRABAJ CON EOF
-        if(c == '\n'){
+    while (getC(&c) != '\n')
+    { // TRABAJ CON EOF
+        if (c == '\n')
+        {
             lines++;
         }
         putC(c, WHITE);
@@ -321,4 +360,25 @@ void wc(){
     put_string("Lines: ", WHITE);
     put_int(lines, WHITE);
     put_string("\n", WHITE);
+}
+
+static int ampersen_searcher(char *input)
+{
+    int len = str_len(input);
+    int ampersand_count = 0;
+
+    for (int i = 0; i < len; i++)
+    {
+        if (input[i] == '&')
+        {
+            ampersand_count++;
+            if (i != len - 1)
+            { // If '&' is not at the end, it's invalid
+                return -1;
+            }
+        }
+    }
+
+    // Return true if there's exactly one '&' at the end
+    return ampersand_count == 1;
 }
