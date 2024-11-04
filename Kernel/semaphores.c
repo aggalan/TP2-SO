@@ -30,12 +30,11 @@ void sem_manager()
 sem *my_sem_create(int n)
 {
     sem *semaphore = (sem *)mm_malloc(sizeof(sem));
+    if (semaphore == NULL) {
+        return NULL;
+    }
     semaphore->n = n;
     semaphore->blocked = qs_init();
-//    if (n > 0)
-//        semaphore->lock = 1;
-//    else
-//        semaphore->lock = 0;
     semaphore->lock = 1;
     return semaphore;
 }

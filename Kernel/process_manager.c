@@ -9,6 +9,7 @@
 #include "interrupts.h"
 #include "../Drivers/include/video_driver.h"
 #include "./collections/include/collections.h"
+#include "include/fd_manager.h"
 
 hash_map_ADT map;
 static pid_t pids = 0;
@@ -53,6 +54,19 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv, int 
     pcb->child = NULL;
     pcb->ground = ground;
     pcb->updated = 0;
+
+    pcb->fds = (int *)mm_malloc(sizeof(int) * 3);
+    if (pcb->fds == NULL) {
+        for (int i = 0; i < argc; i++) {
+            mm_free(argv[i]);
+        }
+        mm_free(argv);
+        mm_free(pcb);
+        return -1;
+    }
+    pcb->fds[0] = STDIN;
+    pcb->fds[1] = STDOUT;
+    pcb->fds[2] = ERROUT;
 
     pcb->base = (uint64_t)mm_malloc(STACK);
     if ((void *)pcb->base == NULL)
@@ -341,6 +355,7 @@ void free_PCB(PCB *pcb)
     } // godspeed.
     mm_free((void *)(pcb->base - STACK + 1));
     mm_free(pcb->argv);
+    mm_free(pcb->fds);
     mm_free(pcb);
 }
 

@@ -38,6 +38,7 @@ typedef struct PCB
     int priority;
     int updated;
     int is_waited;
+    int * fds;
     struct child_node *child;
 } PCB;
 

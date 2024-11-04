@@ -89,7 +89,7 @@ uint64_t overflow_writer(uint64_t argc, char *argv[]) {
 
     // Attempt to write oversized message
     ssize_t written = call_pipe_write(fd, huge_message, TEST_BUFFER_SIZE * 2);
-    print(0xFFFFFF, "Overflow Writer: Attempted write returned %d, (should be -1 since there is no reader active)\n", written);
+    print(0xFFFFFF, "Overflow Writer: Attempted write returned %d, (should be -1 since there is no reader active, this test makes no sense)\n", written);
 
     call_named_pipe_close(fd);
     return 0;

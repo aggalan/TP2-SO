@@ -18,6 +18,9 @@ void fd_init() {
 
 int fd_allocate(void * resource, int fd_type) {
     fd_entry * entry = (fd_entry *) mm_malloc(sizeof(fd_entry));
+    if (entry == NULL) {
+        return -1;
+    }
     entry->fd_type = fd_type;
     entry->resource = resource;
     for (int i = 0; i < MAX_FD; i++) {

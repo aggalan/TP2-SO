@@ -27,9 +27,21 @@ int named_pipe_create(char *name) {
     for (int i = 0; i < MAX_PIPES; i++) {
         if (global_pipe_table[i] == NULL) {
             named_pipe_t *pipe = (named_pipe_t *) mm_malloc(sizeof(named_pipe_t));
+            if (pipe == NULL) {
+                return -1;
+            }
             pipe->name = mm_malloc(sizeof(char) * (str_len(name) + 1));
+            if (pipe->name == NULL) {
+                mm_free(pipe);
+                return -1;
+            }
             str_cpy(pipe->name, name);
-            pipe->buff = (char *)mm_malloc(BUFFER_SIZE);
+            pipe->buff = (char *)mm_malloc(BUFFER_SIZE * sizeof(char));
+            if (pipe->buff == NULL) {
+                mm_free(pipe->name);
+                mm_free(pipe);
+                return -1;
+            }
             for (int i = 0; i < BUFFER_SIZE; i++) {
                 pipe->buff[i] = 0;
             }
@@ -82,7 +94,7 @@ void named_pipe_close(int fd) {
 
     if (pipe->write_pid == pid) {
         pipe->write_pid = -1;
-        my_sem_post(pipe->read_sem); //just in case
+        my_sem_post(pipe->read_sem); //just in case i think necessary
     } else if (pipe->read_pid == pid) {
         pipe->read_pid = -1;
         my_sem_post(pipe->write_sem); // just in case i think necessary
@@ -92,7 +104,6 @@ void named_pipe_close(int fd) {
 
     pipe->ref_count--;
     if (pipe->ref_count == 0) {
-        // Free resources if no more references to this pipe
         mm_free(pipe->buff);
         my_sem_close(pipe->write_sem);
         my_sem_close(pipe->read_sem);
