@@ -132,15 +132,15 @@ ssize_t pipe_read(int fd, char * buff, size_t bytes_r) {
 
     size_t bytes_read = 0;
     while (bytes_read < bytes_r) {
-        if (pipe->read_pos == pipe->write_pos) {
-            if (pipe->write_pid == -1 || pipe->is_finished_writing) {
+        buff[bytes_read++] = pipe->buff[pipe->read_pos];
+        pipe->read_pos = (pipe->read_pos + 1) % BUFFER_SIZE;
+        if (pipe->read_pos == pipe->write_pos && bytes_read < bytes_r) {
+            if (pipe->write_pid == -1) {
                 break;
             }
             my_sem_post(pipe->write_sem);
             my_sem_wait(pipe->read_sem);
         }
-        buff[bytes_read++] = pipe->buff[pipe->read_pos];
-        pipe->read_pos = (pipe->read_pos + 1) % BUFFER_SIZE;
     }
 
     my_sem_post(pipe->write_sem);
@@ -165,8 +165,10 @@ ssize_t pipe_write(int fd, const char * buff, size_t bytes_w) {
     size_t bytes_written = 0;
     while (bytes_written < bytes_w) {
         // Check if buffer would be full after write
-        if (((pipe->write_pos + 1) % BUFFER_SIZE) == pipe->read_pos) {
-            pipe->is_finished_writing = 0;
+        if (((pipe->write_pos + 1) % BUFFER_SIZE) == pipe->read_pos && (bytes_written + 1) < bytes_w) {
+            pipe->buff[pipe->write_pos] = buff[bytes_written++];
+            pipe->write_pos = (pipe->write_pos + 1) % BUFFER_SIZE;
+//            pipe->is_finished_writing = 0;
             my_sem_post(pipe->read_sem);
             my_sem_wait(pipe->write_sem);
             continue;
@@ -175,7 +177,7 @@ ssize_t pipe_write(int fd, const char * buff, size_t bytes_w) {
         pipe->write_pos = (pipe->write_pos + 1) % BUFFER_SIZE;
     }
 
-    pipe->is_finished_writing = 1;
+//    pipe->is_finished_writing = 1;
 
     my_sem_post(pipe->read_sem);
     return bytes_written;

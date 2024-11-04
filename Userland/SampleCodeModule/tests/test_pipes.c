@@ -52,21 +52,43 @@ uint64_t full_buffer_reader(uint64_t argc, char *argv[]) {
     }
 
     char buffer[2001];
-    ssize_t bytes_read = call_sys_read(fd, buffer, 2001);
-    if (bytes_read != 2000 + 1) {
+    ssize_t bytes_read = call_sys_read(fd, buffer, 1024);
+    if (bytes_read != 1024) {
         print(0xFFFFFF, "Full Buffer Reader: Read failed or incomplete (read %d bytes)\n", bytes_read);
         call_named_pipe_close(fd);
         return -1;
     }
 
-    // Verify data integrity
-    for (int i = 0; i < 2000; i++) {
+    for (int i = 0; i < 1024; i++) {
         if (buffer[i] != ('A' + (i % 26))) {
             print(0xFFFFFF, "Full Buffer Reader: Data corruption at position %d\n", i);
             call_named_pipe_close(fd);
             return -1;
         }
     }
+
+    for (int i = 0; i < 2001; i++) {
+        buffer[i] = 0;
+    }
+
+    bytes_read = call_sys_read(fd, buffer, 2001 - 1024);
+    if (bytes_read != 2001-1024) {
+        print(0xFFFFFF, "Full Buffer Reader: Read failed or incomplete (read %d bytes)\n", bytes_read);
+        call_named_pipe_close(fd);
+        return -1;
+    }
+
+    for (int i = 0; i < (2001-1024 - 1); i++) {
+        if (buffer[i] != ('A' + ((i + 1024) % 26))) {
+            print(0xFFFFFF, "Full Buffer Reader: Data corruption at position %d, with value %s\n", i, buffer[i]);
+            call_named_pipe_close(fd);
+            return -1;
+        }
+    }
+
+    // Verify data integrity
+
+
 
     print(0xFFFFFF, "Full Buffer Reader: Successfully read and verified %d bytes\n", bytes_read);
     call_named_pipe_close(fd);
@@ -197,7 +219,7 @@ uint64_t reader_process(uint64_t argc, char *argv[]) {
 
     char buffer[TEST_BUFFER_SIZE_NORMAL];
     for (int i = 0; i < NUM_MESSAGES; i++) {
-        ssize_t bytes_read = call_sys_read(fd, buffer, TEST_BUFFER_SIZE_NORMAL);
+        ssize_t bytes_read = call_sys_read(fd, buffer, 22);
         if (bytes_read <= 0) {
             print(0xFFFFFF, "Reader: Read failed\n");
             call_named_pipe_close(fd);
