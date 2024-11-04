@@ -115,7 +115,7 @@ int call_sem_init(int n);
 
 int call_named_pipe_create(char *name);
 
-int call_named_pipe_open(char *name);
+int call_named_pipe_open(char *name, int mode);
 
 void call_named_pipe_close(int fd);
 

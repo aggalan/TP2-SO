@@ -284,9 +284,9 @@ int irq_named_pipe_create(char * rsi)
 {
     return named_pipe_create(rsi);
 }
-int irq_named_pipe_open(char * rsi)
+int irq_named_pipe_open(char * rsi, int rdx)
 {
-    return named_pipe_open(rsi);
+    return named_pipe_open(rsi, rdx);
 }
 void irq_named_pipe_close(int rsi)
 {

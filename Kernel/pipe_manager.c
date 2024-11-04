@@ -6,6 +6,7 @@
 #include "include/lib.h"
 #include "include/fd_manager.h"
 #include "Drivers/include/video_driver.h"
+#include "include/scheduler.h"
 
 named_pipe_t ** global_pipe_table;
 
@@ -19,6 +20,7 @@ void pipe_table_init() {
 int named_pipe_create(char *name) {
     for (int i = 0; i < MAX_PIPES; i++) {
         if (global_pipe_table[i] != NULL && str_cmp(global_pipe_table[i]->name, name) == 0) {
+            drawWord1(" WHYYYYYY ");
             return -1;
         }
     }
@@ -33,7 +35,11 @@ int named_pipe_create(char *name) {
             pipe->read_pos = 0;
             pipe->write_sem = my_sem_init(1);
             pipe->read_sem = my_sem_init(0);
-            pipe->ref_count = 1;
+            pipe->ref_count = 0;
+
+            pipe->read_pid = -1;
+            pipe->write_pid = -1;
+
             pipe->fd = fd_allocate(pipe, FD_TYPE_PIPE);
             global_pipe_table[i] = pipe;
             return pipe->fd;
@@ -42,10 +48,20 @@ int named_pipe_create(char *name) {
     return -1;
 }
 
-int named_pipe_open(char *name) {
+int named_pipe_open(char *name, int mode) {
     for (int i = 0; i < MAX_PIPES; i++) {
         if (global_pipe_table[i] != NULL && (str_cmp(global_pipe_table[i]->name, name) == 0)) {
+            pid_t pid = get_current_pid();
+
+            if (mode == READ && global_pipe_table[i]->read_pid == -1) {
+                global_pipe_table[i]->read_pid = pid;
+            } else if (mode == WRITE && global_pipe_table[i]->write_pid == -1) {
+                global_pipe_table[i]->write_pid = pid;
+            } else {
+                return -1;
+            }
             global_pipe_table[i]->ref_count++;
+
             return global_pipe_table[i]->fd;
         }
     }
@@ -58,6 +74,16 @@ void named_pipe_close(int fd) {
         return;
     }
     named_pipe_t * pipe = (named_pipe_t *)entry->resource;
+    pid_t pid = get_current_pid();
+
+    if (pipe->write_pid == pid) {
+        pipe->write_pid = -1;
+    } else if (pipe->read_pid == pid) {
+        pipe->read_pid = -1;
+    } else {
+        return;
+    }
+
     pipe->ref_count--;
     if (pipe->ref_count == 0) {
         // Free resources if no more references to this pipe
@@ -65,12 +91,12 @@ void named_pipe_close(int fd) {
         my_sem_close(pipe->write_sem);
         my_sem_close(pipe->read_sem);
         mm_free(pipe->name);
-        for (int i = 0; i < MAX_PIPES; i++) {
-            if (global_pipe_table[i] == pipe) {
-                global_pipe_table[i] = NULL;
-                break;
-            }
-        }
+//        for (int i = 0; i < MAX_PIPES; i++) {
+//            if (global_pipe_table[i] == pipe) {
+//                global_pipe_table[i] = NULL;
+//                break;
+//            }
+//        }
         fd_free(pipe->fd);
         global_pipe_table[pipe->index] = NULL;
         mm_free(pipe);
@@ -84,6 +110,12 @@ ssize_t pipe_read(int fd, char * buff, size_t bytes_r) {
         return -1;
     }
     named_pipe_t * pipe = entry->resource;
+
+    pid_t pid = get_current_pid();
+
+    if (pipe->read_pid != pid) {
+        return -1;
+    }
 
     my_sem_wait(pipe->read_sem);
 
@@ -103,6 +135,12 @@ ssize_t pipe_write(int fd, char * buff, size_t bytes_w) {
         return -1;
     }
     named_pipe_t * pipe = entry->resource;
+
+    pid_t pid = get_current_pid();
+
+    if (pipe->write_pid != pid) {
+        return -1;
+    }
 
     my_sem_wait(pipe->write_sem);
 
