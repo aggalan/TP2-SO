@@ -7,6 +7,7 @@
 #include <naive_console.h>
 #include "include/fd_manager.h"
 #include "include/pipe_manager.h"
+#include "include/scheduler.h"
 
 #define MIN(x, y) x < y ? x : y
 
@@ -18,8 +19,13 @@ ssize_t sys_write(int descriptor, const char *str, int len, uint32_t hexColor)
     switch (entry->fd_type)
     {
         case STDOUT:
-            drawWordLen(hexColor, str, len);
-            return len;
+            PCB * pcb = get_current();
+            if (pcb->fds[STDOUT] == STDOUT) {
+                drawWordLen(hexColor, str, len);
+                return len;
+            } else {
+                return sys_write(pcb->fds[STDOUT], str, len, hexColor);
+            }
         case ERROUT:
             drawWordLen(0x00ff0000, str, len);
             return len;
@@ -36,7 +42,13 @@ ssize_t sys_read(int descriptor, char *save, int len)
     fd_entry * entry = fd_get_entry(descriptor);
     switch (entry->fd_type) { //aca deberia switcher en algo como fd_table[fd]->type. pafa ver si es pipe u otra cosa
         case STDIN:
-            return shell_read(save, len);
+//            return shell_read(save, len);
+            PCB * pcb = get_current();
+            if (pcb->fds[STDIN] == STDIN) {
+                return shell_read(save, len);
+            } else {
+                return sys_read(pcb->fds[STDIN], save, len);
+            }
         case FD_TYPE_PIPE:
             return pipe_read(descriptor, save, len);
         default:
