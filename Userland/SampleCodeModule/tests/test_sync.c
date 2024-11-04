@@ -4,6 +4,7 @@
 #include "test_util.h"
 #include "../include/lib.h"
 #include "./test_sync.h"
+#include <stddef.h>
 
 #define TOTAL_PAIR_PROCESSES 2
 
