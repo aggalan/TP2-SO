@@ -7,42 +7,55 @@
 #include "include/fd_manager.h"
 #include "Drivers/include/video_driver.h"
 #include "include/scheduler.h"
+#include "include/fd_manager.h"
+#include "include/scheduler.h"
 
-named_pipe_t ** global_pipe_table;
+named_pipe_t **global_pipe_table;
 
-void pipe_table_init() {
-    global_pipe_table = (named_pipe_t **) mm_malloc(sizeof(named_pipe_t *) * MAX_PIPES);
-    for (int i = 0; i < MAX_PIPES; i++) {
+void pipe_table_init()
+{
+    global_pipe_table = (named_pipe_t **)mm_malloc(sizeof(named_pipe_t *) * MAX_PIPES);
+    for (int i = 0; i < MAX_PIPES; i++)
+    {
         global_pipe_table[i] = NULL;
     }
 }
 
-int named_pipe_create(char *name) {
-    for (int i = 0; i < MAX_PIPES; i++) {
-        if (global_pipe_table[i] != NULL && str_cmp(global_pipe_table[i]->name, name) == 0) {
+int named_pipe_create(char *name)
+{
+    for (int i = 0; i < MAX_PIPES; i++)
+    {
+        if (global_pipe_table[i] != NULL && str_cmp(global_pipe_table[i]->name, name) == 0)
+        {
             return -1;
         }
     }
 
-    for (int i = 0; i < MAX_PIPES; i++) {
-        if (global_pipe_table[i] == NULL) {
-            named_pipe_t *pipe = (named_pipe_t *) mm_malloc(sizeof(named_pipe_t));
-            if (pipe == NULL) {
+    for (int i = 0; i < MAX_PIPES; i++)
+    {
+        if (global_pipe_table[i] == NULL)
+        {
+            named_pipe_t *pipe = (named_pipe_t *)mm_malloc(sizeof(named_pipe_t));
+            if (pipe == NULL)
+            {
                 return -1;
             }
             pipe->name = mm_malloc(sizeof(char) * (str_len(name) + 1));
-            if (pipe->name == NULL) {
+            if (pipe->name == NULL)
+            {
                 mm_free(pipe);
                 return -1;
             }
             str_cpy(pipe->name, name);
             pipe->buff = (char *)mm_malloc(BUFFER_SIZE * sizeof(char));
-            if (pipe->buff == NULL) {
+            if (pipe->buff == NULL)
+            {
                 mm_free(pipe->name);
                 mm_free(pipe);
                 return -1;
             }
-            for (int i = 0; i < BUFFER_SIZE; i++) {
+            for (int i = 0; i < BUFFER_SIZE; i++)
+            {
                 pipe->buff[i] = 0;
             }
             pipe->write_pos = 0;
@@ -62,16 +75,24 @@ int named_pipe_create(char *name) {
     return -1;
 }
 
-int named_pipe_open(char *name, int mode) {
-    for (int i = 0; i < MAX_PIPES; i++) {
-        if (global_pipe_table[i] != NULL && (str_cmp(global_pipe_table[i]->name, name) == 0)) {
+int named_pipe_open(char *name, int mode)
+{
+    for (int i = 0; i < MAX_PIPES; i++)
+    {
+        if (global_pipe_table[i] != NULL && (str_cmp(global_pipe_table[i]->name, name) == 0))
+        {
             pid_t pid = get_current_pid();
 
-            if (mode == READ && global_pipe_table[i]->read_pid == -1 && global_pipe_table[i]->write_pid != pid) {
+            if (mode == READ && global_pipe_table[i]->read_pid == -1 && global_pipe_table[i]->write_pid != pid)
+            {
                 global_pipe_table[i]->read_pid = pid;
-            } else if (mode == WRITE && global_pipe_table[i]->write_pid == -1 && global_pipe_table[i]->read_pid != pid) {
+            }
+            else if (mode == WRITE && global_pipe_table[i]->write_pid == -1 && global_pipe_table[i]->read_pid != pid)
+            {
                 global_pipe_table[i]->write_pid = pid;
-            } else {
+            }
+            else
+            {
                 return -1;
             }
             global_pipe_table[i]->ref_count++;
@@ -82,15 +103,18 @@ int named_pipe_open(char *name, int mode) {
     return -1;
 }
 
-void named_pipe_close(int fd) {
-    fd_entry * entry = fd_get_entry(fd);
-    if (entry == NULL) {
+void named_pipe_close(int fd)
+{
+    fd_entry *entry = fd_get_entry(fd);
+    if (entry == NULL)
+    {
         return;
     }
-    named_pipe_t * pipe = (named_pipe_t *)entry->resource;
+    named_pipe_t *pipe = (named_pipe_t *)entry->resource;
     pid_t pid = get_current_pid();
 
-    if (pipe->write_pid == pid) {
+    if (pipe->write_pid == pid)
+    {
         pipe->write_pid = -1;
 //        my_sem_post(pipe->read_sem); //just in case i think necessary
     } else if (pipe->read_pid == pid) {
@@ -101,7 +125,8 @@ void named_pipe_close(int fd) {
     }
 
     pipe->ref_count--;
-    if (pipe->ref_count == 0) {
+    if (pipe->ref_count == 0)
+    {
         mm_free(pipe->buff);
         my_sem_close(pipe->write_sem);
         my_sem_close(pipe->read_sem);
@@ -112,17 +137,19 @@ void named_pipe_close(int fd) {
     }
 }
 
-
-ssize_t pipe_read(int fd, char * buff, size_t bytes_r) {
-    fd_entry * entry = fd_get_entry(fd);
-    if (entry == NULL) {
+ssize_t pipe_read(int fd, char *buff, size_t bytes_r)
+{
+    fd_entry *entry = fd_get_entry(fd);
+    if (entry == NULL)
+    {
         return -1;
     }
-    named_pipe_t * pipe = entry->resource;
+    named_pipe_t *pipe = entry->resource;
 
     pid_t pid = get_current_pid();
 
-    if (pipe->read_pid != pid) {
+    if (pipe->read_pid != pid)
+    {
         return -1;
     }
 
@@ -145,16 +172,19 @@ ssize_t pipe_read(int fd, char * buff, size_t bytes_r) {
     return bytes_read;
 }
 
-ssize_t pipe_write(int fd, const char * buff, size_t bytes_w) {
-    fd_entry * entry = fd_get_entry(fd);
-    if (entry == NULL || bytes_w <= 0) {
+ssize_t pipe_write(int fd, const char *buff, size_t bytes_w)
+{
+    fd_entry *entry = fd_get_entry(fd);
+    if (entry == NULL || bytes_w <= 0)
+    {
         return -1;
     }
-    named_pipe_t * pipe = entry->resource;
+    named_pipe_t *pipe = entry->resource;
 
     pid_t pid = get_current_pid();
 
-    if (pipe->write_pid != pid || pipe->read_pid == -1) {
+    if (pipe->write_pid != pid || pipe->read_pid == -1)
+    {
         return -1;
     }
 
@@ -185,17 +215,28 @@ void redirect_std(pid_t pid, int fd, int std) {
     }
 
     pcb->fds[std] = fd;
-
 }
 
-void send_eof_signal(){
-    //aca deberia buscar el pipe y hacer que is_finished_writing = 1
+void send_eof_signal() {
+    PCB *current_pcb = get_current();
+    if (current_pcb == NULL) {
+        return;
+    }
+
+    int fd = current_pcb->fds[STDOUT];
+    if (fd < 0 || fd >= MAX_FD) {
+        return;
+    }
+
+    fd_entry *entry = fd_get_entry(fd);
+    if (entry == NULL) {
+        return; 
+    }
+
+    named_pipe_t *pipe = (named_pipe_t *)entry->resource; 
+    if (pipe == NULL) {
+        return;
+    }
+
+    my_sem_post(pipe->read_sem);
 }
-
-
-
-
-
-
-
-

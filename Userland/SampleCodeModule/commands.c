@@ -9,6 +9,7 @@
 #include "include/eliminator.h"
 
 #define WHITE 0xFFFFFFFF
+#define MAX_LENGTH 1024
 
 static int ampersen_searcher(char *str);
 
@@ -317,11 +318,21 @@ void call_div0()
 void cat()
 {
     char c;
+    char command[MAX_LENGTH] = {0};
+    int i = 0;
     while (getC(&c) != EOF)
     { // TRABAJR CON EOF
         putC(c, WHITE);
+        command[i++] = c;
+        if (c == '\n')
+        {
+            command[i] = 0;
+            i = 0;
+            print(WHITE, "%s", command);
+        }
     }
     putC('\n', WHITE);
+    return;
 }
 
 int is_vowel(char c)
@@ -381,4 +392,68 @@ static int ampersen_searcher(char *input)
 
     // Return true if there's exactly one '&' at the end
     return ampersand_count == 1;
+}
+
+void cat_process(char *args)
+{
+    char **argv = (char **)(uintptr_t)call_malloc(sizeof(char *));
+    argv[0] = (char *)call_malloc(sizeof(char) * (str_len("cat") + 1));
+    str_cpy(argv[0], "cat");
+    int ampersen = ampersen_searcher(args);
+    if (ampersen == -1)
+    {
+        print(WHITE, "Syntax error on or near '&'\n");
+        return;
+    }
+    else if (ampersen)
+    {
+        call_create_process(cat, 1, 1, argv, 0);
+    }
+    else
+    {
+        call_create_process(cat, 1, 1, argv, 1);
+    }
+}
+
+void filter_process(char * args)
+{
+    char **argv = (char **)(uintptr_t)call_malloc(sizeof(char *));
+    argv[0] = (char *)call_malloc(sizeof(char) * (str_len("filter") + 1));
+    str_cpy(argv[0], "filter");
+    int ampersen = ampersen_searcher(args);
+    if (ampersen == -1)
+    {
+        print(WHITE, "Syntax error on or near '&'\n");
+        return;
+    }
+    else if (ampersen)
+    {
+        call_create_process(filter, 1, 1, argv, 0);
+    }
+    else
+    {
+        call_create_process(filter, 1, 1, argv, 1);
+    }
+
+}
+
+void wc_process(char * args)
+{
+    char **argv = (char **)(uintptr_t)call_malloc(sizeof(char *));
+    argv[0] = (char *)call_malloc(sizeof(char) * (str_len("wc") + 1));
+    str_cpy(argv[0], "wc");
+    int ampersen = ampersen_searcher(args);
+    if (ampersen == -1)
+    {
+        print(WHITE, "Syntax error on or near '&'\n");
+        return;
+    }
+    else if (ampersen)
+    {
+        call_create_process(wc, 1, 1, argv, 0);
+    }
+    else
+    {
+        call_create_process(wc, 1, 1, argv, 1);
+    }
 }

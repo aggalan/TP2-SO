@@ -10,6 +10,8 @@
 #include "../include/scheduler.h"
 #include "../include/pipe_manager.h"
 
+#define EOF -1
+
 #define LEFT_SHIFT 0x2A
 #define RIGHT_SHIFT 0x36
 #define CTRL 0x1D
@@ -91,7 +93,8 @@ void keyboard_handler()
       }
       else if(keyMap[keyMapRow][code] == 'd' || keyMap[keyMapRow][code] == 'D')
       {
-          send_eof_signal();
+          buff[buff_pos] = EOF;
+          incBufferLen(1);
           return;
       }
     }

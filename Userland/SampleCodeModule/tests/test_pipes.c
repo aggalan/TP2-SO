@@ -67,6 +67,8 @@ uint64_t full_buffer_reader(uint64_t argc, char *argv[]) {
         }
     }
 
+    print(0xFFFFFF, "Full Buffer Reader: Successfully read and verified %d bytes\n", bytes_read);
+
     for (int i = 0; i < 2001; i++) {
         buffer[i] = 0;
     }
