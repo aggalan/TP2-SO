@@ -11,11 +11,11 @@
 
 int wait(sem *semaphore);
 int post(sem *semaphore);
-sem * my_sem_create(int n);
+sem *my_sem_create(int n);
 
 typedef struct sem_manager_cdt
 {
-    sem * semaphores[MAX_SEMAPHORES];
+    sem *semaphores[MAX_SEMAPHORES];
 } sem_manager_cdt;
 
 sem_manager_adt manager = NULL;
@@ -30,7 +30,8 @@ void sem_manager()
 sem *my_sem_create(int n)
 {
     sem *semaphore = (sem *)mm_malloc(sizeof(sem));
-    if (semaphore == NULL) {
+    if (semaphore == NULL)
+    {
         return NULL;
     }
     semaphore->n = n;
@@ -42,8 +43,10 @@ sem *my_sem_create(int n)
 int my_sem_init(int n)
 {
     int id = -1;
-    for (int i = 0; i < MAX_SEMAPHORES; i++) {
-        if (manager->semaphores[i] == NULL) {
+    for (int i = 0; i < MAX_SEMAPHORES; i++)
+    {
+        if (manager->semaphores[i] == NULL)
+        {
             id = i;
             break;
         }

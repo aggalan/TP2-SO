@@ -85,10 +85,10 @@ int insert(PCB *data, uint8_t priority, linked_list_ADT list)
     return 1;
 }
 
-int remove(pid_t pid_remove, linked_list_ADT list) //modularizar esta funcion
+int remove(pid_t pid_remove, linked_list_ADT list) // modularizar esta funcion
 {
 
-    node_t *node = find(pid_remove, list); 
+    node_t *node = find(pid_remove, list);
     if (node == NULL)
     {
         return 0;
@@ -114,7 +114,7 @@ int remove(pid_t pid_remove, linked_list_ADT list) //modularizar esta funcion
             }
             if (list->last == to_remove)
             {
-                list->last = node; 
+                list->last = node;
             }
             mm_free(to_remove);
             priority--;
@@ -134,7 +134,7 @@ int remove(pid_t pid_remove, linked_list_ADT list) //modularizar esta funcion
 
 int remove_times(pid_t pid_remove, int times, linked_list_ADT list)
 {
-    node_t *node = find(pid_remove, list); 
+    node_t *node = find(pid_remove, list);
     if (node == NULL)
     {
         return 0;
@@ -144,7 +144,6 @@ int remove_times(pid_t pid_remove, int times, linked_list_ADT list)
     {
         remove(pid_remove, list);
     }
-
 
     list->size -= times;
 

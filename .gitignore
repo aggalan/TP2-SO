@@ -26,3 +26,9 @@
 *.vscode
 *.vscode/*
 *.sublime-project
+
+
+#PVS-Studio
+strace_out
+*.html
+*.lic

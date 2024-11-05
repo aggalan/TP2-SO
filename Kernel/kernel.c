@@ -37,7 +37,7 @@ void clearBSS(void *bssAddress, uint64_t bssSize)
 void *get_stack_base()
 {
 	return (void *)((uint64_t)&end_of_kernel + page_size * 8 // The size of the stack itself, 32KiB
-					- sizeof(uint64_t)					  // Begin at the top of the stack
+					- sizeof(uint64_t)						 // Begin at the top of the stack
 	);
 }
 
@@ -70,9 +70,9 @@ int main()
 	load_idt();
 	mm_init((void *)0x600000, 0x2700000);
 	sem_manager();
-    pipe_table_init();
-    fd_init();
-    scheduler_init();
+	pipe_table_init();
+	fd_init();
+	scheduler_init();
 	shell();
 
 	while (1)

@@ -97,12 +97,12 @@ uint64_t schedule(uint64_t rsp)
     }
 
     if (process_has_run == IDLE)
-    { 
+    {
         idle_p->rsp = rsp;
         idle_p->state = READY;
     }
     else if (processes->current->data->state != ZOMBIE && processes->current->data->state != READY)
-    { 
+    {
         if (processes->current->data->state == RUNNING)
         {
             processes->current->data->state = READY;
@@ -117,9 +117,9 @@ uint64_t schedule(uint64_t rsp)
 
     node_t *aux = processes->current;
     if (aux == NULL)
-    { 
+    {
         process_has_run = IDLE;
-        idle_p->state = RUNNING; 
+        idle_p->state = RUNNING;
         return idle_p->rsp;
     }
     processes->current = processes->current->next;

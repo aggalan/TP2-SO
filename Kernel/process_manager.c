@@ -16,6 +16,7 @@ hash_map_ADT map;
 static pid_t pids = 0;
 #define DEFAULT_PRIORITY 1
 
+
 PCB * idle_proc = NULL;
 PCB * shell_process;
 PCB * foreground_process = NULL;
@@ -32,7 +33,7 @@ PCB *get_idle()
     return idle_proc;
 }
 
-pid_t create_process(uint64_t fn, int * fds, uint64_t argc, char **argv, int ground)
+pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int ground)
 {
 
     PCB *pcb = (PCB *)mm_malloc(sizeof(PCB));
@@ -59,33 +60,37 @@ pid_t create_process(uint64_t fn, int * fds, uint64_t argc, char **argv, int gro
     pcb->updated = 0;
 
     pcb->fds = (int *)mm_malloc(sizeof(int) * 3);
-    if (pcb->fds == NULL) {
-        for (int i = 0; i < argc; i++) {
+    if (pcb->fds == NULL)
+    {
+        for (int i = 0; i < argc; i++)
+        {
             mm_free(argv[i]);
         }
         mm_free(argv);
         mm_free(pcb);
         return -1;
     }
-    if(fds == NULL)
+    if (fds == NULL)
     {
         pcb->fds[0] = 0;
         pcb->fds[1] = 1;
         pcb->fds[2] = 2;
-    } else {
+    }
+    else
+    {
         pcb->fds[0] = fds[0];
         pcb->fds[1] = fds[1];
         pcb->fds[2] = fds[2];
-        if (fds[0] != 0) {
+        if (fds[0] != 0)
+        {
             signal_anon_pipe_open(pcb->pid, fds[0], STDIN);
-        } else {
+        }
+        else
+        {
             io_process = pcb;
             signal_anon_pipe_open(pcb->pid, fds[1], STDOUT);
         }
     }
-
-
-
 
     pcb->base = (uint64_t)mm_malloc(STACK);
     if ((void *)pcb->base == NULL)
@@ -118,7 +123,7 @@ pid_t create_process(uint64_t fn, int * fds, uint64_t argc, char **argv, int gro
     {
         idle_proc = pcb;
     }
-    else if(pcb->pid != 1)
+    else if (pcb->pid != 1)
     {
         add_pcb(pcb->pid, pcb);
         add_process(pcb, DEFAULT_PRIORITY);
@@ -126,7 +131,7 @@ pid_t create_process(uint64_t fn, int * fds, uint64_t argc, char **argv, int gro
 
     if (pcb->pid == 1)
     {
-        pcb->priority = 5; //shell should have higher priority
+        pcb->priority = 5; // shell should have higher priority
         add_pcb(pcb->pid, pcb);
         add_process(pcb, pcb->priority);
         shell_process = pcb;
@@ -194,14 +199,18 @@ pid_t kill_process_pid(pid_t pid)
     {
         return 0;
     }
-    if (pcb->ground) {
+    if (pcb->ground)
+    {
         foreground_process = NULL;
     }
 
-    if (pcb->fds[0] != 0) {
+    if (pcb->fds[0] != 0)
+    {
         signal_anon_pipe_close(pid, pcb->fds[0]);
-        mm_free(pcb->fds);//SACAAAAAAAARRRRRRRRR
-    } else if(pcb->fds[1] != 1) {
+        mm_free(pcb->fds);
+    }
+    else if (pcb->fds[1] != 1)
+    {
         signal_anon_pipe_close(pid, pcb->fds[1]);
         mm_free(pcb->fds);
     }
@@ -362,28 +371,32 @@ pid_t wait_pid(pid_t pid_to_wait)
     return pcb->pid;
 }
 
-void block_shell_read() {
-    if (io_process != NULL && (io_process->state == RUNNING || io_process->state == READY) && shell_process->state == WAITING) {
-//        draw_word_white("HERE I AM, BLOCKED PID: ");
-//        draw_number(io_process->pid);
-//        newline();
+
+void block_shell_read()
+{
+    if (io_process != NULL && (io_process->state == RUNNING || io_process->state == READY) && shell_process->state == WAITING)
+    {
         io_process->updated = 0;
         io_process->state = BLOCKED_IO;
         nice();
-    } else if (shell_process->state == RUNNING || shell_process->state == READY) {
+    }
+    else if (shell_process->state == RUNNING || shell_process->state == READY)
+    {
         shell_process->updated = 0;
         shell_process->state = BLOCKED_IO;
         nice();
     }
 }
 
-void wake_up_shell() {
-    if (io_process->state == BLOCKED_IO) {
-//        draw_word_white("HERE I AM, AWAKENED PID: ");
-//        draw_number(io_process->pid);
-//        newline();
+
+void wake_up_shell()
+{
+    if (io_process->state == BLOCKED_IO)
+    {
         io_process->state = READY;
-    } else if (shell_process->state == BLOCKED_IO) {
+    }
+    else if (shell_process->state == BLOCKED_IO)
+    {
         shell_process->state = READY;
     }
 }
@@ -395,9 +408,9 @@ void hash_map_init()
 
 void free_PCB(PCB *pcb)
 {
-    // for (int i = 0; i < pcb->argc; i++) 
-    // {                                   
-    //     mm_free(pcb->argv[i]);        
+    // for (int i = 0; i < pcb->argc; i++)
+    // {
+    //     mm_free(pcb->argv[i]);
     // }
     mm_free((void *)(pcb->base - STACK + 1));
     mm_free(pcb->argv);
@@ -426,8 +439,10 @@ PCB *find_pcb(pid_t key)
     return find_map(key, map);
 }
 
-void kill_foreground_process() {
-    if (foreground_process != NULL) {
+void kill_foreground_process()
+{
+    if (foreground_process != NULL)
+    {
         kill_process_pid(foreground_process->pid);
     }
 }
@@ -532,13 +547,14 @@ void print_processes()
                     draw_word_white(" ");
                 }
 
-                switch (aux->value->ground) {
-                    case 0:
-                        draw_word_white("BACKGROUND");
-                        break;
-                    case 1:
-                        draw_word_white("FOREGROUND");
-                        break;
+                switch (aux->value->ground)
+                {
+                case 0:
+                    draw_word_white("BACKGROUND");
+                    break;
+                case 1:
+                    draw_word_white("FOREGROUND");
+                    break;
                 }
                 newline();
                 j++;

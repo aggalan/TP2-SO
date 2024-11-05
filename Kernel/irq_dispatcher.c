@@ -43,12 +43,12 @@ syscall_func_t syscalls[] = {
     [34] = (syscall_func_t)irq_sem_wait,
     [35] = (syscall_func_t)irq_sem_post,
     [36] = (syscall_func_t)irq_sem_init,
-    [37] = (syscall_func_t) irq_named_pipe_create,
-    [38] = (syscall_func_t) irq_named_pipe_open,
-    [39] = (syscall_func_t) irq_named_pipe_close,
-    [40] = (syscall_func_t) irq_pipe_read,
-    [41] = (syscall_func_t) irq_pipe_write,
-    [42] = (syscall_func_t) irq_anon_pipe_create,
+    [37] = (syscall_func_t)irq_named_pipe_create,
+    [38] = (syscall_func_t)irq_named_pipe_open,
+    [39] = (syscall_func_t)irq_named_pipe_close,
+    [40] = (syscall_func_t)irq_pipe_read,
+    [41] = (syscall_func_t)irq_pipe_write,
+    [42] = (syscall_func_t)irq_anon_pipe_create,
 };
 
 static void int_20();
