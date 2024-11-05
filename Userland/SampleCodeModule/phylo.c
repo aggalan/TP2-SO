@@ -99,6 +99,7 @@ int add_philo(){
     char *argv[2] = {"philosopher", buffer};
     philo_pid[id] = call_create_process(philo, 0, 2, argv, 1);
     global_count++;
+    putC('\n', WHITE);
     print(WHITE, "Philosopher %d added\n", global_count);
     putC('\n', WHITE);
     call_sem_post(mutex);
@@ -116,6 +117,7 @@ int remove_philo(){
     call_kill(philo_pid[id]);
     call_waitpid(philo_pid[id]);
     call_sem_close(sem_philo[id]);
+    putC('\n', WHITE);
     print(WHITE, "Philosopher %d removed\n", global_count);
     putC('\n', WHITE);
     global_count--;
@@ -159,47 +161,29 @@ void put_forks(int i){
 void test(int i){
     if(philo_state[i] == HUNGRY && philo_state[LEFT(i)] != EATING && philo_state[RIGHT(i)] != EATING){
         philo_state[i] = EATING;
-        render();
+        print_phylo();
         call_sem_post(sem_philo[i]);
     }
 }
 
-void render(){
-    print_phylo();
-    // if(line){
-    //     call_clear();
-    // }
-    // const static char letters[] = {' ', 'E', '.', '.'};
-    // int to_write = 0;
-    // for(int i = 0; i < num_philosophers; i++){
-    //     if(letters[philo_state[i]] != ' '){
-    //          to_write = 1;
-    //         print(WHITE, "%c", letters[philo_state[i]]);
-    //     }
-    
-    // }
-    // if(to_write){
-    //     print(WHITE, "\n");
-    // }
-}
 
 void print_phylo()
 {
-    print(WHITE, "Table state (%d philosophers): ", global_count);
+    putC('\n', WHITE);
     for (int i = 0; i < global_count; i++)
     {
         switch (philo_state[i])
         {
         case THINKING:
-            print(WHITE, "T ");
+            print(WHITE, " . ");
             break;
         case HUNGRY:
-            print(WHITE, "H ");
+            print(WHITE, " . ");
             break;
         case EATING:
-            print(WHITE, "E ");
+            print(WHITE, " E ");
             break;
         }
     }
-    print(WHITE, "\n");
+     putC('\n', WHITE);
 }
