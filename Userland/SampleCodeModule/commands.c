@@ -322,13 +322,17 @@ void cat()
     int i = 0;
     while (getC(&c) != EOF)
     { // TRABAJR CON EOF
-        putC(c, WHITE);
-        command[i++] = c;
-        if (c == '\n')
+        if (c != 0)
         {
-            command[i] = 0;
-            i = 0;
-            print(WHITE, "%s", command);
+            putC(c, WHITE);
+            command[i++] = c;
+            if (c == '\n')
+            {
+                command[i] = '\0';
+                i = 0;
+                print(WHITE, "%s", command);
+                command[0] = '\0';
+            }
         }
     }
     putC('\n', WHITE);
@@ -356,7 +360,7 @@ void filter()
 
 void wc()
 {
-    int lines = 0;
+    int lines = 1;
     char c;
 
     while (getC(&c) != EOF)
@@ -365,7 +369,10 @@ void wc()
         {
             lines++;
         }
-        putC(c, WHITE);
+        if(c != 0)
+        {
+            putC(c, WHITE);
+        }
     }
     putC('\n', WHITE);
     put_string("Lines: ", WHITE);
@@ -415,7 +422,7 @@ void cat_process(char *args)
     }
 }
 
-void filter_process(char * args)
+void filter_process(char *args)
 {
     char **argv = (char **)(uintptr_t)call_malloc(sizeof(char *));
     argv[0] = (char *)call_malloc(sizeof(char) * (str_len("filter") + 1));
@@ -434,10 +441,9 @@ void filter_process(char * args)
     {
         call_create_process(filter, 1, 1, argv, 1);
     }
-
 }
 
-void wc_process(char * args)
+void wc_process(char *args)
 {
     char **argv = (char **)(uintptr_t)call_malloc(sizeof(char *));
     argv[0] = (char *)call_malloc(sizeof(char) * (str_len("wc") + 1));
