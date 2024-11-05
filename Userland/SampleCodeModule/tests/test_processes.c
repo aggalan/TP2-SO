@@ -45,24 +45,26 @@ int64_t test_processes(uint64_t argc, char *argv[])
     // Create max_processes processes
     for (rq = 0; rq < max_processes; rq++)
     {
-      char **argvAux = (char **)(uintptr_t)call_malloc(sizeof(char *));
+      // char **argvAux = (char **)(uintptr_t)call_malloc(sizeof(char *));
 
-      if (argvAux == (void *)0)
-      {
-        print(0xFFFFFF, "\nNo room for arguments\n");
-        return -1;
-      }
+      // if (argvAux == (void *)0)
+      // {
+      //   print(0xFFFFFF, "\nNo room for arguments\n");
+      //   return -1;
+      // }
 
-      argvAux[0] = (char *)call_malloc(sizeof(char) * str_len("endless loop") + 1);
+      // argvAux[0] = (char *)call_malloc(sizeof(char) * str_len("endless loop") + 1);
 
-      if (argvAux[0] == (void *)0)
-      {
-        print(0xFFFFFF, "\nNo room for arguments\n");
-        call_free(argvAux); 
-        return -1;
-      }
+      // if (argvAux[0] == (void *)0)
+      // {
+      //   print(0xFFFFFF, "\nNo room for arguments\n");
+      //   call_free(argvAux); 
+      //   return -1;
+      // }
 
-      str_cpy(argvAux[0], "endless loop");
+      // str_cpy(argvAux[0], "endless loop");
+
+      char *argvAux[1] = {"endless loop"};
 
       p_rqs[rq].pid = call_create_process(endless_loop, 0, 1, argvAux, 0);
 

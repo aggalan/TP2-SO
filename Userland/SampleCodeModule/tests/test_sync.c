@@ -17,8 +17,6 @@ void slowInc(int64_t *p, int64_t inc)
   call_nice(); // This makes the race condition highly probable
   aux += inc;
   *p = aux;
-  //  print(0xFFFFFF," %d ", inc);
-  //  print(0xFFFFFF," = %d\n", *p);
 }
 
 uint64_t my_process_inc(uint64_t argc, char *argv[])

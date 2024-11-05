@@ -34,15 +34,15 @@ pid_t create_process(uint64_t fn, int * fds, uint64_t argc, char **argv, int gro
 {
 
     PCB *pcb = (PCB *)mm_malloc(sizeof(PCB));
-    if (pcb == NULL)
-    {
-        for (int i = 0; i < argc; i++) // he who uncomments this shall bear the sacred burden of uncovering the
-        {                              // truth behind the reason as of why this destroys everything.
-            mm_free(argv[i]);          // may god bear witness to your brave attempt, for only he, and the person i was when this code was written, know how to fix it
-        } // godspeed.
-        mm_free(argv);
-        return -1;
-    }
+    // if (pcb == NULL)
+    // {
+    //     for (int i = 0; i < argc; i++) // he who uncomments this shall bear the sacred burden of uncovering the
+    //     {                              // truth behind the reason as of why this destroys everything.
+    //         mm_free(argv[i]);          // may god bear witness to your brave attempt, for only he, and the person i was when this code was written, know how to fix it
+    //     } // godspeed.
+    //     mm_free(argv);
+    //     return -1;
+    // }
 
     pcb->rip = fn;
     pcb->state = READY;
@@ -77,11 +77,11 @@ pid_t create_process(uint64_t fn, int * fds, uint64_t argc, char **argv, int gro
     pcb->base = (uint64_t)mm_malloc(STACK);
     if ((void *)pcb->base == NULL)
     {
-        for (int i = 0; i < argc; i++) // he who uncomments this shall bear the sacred burden of uncovering the
-        {                              // truth behind the reason as of why this destroys everything.
-            mm_free(argv[i]);          // may god bear witness to your brave attempt, for only he, and the person i was when this code was written, know how to fix it
-        } // godspeed.
-        mm_free(argv);
+        // for (int i = 0; i < argc; i++) // he who uncomments this shall bear the sacred burden of uncovering the
+        // {                              // truth behind the reason as of why this destroys everything.
+        //     mm_free(argv[i]);          // may god bear witness to your brave attempt, for only he, and the person i was when this code was written, know how to fix it
+        // } // godspeed.
+        // mm_free(argv);
         mm_free(pcb->fds);
         mm_free(pcb);
         return -1;
@@ -110,6 +110,7 @@ pid_t create_process(uint64_t fn, int * fds, uint64_t argc, char **argv, int gro
         add_pcb(pcb->pid, pcb);
         add_process(pcb, DEFAULT_PRIORITY);
     }
+
     if (pcb->pid == 1)
     {
         pcb->priority = 5; //shell should have higher priority
@@ -362,11 +363,10 @@ void hash_map_init()
 
 void free_PCB(PCB *pcb)
 {
-
-    for (int i = 0; i < pcb->argc; i++) // he who uncomments this shall bear the sacred burden of uncovering the
-    {                                   // truth behind the reason as of why this destroys everything.
-        mm_free(pcb->argv[i]);          // may god bear witness to your brave attempt, for only he, and the person i was when this code was written, know how to fix it
-    } // godspeed.
+    // for (int i = 0; i < pcb->argc; i++) 
+    // {                                   
+    //     mm_free(pcb->argv[i]);        
+    // }
     mm_free((void *)(pcb->base - STACK + 1));
     mm_free(pcb->argv);
     mm_free(pcb->fds);
