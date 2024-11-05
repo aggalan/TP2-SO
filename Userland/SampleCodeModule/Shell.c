@@ -32,7 +32,7 @@ void piped_line_read(char * buffer);
 int is_space(char c);
 void line_read(char *buffer, int * fds);
 void cmd_exit(char *args);
-void i_want_to_die();
+void turn_red();
 void starting_line()
 {
     char *starting_line = "$>";
@@ -113,7 +113,7 @@ command_t commands[] = {
     {"cat", cat_process, "Prints the input received."},
     {"filter", filter_process, "Filters the input received."},
     {"wc", wc_process, "Counts the words in the input received."},
-    {"die", i_want_to_die, "To test the anonymous pipe. It reads from stdin and prints to the screen"}
+    {"red", turn_red, "To test the anonymous pipe. It reads from stdin and prints to the screen in red."}
 };
 
 void line_read(char *buffer, int * fds)
@@ -156,10 +156,10 @@ void line_read(char *buffer, int * fds)
     call_free(command_copy);
 }
 
-void i_want_to_die() {
+void turn_red() {
     char buff[3000] = {0};
 
-    ssize_t b_read = call_sys_read(STDIN, buff, 3000);
+    call_sys_read(STDIN, buff, 3000);
     call_sys_write(STDOUT, buff, str_len(buff), RED);
 //    if (b_read < 1024) {
 //        return;

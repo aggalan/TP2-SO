@@ -183,7 +183,7 @@ void draw_char(uint32_t hex_color, char character)
 			// Comprueba cada bit de la fuente y dibuja un píxel si está activo
 			((uint8_t)font[i + (index * 32)] & (uint8_t)aux) >> j ? draw_square(hex_color, size_x, current, y) : 0;
 			current += size_x; // Avanza a la siguiente posición horizontal
-			aux <<= 1;		  // Desplaza el bit auxiliar hacia la izquierda
+			aux <<= 1;		   // Desplaza el bit auxiliar hacia la izquierda
 		}
 	}
 	cursor_x += size_x * 8;

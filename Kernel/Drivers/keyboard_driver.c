@@ -88,13 +88,13 @@ void keyboard_handler()
     {
       if (key_map[key_map_row][code] == 'c' || key_map[key_map_row][code] == 'C')
       {
-          kill_foreground_process();
-          return;
+        kill_foreground_process();
+        return;
       }
-      else if(key_map[key_map_row][code] == 'd' || key_map[key_map_row][code] == 'D')
+      else if (key_map[key_map_row][code] == 'd' || key_map[key_map_row][code] == 'D')
       {
-          buff[buff_pos] = EOF;
-          inc_buffer_len(1);
+        buff[buff_pos] = EOF;
+        inc_buffer_len(1);
       }
     }
     else if (key_map[key_map_row][code] != 0)
@@ -103,7 +103,7 @@ void keyboard_handler()
       inc_buffer_len(1);
       set_pos(buff_pos);
     }
-      wake_up_shell();
+    wake_up_shell();
   }
   else
   { // Key released

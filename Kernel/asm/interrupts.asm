@@ -1,4 +1,3 @@
-
 GLOBAL _cli
 GLOBAL _sti
 GLOBAL pic_master_mask
@@ -30,7 +29,6 @@ EXTERN get_stack_base
 EXTERN clear
 EXTERN print_registers
 SECTION .text
-
 
 %macro save_registers_state 0
     mov rax, [rsp]
@@ -161,7 +159,6 @@ get_flag:
    	iretq
 %endmacro
 
-
 _hlt:
 	sti
 	hlt
@@ -191,7 +188,6 @@ pic_slave_mask:
     out	0A1h,al
     pop     rbp
     retn
-
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
@@ -246,7 +242,6 @@ _irq04Handler:
 ;USB
 _irq05Handler:
 	irqHandlerMaster 5
-
 
 _irq80Handler:
 

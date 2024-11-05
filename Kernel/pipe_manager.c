@@ -118,11 +118,15 @@ void named_pipe_close(int fd)
     if (pipe->write_pid == pid)
     {
         pipe->write_pid = -1;
-//        my_sem_post(pipe->read_sem); //just in case i think necessary
-    } else if (pipe->read_pid == pid) {
+        //        my_sem_post(pipe->read_sem); //just in case i think necessary
+    }
+    else if (pipe->read_pid == pid)
+    {
         pipe->read_pid = -1;
-//        my_sem_post(pipe->write_sem); // just in case i think necessary
-    } else {
+        //        my_sem_post(pipe->write_sem); // just in case i think necessary
+    }
+    else
+    {
         return;
     }
 
@@ -157,16 +161,19 @@ ssize_t pipe_read(int fd, char *buff, size_t bytes_r)
     }
 
     size_t bytes_read = 0;
-    while (bytes_read < bytes_r) {
+    while (bytes_read < bytes_r)
+    {
         my_sem_wait(pipe->read_sem);
-//        if (pipe->read_pos != pipe->write_pos) {
-//            buff[bytes_read++] = pipe->buff[pipe->read_pos];
-//            pipe->read_pos = (pipe->read_pos + 1) % BUFFER_SIZE;
-//        }
+        //        if (pipe->read_pos != pipe->write_pos) {
+        //            buff[bytes_read++] = pipe->buff[pipe->read_pos];
+        //            pipe->read_pos = (pipe->read_pos + 1) % BUFFER_SIZE;
+        //        }
         buff[bytes_read++] = pipe->buff[pipe->read_pos];
         pipe->read_pos = (pipe->read_pos + 1) % BUFFER_SIZE;
-        if (pipe->read_pos == pipe->write_pos) {
-            if (pipe->write_pid == -1) {
+        if (pipe->read_pos == pipe->write_pos)
+        {
+            if (pipe->write_pid == -1)
+            {
                 return 0;
             }
         }
@@ -194,12 +201,16 @@ ssize_t pipe_write(int fd, const char *buff, size_t bytes_w)
     }
 
     size_t bytes_written = 0;
-    while (bytes_written < bytes_w) {
+    while (bytes_written < bytes_w)
+    {
         my_sem_wait(pipe->write_sem);
-        if ((pipe->write_pos + 1) % BUFFER_SIZE != pipe->read_pos) {
+        if ((pipe->write_pos + 1) % BUFFER_SIZE != pipe->read_pos)
+        {
             pipe->buff[pipe->write_pos] = buff[bytes_written++];
             pipe->write_pos = (pipe->write_pos + 1) % BUFFER_SIZE;
-        } else if (pipe->read_pid == -1) {
+        }
+        else if (pipe->read_pid == -1)
+        {
             break;
         }
         my_sem_post(pipe->read_sem);
@@ -208,11 +219,11 @@ ssize_t pipe_write(int fd, const char *buff, size_t bytes_w)
     return bytes_written;
 }
 
-
-int anon_pipe_create() {
-    pipe_t * pipe = (pipe_t *) mm_malloc(sizeof(pipe_t));
-    pipe->buff = (char *) mm_malloc(sizeof(char) * BUFFER_SIZE);
-    pipe->name = (char *) mm_malloc(sizeof(char) * (str_len("anon") + 1));
+int anon_pipe_create()
+{
+    pipe_t *pipe = (pipe_t *)mm_malloc(sizeof(pipe_t));
+    pipe->buff = (char *)mm_malloc(sizeof(char) * BUFFER_SIZE);
+    pipe->name = (char *)mm_malloc(sizeof(char) * (str_len("anon") + 1));
     str_cpy(pipe->name, "anon");
     pipe->write_pos = 0;
     pipe->read_pos = 0;
@@ -227,39 +238,51 @@ int anon_pipe_create() {
     return pipe->fd;
 }
 
-ssize_t anon_pipe_read(int fd, char * buff, size_t len) {
-    PCB * pcb = get_current();
-    if (pcb->fds[STDIN] != fd) {
+ssize_t anon_pipe_read(int fd, char *buff, size_t len)
+{
+    PCB *pcb = get_current();
+    if (pcb->fds[STDIN] != fd)
+    {
         return -1;
     }
     return pipe_read(fd, buff, len);
 }
 
-ssize_t anon_pipe_write(int fd, const char * buff, size_t len) {
-    PCB * pcb = get_current();
-    if (pcb->fds[STDOUT] != fd) {
+ssize_t anon_pipe_write(int fd, const char *buff, size_t len)
+{
+    PCB *pcb = get_current();
+    if (pcb->fds[STDOUT] != fd)
+    {
         return -1;
     }
     return pipe_write(fd, buff, len);
 }
 
-void signal_anon_pipe_close(pid_t pid, int fd) {
-    fd_entry * entry = fd_get_entry(fd);
-    if (entry->fd_type != FD_TYPE_ANON_PIPE) {
+void signal_anon_pipe_close(pid_t pid, int fd)
+{
+    fd_entry *entry = fd_get_entry(fd);
+    if (entry->fd_type != FD_TYPE_ANON_PIPE)
+    {
         return;
     }
-    pipe_t * pipe = entry->resource;
-    if (pipe->read_pid == pid) {
+    pipe_t *pipe = entry->resource;
+    if (pipe->read_pid == pid)
+    {
         pipe->read_pid = -1;
         my_sem_post(pipe->write_pid);
-    } else if (pipe->write_pid == pid) {
+    }
+    else if (pipe->write_pid == pid)
+    {
         pipe->write_pid = -1;
         my_sem_post(pipe->read_pid);
-    } else {
+    }
+    else
+    {
         return;
     }
     pipe->ref_count--;
-    if (pipe->ref_count == 0) {
+    if (pipe->ref_count == 0)
+    {
         fd_free(fd);
         mm_free(pipe->buff);
         mm_free(pipe->name);
@@ -267,17 +290,24 @@ void signal_anon_pipe_close(pid_t pid, int fd) {
     }
 }
 
-void signal_anon_pipe_open(pid_t pid, int fd, int end) {
-    fd_entry * entry = fd_get_entry(fd);
-    if (entry->fd_type != FD_TYPE_ANON_PIPE) {
+void signal_anon_pipe_open(pid_t pid, int fd, int end)
+{
+    fd_entry *entry = fd_get_entry(fd);
+    if (entry->fd_type != FD_TYPE_ANON_PIPE)
+    {
         return;
     }
-    pipe_t * pipe = entry->resource;
-    if (end == STDIN && pipe->read_pid == -1) {
+    pipe_t *pipe = entry->resource;
+    if (end == STDIN && pipe->read_pid == -1)
+    {
         pipe->read_pid = pid;
-    } else if (end == STDOUT && pipe->write_pid == -1) {
+    }
+    else if (end == STDOUT && pipe->write_pid == -1)
+    {
         pipe->write_pid = pid;
-    } else {
+    }
+    else
+    {
         return;
     }
     pipe->ref_count++;

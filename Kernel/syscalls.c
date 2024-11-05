@@ -16,63 +16,72 @@ int shell_read(char *save, int len);
 
 ssize_t sys_write(int descriptor, const char *str, int len, uint32_t hexColor)
 {
-    fd_entry * entry = fd_get_entry(descriptor); //agregar chequeo de error, y ver porq aca misticamente no anda
+    fd_entry *entry = fd_get_entry(descriptor); // agregar chequeo de error, y ver porq aca misticamente no anda
     switch (entry->fd_type)
     {
-        case STDOUT:
-            PCB * pcb = get_current();
-            if (pcb->fds[STDOUT] == STDOUT) {
-                draw_word_len(hexColor, str, len);
-                return len;
-            } else {
-                return sys_write(pcb->fds[STDOUT], str, len, hexColor);
-            }
-        case ERROUT:
-            draw_word_len(0x00ff0000, str, len);
+    case STDOUT:
+        PCB *pcb = get_current();
+        if (pcb->fds[STDOUT] == STDOUT)
+        {
+            draw_word_len(hexColor, str, len);
             return len;
-        case FD_TYPE_PIPE:
-            return pipe_write(descriptor, str, len);
-        case FD_TYPE_ANON_PIPE:
-            return anon_pipe_write(descriptor, str, len);
-        default:
-            draw_word(0x00ff0000, "no such descriptor");
-            return -1;
+        }
+        else
+        {
+            return sys_write(pcb->fds[STDOUT], str, len, hexColor);
+        }
+    case ERROUT:
+        draw_word_len(0x00ff0000, str, len);
+        return len;
+    case FD_TYPE_PIPE:
+        return pipe_write(descriptor, str, len);
+    case FD_TYPE_ANON_PIPE:
+        return anon_pipe_write(descriptor, str, len);
+    default:
+        draw_word(0x00ff0000, "no such descriptor");
+        return -1;
     }
 }
 
 ssize_t sys_read(int descriptor, char *save, int len)
 {
-    fd_entry * entry = fd_get_entry(descriptor);
-    switch (entry->fd_type) { //aca deberia switcher en algo como fd_table[fd]->type. pafa ver si es pipe u otra cosa
-        case STDIN:
-//            return shell_read(save, len);
-            PCB * pcb = get_current();
-            if (pcb->fds[STDIN] == STDIN) {
-                return shell_read(save, len);
-            } else {
-                return sys_read(pcb->fds[STDIN], save, len);
-            }
-        case FD_TYPE_PIPE:
-            return pipe_read(descriptor, save, len);
-        case FD_TYPE_ANON_PIPE:
-            return anon_pipe_read(descriptor, save, len);
-        default:
-            draw_word(0x00ff0000, "no such descriptor");
-            break;
+    fd_entry *entry = fd_get_entry(descriptor);
+    switch (entry->fd_type)
+    { // aca deberia switcher en algo como fd_table[fd]->type. pafa ver si es pipe u otra cosa
+    case STDIN:
+        //            return shell_read(save, len);
+        PCB *pcb = get_current();
+        if (pcb->fds[STDIN] == STDIN)
+        {
+            return shell_read(save, len);
+        }
+        else
+        {
+            return sys_read(pcb->fds[STDIN], save, len);
+        }
+    case FD_TYPE_PIPE:
+        return pipe_read(descriptor, save, len);
+    case FD_TYPE_ANON_PIPE:
+        return anon_pipe_read(descriptor, save, len);
+    default:
+        draw_word(0x00ff0000, "no such descriptor");
+        break;
     }
 
-//    if (descriptor != STDIN)
-//    {
-//        draw_word(0x00ff0000, "no such descriptor");
-//    }
+    //    if (descriptor != STDIN)
+    //    {
+    //        draw_word(0x00ff0000, "no such descriptor");
+    //    }
 
     return -1;
 }
 
-int shell_read(char *save, int len) {
-    PCB * pcb = get_current();
+int shell_read(char *save, int len)
+{
+    PCB *pcb = get_current();
 
-    if(pcb->ground == 0 && pcb->pid != 1 && pcb->pid != 0){ //to mimic the behaviour of cat when running in background like linux
+    if (pcb->ground == 0 && pcb->pid != 1 && pcb->pid != 0)
+    { // to mimic the behaviour of cat when running in background like linux
         kill_process_pid(pcb->pid);
         return 0;
     }
@@ -87,12 +96,12 @@ int shell_read(char *save, int len) {
         return 0;
     }
 
-    if(get_char_at(n) == EOF){
+    if (get_char_at(n) == EOF)
+    {
         *save = EOF;
         consume_buffer_at(n);
         return EOF;
     }
-    
 
     int length = MIN(len, get_buffer_len());
 
@@ -149,7 +158,8 @@ int irq_clear()
     return 0;
 }
 
-int irq_anon_pipe_create() {
+int irq_anon_pipe_create()
+{
     return anon_pipe_create();
 }
 
@@ -266,7 +276,7 @@ int irq_mm_free(void *rsi)
     return 0;
 }
 
-pid_t irq_create_process(uint64_t rsi, int * rdx, uint64_t rcx, char **r8, int r9)
+pid_t irq_create_process(uint64_t rsi, int *rdx, uint64_t rcx, char **r8, int r9)
 {
     return create_process(rsi, rdx, rcx, r8, r9);
 }
@@ -316,11 +326,11 @@ int irq_sem_init(int rsi)
 {
     return my_sem_init(rsi);
 }
-int irq_named_pipe_create(char * rsi)
+int irq_named_pipe_create(char *rsi)
 {
     return named_pipe_create(rsi);
 }
-int irq_named_pipe_open(char * rsi, int rdx)
+int irq_named_pipe_open(char *rsi, int rdx)
 {
     return named_pipe_open(rsi, rdx);
 }
@@ -328,11 +338,11 @@ void irq_named_pipe_close(int rsi)
 {
     named_pipe_close(rsi);
 }
-ssize_t irq_pipe_read(int rsi, char * rdx, size_t rcx)
+ssize_t irq_pipe_read(int rsi, char *rdx, size_t rcx)
 {
     return pipe_read(rsi, rdx, rcx);
 }
-ssize_t irq_pipe_write(int rsi, char * rdx, size_t rcx)
+ssize_t irq_pipe_write(int rsi, char *rdx, size_t rcx)
 {
     return pipe_write(rsi, rdx, rcx);
 }
