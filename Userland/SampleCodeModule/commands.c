@@ -40,11 +40,11 @@ void mm_test(char *args)
     }
     else if (ampersen)
     {
-        call_create_process(test_mm, 1, 2, argv_mm, 0);
+        call_create_process(test_mm, 0, 2, argv_mm, 0);
     }
     else
     {
-        call_create_process(test_mm, 1, 2, argv_mm, 1);
+        call_create_process(test_mm, 0, 2, argv_mm, 1);
     }
     return;
 }
@@ -65,11 +65,11 @@ void process_test(char *args)
     }
     else if (ampersen)
     {
-        call_create_process(test_processes, 1, 2, argv_process, 0);
+        call_create_process(test_processes, 0, 2, argv_process, 0);
     }
     else
     {
-        call_create_process(test_processes, 1, 2, argv_process, 1);
+        call_create_process(test_processes, 0, 2, argv_process, 1);
     }
 }
 void prio_test(char *args)
@@ -86,11 +86,11 @@ void prio_test(char *args)
     }
     else if (ampersen)
     {
-        call_create_process(test_prio, 1, 1, argv_priority, 0);
+        call_create_process(test_prio, 0, 1, argv_priority, 0);
     }
     else
     {
-        call_create_process(test_prio, 1, 1, argv_priority, 1);
+        call_create_process(test_prio, 0, 1, argv_priority, 1);
     }
 }
 
@@ -133,23 +133,23 @@ void sync_test(char *args)
 
         if (ampersen_searcher(aux2))
         {
-            call_create_process(test_sync, 1, 4, argv_sync, 0);
+            call_create_process(test_sync, 0, 4, argv_sync, 0);
         }
         else
         {
-            call_create_process(test_sync, 1, 4, argv_sync, 1);
+            call_create_process(test_sync, 0, 4, argv_sync, 1);
         }
     }
     else if (str_cmp(cut_string(str), "&") == 0)
     {
         str_cpy(argv_sync[2], "1");
 
-        call_create_process(test_sync, 1, 4, argv_sync, 0);
+        call_create_process(test_sync, 0, 4, argv_sync, 0);
     }
     else if (*str == 0)
     {
         str_cpy(argv_sync[2], "1");
-        call_create_process(test_sync, 1, 4, argv_sync, 1);
+        call_create_process(test_sync, 0, 4, argv_sync, 1);
     }
     else
     {
@@ -172,11 +172,11 @@ void pipe_test(char *args)
     }
     else if (ampersen)
     {
-        call_create_process(main_test_pipes, 1, 1, argv_pipes, 0);
+        call_create_process(main_test_pipes, 0, 1, argv_pipes, 0);
     }
     else
     {
-        call_create_process(main_test_pipes, 1, 1, argv_pipes, 1);
+        call_create_process(main_test_pipes, 0, 1, argv_pipes, 1);
     }
 }
 
@@ -185,7 +185,7 @@ void busy_wait()
     char **argv_loop = (char **)(uintptr_t)call_malloc(sizeof(char *));
     argv_loop[0] = (char *)call_malloc(sizeof(char) * (str_len("loop") + 1));
     str_cpy(argv_loop[0], "loop");
-    call_create_process(loop, 1, 1, argv_loop, 0);
+    call_create_process(loop, 0, 1, argv_loop, 0);
 }
 
 void cmd_eliminator(char *args)
@@ -414,11 +414,11 @@ void cat_process(char *args)
     }
     else if (ampersen)
     {
-        call_create_process(cat, 1, 1, argv, 0);
+        call_create_process(cat, 0, 1, argv, 0);
     }
     else
     {
-        call_create_process(cat, 1, 1, argv, 1);
+        call_create_process(cat, 0, 1, argv, 1);
     }
 }
 
@@ -435,11 +435,11 @@ void filter_process(char *args)
     }
     else if (ampersen)
     {
-        call_create_process(filter, 1, 1, argv, 0);
+        call_create_process(filter, 0, 1, argv, 0);
     }
     else
     {
-        call_create_process(filter, 1, 1, argv, 1);
+        call_create_process(filter, 0, 1, argv, 1);
     }
 }
 
@@ -456,10 +456,10 @@ void wc_process(char *args)
     }
     else if (ampersen)
     {
-        call_create_process(wc, 1, 1, argv, 0);
+        call_create_process(wc, 0, 1, argv, 0);
     }
     else
     {
-        call_create_process(wc, 1, 1, argv, 1);
+        call_create_process(wc, 0, 1, argv, 1);
     }
 }

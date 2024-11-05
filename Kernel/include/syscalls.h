@@ -53,7 +53,7 @@ pid_t irq_wait_pid(pid_t rsi);
 int irq_change_priority(pid_t rsi, uint8_t rdx);
 uint64_t irq_mm_malloc(uint32_t rsi);
 int irq_mm_free(void *rsi);
-pid_t irq_create_process(uint64_t rsi, uint8_t rdx, uint64_t rcx, char **r8, int r9);
+pid_t irq_create_process(uint64_t rsi, int * rdx, uint64_t rcx, char **r8, int r9);
 int irq_print_processes();
 pid_t irq_get_current_pid();
 pid_t irq_kill_process();

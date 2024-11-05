@@ -8,7 +8,7 @@
 #include "process.h"
 
 #define STACK 4096
-#define MAX_PROCESSES 64
+#define MAX_PROCESSES 128
 
 enum State
 {
@@ -49,7 +49,7 @@ typedef struct child_node
     struct child_node *next;
 } child_node;
 
-pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv, int ground);
+pid_t create_process(uint64_t fn, int * fds, uint64_t argc, char **argv, int ground);
 
 pid_t kill_process();
 

@@ -207,36 +207,5 @@ ssize_t pipe_write(int fd, const char *buff, size_t bytes_w)
     return bytes_written;
 }
 
-void redirect_std(pid_t pid, int fd, int std) {
-    PCB * pcb = find_pcb(pid);
 
-    if (pcb == NULL) {
-        return;
-    }
 
-    pcb->fds[std] = fd;
-}
-
-void send_eof_signal() {
-    PCB *current_pcb = get_current();
-    if (current_pcb == NULL) {
-        return;
-    }
-
-    int fd = current_pcb->fds[STDOUT];
-    if (fd < 0 || fd >= MAX_FD) {
-        return;
-    }
-
-    fd_entry *entry = fd_get_entry(fd);
-    if (entry == NULL) {
-        return; 
-    }
-
-    named_pipe_t *pipe = (named_pipe_t *)entry->resource; 
-    if (pipe == NULL) {
-        return;
-    }
-
-    my_sem_post(pipe->read_sem);
-}

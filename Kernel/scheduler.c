@@ -28,7 +28,7 @@ void scheduler_init()
     processes = ll_init();
     hash_map_init();
 
-    create_process((uint64_t)idle, 1, 0, NULL, 0);
+    create_process((uint64_t)idle, 0, 0, NULL, 0);
 
     idle_p = get_idle();
 

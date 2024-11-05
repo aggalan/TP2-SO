@@ -66,6 +66,11 @@ ssize_t sys_read(int descriptor, char *save, int len)
 }
 
 int shell_read(char *save, int len) {
+    PCB * pcb = get_current();
+
+    if(pcb->ground == 0 && pcb->pid != 1 && pcb->pid != 0){ //to mimic the behaviour of cat when running in background like linux
+        kill_process_pid(pcb->pid);
+    }
 
     block_shell_read();
 
@@ -252,7 +257,7 @@ int irq_mm_free(void *rsi)
     return 0;
 }
 
-pid_t irq_create_process(uint64_t rsi, uint8_t rdx, uint64_t rcx, char **r8, int r9)
+pid_t irq_create_process(uint64_t rsi, int * rdx, uint64_t rcx, char **r8, int r9)
 {
     return create_process(rsi, rdx, rcx, r8, r9);
 }

@@ -13,6 +13,7 @@
 
 hash_map_ADT map;
 static pid_t pids = 0;
+#define DEFAULT_PRIORITY 1
 
 PCB * idle_proc = NULL;
 PCB * shell_process;
@@ -29,7 +30,7 @@ PCB *get_idle()
     return idle_proc;
 }
 
-pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv, int ground)
+pid_t create_process(uint64_t fn, int * fds, uint64_t argc, char **argv, int ground)
 {
 
     PCB *pcb = (PCB *)mm_malloc(sizeof(PCB));
@@ -45,7 +46,7 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv, int 
 
     pcb->rip = fn;
     pcb->state = READY;
-    pcb->priority = priority;
+    pcb->priority = DEFAULT_PRIORITY;
     pcb->pid = pids++;
     pcb->argv = argv;
     pcb->argc = argc;
@@ -64,9 +65,14 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv, int 
         mm_free(pcb);
         return -1;
     }
-    pcb->fds[0] = STDIN;
-    pcb->fds[1] = STDOUT;
-    pcb->fds[2] = ERROUT;
+    if(fds == NULL)
+    {
+        int default_fds[3] = {STDIN, STDOUT, ERROUT};
+        fds = default_fds;
+    }
+    pcb->fds[0] = fds[0];
+    pcb->fds[1] = fds[1];
+    pcb->fds[2] = fds[2];
 
     pcb->base = (uint64_t)mm_malloc(STACK);
     if ((void *)pcb->base == NULL)
@@ -99,13 +105,16 @@ pid_t create_process(uint64_t fn, int priority, uint64_t argc, char **argv, int 
     {
         idle_proc = pcb;
     }
-    else
+    else if(pcb->pid != 1)
     {
         add_pcb(pcb->pid, pcb);
-        add_process(pcb, priority);
+        add_process(pcb, DEFAULT_PRIORITY);
     }
     if (pcb->pid == 1)
     {
+        pcb->priority = 5; //shell should have higher priority
+        add_pcb(pcb->pid, pcb);
+        add_process(pcb, pcb->priority);
         shell_process = pcb;
     }
 

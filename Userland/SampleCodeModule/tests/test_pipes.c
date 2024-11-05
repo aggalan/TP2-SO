@@ -132,7 +132,7 @@ void test_edge_cases() {
 
     // Test exact buffer size transfer
     print(0xFFFFFF, "Testing exact buffer size transfer...\n");
-    uint64_t reader_pid = call_create_process(full_buffer_reader, 1, 1, empty_args, 0);
+    uint64_t reader_pid = call_create_process(full_buffer_reader, 0, 1, empty_args, 0);
     if (reader_pid == -1) {
         print(0xFFFFFF, "FAIL: Failed to create full buffer reader process\n");
         return;
@@ -142,7 +142,7 @@ void test_edge_cases() {
 
     call_nice();  // Give reader time to start
 
-    uint64_t writer_pid = call_create_process(full_buffer_writer, 1, 1, empty_args, 0);
+    uint64_t writer_pid = call_create_process(full_buffer_writer, 0, 1, empty_args, 0);
     if (writer_pid == -1) {
         print(0xFFFFFF, "FAIL: Failed to create full buffer writer process\n");
         call_waitpid(reader_pid);
@@ -163,7 +163,7 @@ void test_edge_cases() {
         return;
     }
 
-    writer_pid = call_create_process(overflow_writer, 1, 1, empty_args, 0);
+    writer_pid = call_create_process(overflow_writer, 0, 1, empty_args, 0);
     if (writer_pid == -1) {
         print(0xFFFFFF, "FAIL: Failed to create overflow writer process\n");
         return;
@@ -323,7 +323,7 @@ void test_pipe_concurrent_processes() {
     char *empty_args[] = {"name"};
 
     // Create reader and writer processes
-    uint64_t reader_pid = call_create_process(reader_process, 1, 1, empty_args, 0);
+    uint64_t reader_pid = call_create_process(reader_process, 0, 1, empty_args, 0);
     if (reader_pid == -1) {
         print(0xFFFFFF, "FAIL: Failed to create reader process\n");
         return;
@@ -332,7 +332,7 @@ void test_pipe_concurrent_processes() {
     // Give reader a moment to start
     call_nice();
 
-    uint64_t writer_pid = call_create_process(writer_process, 1, 1, empty_args, 0);
+    uint64_t writer_pid = call_create_process(writer_process, 0, 1, empty_args, 0);
     if (writer_pid == -1) {
         print(0xFFFFFF, "FAIL: Failed to create writer process\n");
         call_waitpid(reader_pid);
