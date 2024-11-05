@@ -201,6 +201,8 @@ void piped_line_read(char * buffer) {
                 func1 = wc;
             } else if (str_cmp(commands[i].command, "cat") == 0) {
                 func1 = cat;
+            } else if (str_cmp(commands[i].command, "filter") == 0) {
+                func1 = filter;
             }
         }
         if (str_cmp(cut_string(command2), commands[i].command) == 0)
@@ -210,6 +212,8 @@ void piped_line_read(char * buffer) {
                 func2 = wc;
             } else if (str_cmp(commands[i].command, "cat") == 0) {
                 func2 = cat;
+            } else if (str_cmp(commands[i].command, "filter") == 0) {
+                func2 = filter;
             }
         }
     }
@@ -227,11 +231,8 @@ void piped_line_read(char * buffer) {
     }
 
     if (func1 == NULL || func2 == NULL) {
-        print(WHITE,"WHY DOES THIS HAPPEN\n");
         return;
     }
-
-    print(WHITE, "HERE\n");
 
 
     pid_t pid1 = call_create_process(func1, fds, 1, argv, 0);
