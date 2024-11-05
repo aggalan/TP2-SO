@@ -21,11 +21,6 @@ int putC(char c, uint32_t hex_color)
 
 void put_int(uint64_t num, uint32_t hex_color)
 {
-    if (num < 0)
-    {
-        putC('-', hex_color);
-        num = -num;
-    }
 
     int divisor = 1;
     while (num / divisor >= 10)

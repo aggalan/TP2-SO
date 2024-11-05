@@ -330,7 +330,7 @@ void call_div0()
 {
     int a = 7;
     int b = 0;
-    a = a / b;
+    int c = a / b;
 }
 
 void cat()
