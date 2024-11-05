@@ -9,8 +9,10 @@
 #include "../include/process_manager.h"
 #include "../include/scheduler.h"
 #include "../include/pipe_manager.h"
+#include "../include/lib.h"
 
 #define EOF -1
+#define WHITE 0xFFFFFFFF
 
 #define LEFT_SHIFT 0x2A
 #define RIGHT_SHIFT 0x36
@@ -89,6 +91,7 @@ void keyboard_handler()
       if (key_map[key_map_row][code] == 'c' || key_map[key_map_row][code] == 'C')
       {
         kill_foreground_process();
+        print_kernel(WHITE, "\n");
         return;
       }
       else if (key_map[key_map_row][code] == 'd' || key_map[key_map_row][code] == 'D')

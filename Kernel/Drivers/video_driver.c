@@ -7,6 +7,8 @@
 #include <lib.h>
 #include "../include/keyboard_buffer.h"
 #include "../include/lib.h"
+#define WHITE 0xFFFFFFFF
+
 struct vbe_mode_info_structure
 {
 	uint16_t attributes;  // deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.
@@ -223,7 +225,7 @@ void address_to_string(void *ptr)
 		buffer[k] = temp;
 	}
 
-	draw_word_white(buffer); // Call draw_word_white to print the string directly
+	print_kernel(WHITE, buffer); // Call draw_word_white to print the string directly
 }
 
 void draw_number(int value)

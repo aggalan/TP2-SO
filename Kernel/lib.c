@@ -5,7 +5,15 @@
 #include "include/interrupts.h"
 #include "include/process_manager.h"
 #include "include/scheduler.h"
+#include <stdarg.h>
 #include "../Drivers/include/video_driver.h"
+#include "include/lib.h"
+#include "include/syscalls.h"
+
+void put_int_kernel(uint64_t num, uint32_t hex_color);
+void put_string_kernel(const char *str, uint32_t hex_color);
+
+
 void *memset(void *destination, int32_t c, uint64_t length)
 {
 	uint8_t chr = (uint8_t)c;
@@ -63,15 +71,16 @@ void sleepms(uint32_t ms)
 		_hlt();
 	}
 }
-int str_len(char *str)
+
+int str_len(const char *str)
 {
-	int i = 0;
-	while (str[i] != '\0')
-	{
-		i++;
-	}
-	return i;
-};
+    int length = 0;
+    while (str[length] != '\0')
+    {
+        length++;
+    }
+    return length;
+}
 
 int str_cpy(char *dest, const char *src)
 {
@@ -109,4 +118,74 @@ void exit_process(int status)
 	//    pcb->state = EXITED;
 	kill_process_pid(pcb->pid);
 	//    nice();
+}
+
+
+void print_kernel(int color, const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+
+    while (*format)
+    {
+        if (*format == '%' && *(format + 1) == 'd')
+        {
+            int num = va_arg(args, int);
+            if (num < 0)
+            {
+                sys_write(STDOUT, "-", 1, color);
+                num = -num;
+            }
+            put_int_kernel(num, color); // Assuming put_int_kernel is a function that prints positive numbers
+            format += 2;
+        }
+        else if (*format == '%' && *(format + 1) == 's')
+        {
+            const char *str = va_arg(args, const char *);
+            put_string_kernel(str, color);
+            format += 2;
+        }
+        else
+        {
+            sys_write(STDOUT, format, 1, color);
+            format++;
+        }
+    }
+
+    va_end(args);
+}
+
+void put_int_kernel(uint64_t num, uint32_t hex_color)
+{
+    char buffer[20];
+    int i = 0;
+
+    if (num == 0)
+    {
+        buffer[i++] = '0';
+    }
+    else
+    {
+        while (num > 0)
+        {
+            buffer[i++] = (num % 10) + '0';
+            num /= 10;
+        }
+    }
+
+    buffer[i] = '\0';
+
+    // Reverse the buffer
+    for (int j = 0; j < i / 2; j++)
+    {
+        char temp = buffer[j];
+        buffer[j] = buffer[i - j - 1];
+        buffer[i - j - 1] = temp;
+    }
+
+    put_string_kernel(buffer, hex_color);
+}
+void put_string_kernel(const char *str, uint32_t hex_color)
+{
+    sys_write(STDOUT, str, str_len(str), hex_color);
 }

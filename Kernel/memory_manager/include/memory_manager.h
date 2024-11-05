@@ -7,6 +7,7 @@
 
 #define HEAP_SIZE 0x10000000 // 256MB heap
 #define BLOCK_SIZE 32        //  bytes per block
+#define WHITE 0xFFFFFFFF
 
 typedef struct memory_status_t
 {

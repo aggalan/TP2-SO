@@ -11,8 +11,8 @@ void print_registers(uint64_t *registers, uint32_t colour)
 {
     for (int i = 0; i < SIZE; i++)
     {
-        draw_word(colour, register_names[i]);
-        draw_word(colour, ": 0x");
+        print_kernel(colour, "%s", register_names[i]);
+        print_kernel(colour, ": 0x");
         draw_register(registers[SIZE - i - 1], colour);
     }
 }
