@@ -94,7 +94,6 @@ command_t commands[] = {
     {"help", cmd_help, "Displays this help message."},
     {"eliminator", cmd_eliminator, "Starts the eliminator."},
     {"clear", call_clear, "Clears the screen."},
-    {"set_font", cmd_set_font, "Sets the font size."},
     {"status", call_status, "Displays the status of the memory in the system."},
     {"tests", cmd_tests, "Displays runnable tests"},
     {"ps", cmd_ps, "Displays the processes in the system."},
@@ -203,6 +202,14 @@ void piped_line_read(char * buffer) {
                 func1 = cat;
             } else if (str_cmp(commands[i].command, "filter") == 0) {
                 func1 = filter;
+            } else if (str_cmp(commands[i].command, "div_0") == 0) {
+                print(RED, "CANNOT PIPE DIVISION BY ZERO\n");
+                return;
+            } else if (str_cmp(commands[i].command, "invalid_op") == 0) {
+                print(RED, "CANNOT PIPE INVALID OPERATION\n");
+                return;
+            } else if (str_cmp(commands[i].command, "get_registers") == 0) {
+                print(RED, "CANNOT PIPE get_registers\n");
             }
         }
         if (str_cmp(cut_string(command2), commands[i].command) == 0)
@@ -214,6 +221,14 @@ void piped_line_read(char * buffer) {
                 func2 = cat;
             } else if (str_cmp(commands[i].command, "filter") == 0) {
                 func2 = filter;
+            } else if (str_cmp(commands[i].command, "div_0") == 0) {
+                print(RED, "CANNOT PIPE DIVISION BY ZERO\n");
+                return;
+            } else if (str_cmp(commands[i].command, "invalid_op") == 0) {
+                print(RED, "CANNOT PIPE INVALID OPERATION\n");
+                return;
+            } else if (str_cmp(commands[i].command, "get_registers") == 0) {
+                print(RED, "CANNOT PIPE get_registers\n");
             }
         }
     }
@@ -243,9 +258,7 @@ void piped_line_read(char * buffer) {
 
 
     call_waitpid(pid1);
-//    print(WHITE, "PROCESS 1 FINISHED");
     call_waitpid(pid2);
-//    print(WHITE, "PROCESS 2 FINISHED");
 
 }
 
