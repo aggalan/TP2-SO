@@ -48,6 +48,7 @@ syscall_func_t syscalls[] = {
     [39] = (syscall_func_t) irq_named_pipe_close,
     [40] = (syscall_func_t) irq_pipe_read,
     [41] = (syscall_func_t) irq_pipe_write,
+    [42] = (syscall_func_t) irq_anon_pipe_create,
 };
 
 static void int_20();

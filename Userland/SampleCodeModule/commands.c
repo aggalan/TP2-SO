@@ -338,9 +338,11 @@ void cat()
     char c;
     char command[MAX_LENGTH] = {0};
     int i = 0;
-    while (getC(&c) != EOF)
-    { // TRABAJR CON EOF
-        if (c != 0)
+    ssize_t status = -1;
+
+    do{ // TRABAJR CON EOF
+        status = getC(&c);
+        if (c != 0 && c != -1)
         {
             putC(c, WHITE);
             command[i++] = c;
@@ -352,7 +354,7 @@ void cat()
                 command[0] = '\0';
             }
         }
-    }
+    }while (status != EOF && status != 0);
     putC('\n', WHITE);
     return;
 }
@@ -380,18 +382,19 @@ void wc()
 {
     int lines = 1;
     char c;
+    ssize_t status = -1;
 
-    while (getC(&c) != EOF)
-    { // TRABAJ CON EOF
+    do{ // TRABAJ CON EOF
+        status = getC(&c);
         if (c == '\n')
         {
             lines++;
         }
-        if(c != 0)
+        if(c != 0 && c != -1)
         {
             putC(c, WHITE);
         }
-    }
+    }while (status != EOF && status != 0);
     putC('\n', WHITE);
     put_string("Lines: ", WHITE);
     put_int(lines, WHITE);

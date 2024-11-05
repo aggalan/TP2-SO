@@ -4,6 +4,7 @@
 #define MAX_FD 30
 #define FD_TYPE_PIPE 3
 #define FD_TYPE_STD 4
+#define FD_TYPE_ANON_PIPE 5
 
 #define STDIN 0
 #define STDOUT 1

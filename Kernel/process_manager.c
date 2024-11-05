@@ -10,6 +10,7 @@
 #include "../Drivers/include/video_driver.h"
 #include "./collections/include/collections.h"
 #include "include/fd_manager.h"
+#include "include/pipe_manager.h"
 
 hash_map_ADT map;
 static pid_t pids = 0;
@@ -67,14 +68,22 @@ pid_t create_process(uint64_t fn, int * fds, uint64_t argc, char **argv, int gro
     }
     if(fds == NULL)
     {
-        pcb->fds[0] = STDIN;
-        pcb->fds[1] = STDOUT;
-        pcb->fds[2] = ERROUT;
+        pcb->fds[0] = 0;
+        pcb->fds[1] = 1;
+        pcb->fds[2] = 2;
     } else {
         pcb->fds[0] = fds[0];
         pcb->fds[1] = fds[1];
         pcb->fds[2] = fds[2];
+        if (fds[0] != 0) {
+            signal_anon_pipe_open(pcb->pid, fds[0], STDIN);
+        } else {
+            signal_anon_pipe_open(pcb->pid, fds[1], STDOUT);
+        }
     }
+
+
+
 
     pcb->base = (uint64_t)mm_malloc(STACK);
     if ((void *)pcb->base == NULL)
@@ -183,6 +192,14 @@ pid_t kill_process_pid(pid_t pid)
     }
     if (pcb->ground) {
         foreground_process = NULL;
+    }
+
+    if (pcb->fds[0] != 0) {
+        signal_anon_pipe_close(pid, pcb->fds[0]);
+        mm_free(pcb->fds);
+    } else if(pcb->fds[1] != 1) {
+        signal_anon_pipe_close(pid, pcb->fds[1]);
+        mm_free(pcb->fds);
     }
 
     abandon_children(pcb); // the children have been abandoned, the shell adopted them.
@@ -502,7 +519,7 @@ void print_processes()
                     drawWord1(" ");
                 }
 
-                switch (aux->value->state) {
+                switch (aux->value->ground) {
                     case 0:
                         drawWord1("BACKGROUND");
                         break;

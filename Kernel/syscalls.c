@@ -32,6 +32,8 @@ ssize_t sys_write(int descriptor, const char *str, int len, uint32_t hexColor)
             return len;
         case FD_TYPE_PIPE:
             return pipe_write(descriptor, str, len);
+        case FD_TYPE_ANON_PIPE:
+            return anon_pipe_write(descriptor, str, len);
         default:
             drawWord(0x00ff0000, "no such descriptor");
             return -1;
@@ -52,6 +54,8 @@ ssize_t sys_read(int descriptor, char *save, int len)
             }
         case FD_TYPE_PIPE:
             return pipe_read(descriptor, save, len);
+        case FD_TYPE_ANON_PIPE:
+            return anon_pipe_read(descriptor, save, len);
         default:
             drawWord(0x00ff0000, "no such descriptor");
             break;
@@ -142,6 +146,10 @@ int irq_clear()
 {
     clear();
     return 0;
+}
+
+int irq_anon_pipe_create() {
+    return anon_pipe_create();
 }
 
 int irq_ticks_elapsed()

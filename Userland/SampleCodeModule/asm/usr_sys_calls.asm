@@ -42,6 +42,7 @@ GLOBAL call_pipe_read
 GLOBAL call_pipe_write
 GLOBAL call_get_char_at
 GLOBAL call_get_buffer_position
+GLOBAL call_anon_pipe_create
 
 
 section .text
@@ -143,6 +144,8 @@ call_pipe_read:
     call_to_handler 40
 call_pipe_write:
     call_to_handler 41
+call_anon_pipe_create:
+    call_to_handler 42
 
 
 

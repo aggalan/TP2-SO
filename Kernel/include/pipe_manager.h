@@ -12,7 +12,7 @@
 #define BUFFER_SIZE 1024
 
 
-typedef struct named_pipe_t {
+typedef struct pipe_t{
     int fd;
     int index;
     char * name;
@@ -24,7 +24,7 @@ typedef struct named_pipe_t {
     pid_t read_pid;
     pid_t write_pid;
     int ref_count;
-}named_pipe_t;
+}pipe_t;
 
 void pipe_table_init();
 
@@ -39,6 +39,17 @@ ssize_t pipe_read(int fd, char * buff, size_t bytes_r);
 ssize_t pipe_write(int fd, const char * buff, size_t bytes_w);
 
 void free_entry(int fd);
+
+
+int anon_pipe_create();
+
+ssize_t anon_pipe_read(int fd, char * buff, size_t len);
+
+ssize_t anon_pipe_write(int fd, const char * buff, size_t len);
+
+void signal_anon_pipe_open(pid_t pid, int fd, int end);
+
+void signal_anon_pipe_close(pid_t pid, int fd);
 
 
 #endif

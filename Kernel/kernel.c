@@ -69,10 +69,10 @@ int main()
 {
 	load_idt();
 	mm_init((void *)0x600000, 0x2700000);
-	scheduler_init();
 	sem_manager();
     pipe_table_init();
     fd_init();
+    scheduler_init();
 	shell();
 
 	while (1)
