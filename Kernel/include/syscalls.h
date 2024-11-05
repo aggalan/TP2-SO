@@ -68,5 +68,7 @@ int irq_named_pipe_open(char * rsi, int rdx);
 void irq_named_pipe_close(int rsi);
 ssize_t irq_pipe_read(int rsi, char * rdx, size_t rcx);
 ssize_t irq_pipe_write(int rsi, char * rdx, size_t rcx);
+char irq_get_char_at(int rsi);
+int irq_get_buffer_position();
 
 #endif // TPE_SYSCALLS_H

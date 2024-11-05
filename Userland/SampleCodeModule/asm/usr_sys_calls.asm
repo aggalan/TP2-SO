@@ -40,6 +40,8 @@ GLOBAL call_named_pipe_open
 GLOBAL call_named_pipe_close
 GLOBAL call_pipe_read
 GLOBAL call_pipe_write
+GLOBAL call_get_char_at
+GLOBAL call_get_buffer_position
 
 
 section .text
@@ -91,7 +93,7 @@ call_status:
     call_to_handler 15
 call_annihilate:
     call_to_handler 16
-call_process_test:
+call_get_buffer_position:
     call_to_handler 17
 call_prio_test:
     call_to_handler 18
@@ -101,8 +103,8 @@ call_unblock:
     call_to_handler 20
 call_kill:
     call_to_handler 21
-; call_nice:
-;     call_to_handler 22
+call_get_char_at:
+    call_to_handler 22
 call_waitpid:
     call_to_handler 23
 call_change_priority:
