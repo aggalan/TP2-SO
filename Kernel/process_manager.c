@@ -421,20 +421,20 @@ void kill_foreground_process() {
 
 void print_processes()
 {
-    drawWord1("There are ");
-    drawNumber(map->size);
-    drawWord1(" processes in the system");
-    newLine();
-    drawWord1("PID    ");
-    drawWord1("NAME          ");
-    drawWord1("PRIORITY   ");
-    drawWord1("STACK BASE   ");
-    drawWord1("RSP        ");
+    draw_word_white("There are ");
+    draw_number(map->size);
+    draw_word_white(" processes in the system");
+    newline();
+    draw_word_white("PID    ");
+    draw_word_white("NAME          ");
+    draw_word_white("PRIORITY   ");
+    draw_word_white("STACK BASE   ");
+    draw_word_white("RSP        ");
 
-    drawWord1("STATE    ");
+    draw_word_white("STATE    ");
 
-    drawWord1("GROUND");
-    newLine();
+    draw_word_white("GROUND");
+    newline();
     for (int i = 0, j = 0; j < map->size && i < MAX_MAP_SIZE; i++)
     {
         if (map->PCB_arr[i] != NULL)
@@ -442,7 +442,7 @@ void print_processes()
             map_node *aux = map->PCB_arr[i];
             while (aux != NULL)
             {
-                drawNumber(aux->key);
+                draw_number(aux->key);
 
                 pid_t beaut = aux->key;
                 int m = 0;
@@ -453,16 +453,16 @@ void print_processes()
                 }
                 for (int z = 0; z < (6 - m); z++)
                 {
-                    drawWord1(" ");
+                    draw_word_white(" ");
                 }
-                drawWord1(aux->value->name);
+                draw_word_white(aux->value->name);
                 for (int z = 0; z < 14 - str_len(aux->value->name); z++)
                 {
-                    drawWord1(" ");
+                    draw_word_white(" ");
                 }
 
-                drawNumber(aux->value->priority);
-                drawWord1("          ");
+                draw_number(aux->value->priority);
+                draw_word_white("          ");
                 address_to_string((void *)aux->value->base);
 
                 unsigned long beaut2 = aux->value->base;
@@ -474,7 +474,7 @@ void print_processes()
                 }
                 for (int z = 0; z < (10 - m); z++)
                 {
-                    drawWord1(" ");
+                    draw_word_white(" ");
                 }
 
                 address_to_string((void *)aux->value->rsp);
@@ -488,7 +488,7 @@ void print_processes()
                 }
                 for (int z = 0; z < (8 - m); z++)
                 {
-                    drawWord1(" ");
+                    draw_word_white(" ");
                 }
 
                 char *buff = NULL;
@@ -513,21 +513,21 @@ void print_processes()
                     buff = "EXITED";
                     break;
                 }
-                drawWord1(buff);
+                draw_word_white(buff);
                 for (int z = 0; z < 9 - str_len(buff); z++)
                 {
-                    drawWord1(" ");
+                    draw_word_white(" ");
                 }
 
                 switch (aux->value->ground) {
                     case 0:
-                        drawWord1("BACKGROUND");
+                        draw_word_white("BACKGROUND");
                         break;
                     case 1:
-                        drawWord1("FOREGROUND");
+                        draw_word_white("FOREGROUND");
                         break;
                 }
-                newLine();
+                newline();
                 j++;
                 aux = aux->next;
             }

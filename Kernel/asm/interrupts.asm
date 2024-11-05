@@ -1,8 +1,8 @@
 
 GLOBAL _cli
 GLOBAL _sti
-GLOBAL picMasterMask
-GLOBAL picSlaveMask
+GLOBAL pic_master_mask
+GLOBAL pic_slave_mask
 GLOBAL haltcpu
 GLOBAL _hlt
 
@@ -16,23 +16,23 @@ GLOBAL _irq80Handler
 
 GLOBAL _exception0Handler
 GLOBAL _exception6Handler
-GLOBAL getRegisters
-GLOBAL printRegistersAsm
-GLOBAL getFlag
-GLOBAL saveRegisters
+GLOBAL get_registers
+GLOBAL print_registers_asm
+GLOBAL get_flag
+GLOBAL save_registers_state
 GLOBAL nice
 
 EXTERN schedule
-EXTERN irqDispatcher
-EXTERN exceptionDispatcher
-EXTERN retUserland
-EXTERN getStackBase
+EXTERN irq_dispatcher
+EXTERN exception_dispatcher
+EXTERN ret_userland
+EXTERN get_stack_base
 EXTERN clear
-EXTERN printRegisters
+EXTERN print_registers
 SECTION .text
 
 
-%macro saveRegistersState 0
+%macro save_registers_state 0
     mov rax, [rsp]
 	mov [registers],rax ;r15
 	mov rax , [rsp + 8]
@@ -74,7 +74,7 @@ SECTION .text
 
 %endmacro
 
-%macro pushState 0
+%macro push_state 0
     push rbp
 	push rax
 	push rbx
@@ -92,7 +92,7 @@ SECTION .text
 	push r15
 %endmacro
 
-%macro popState 0
+%macro pop_state 0
 	pop r15
 	pop r14
 	pop r13
@@ -111,21 +111,21 @@ SECTION .text
 %endmacro
 
 %macro irqHandlerMaster 1
-	pushState
+	push_state
 
 	mov rdi, %1 ; pasaje de parametro
-	call irqDispatcher
+	call irq_dispatcher
 
 	; signal pic EOI (End of Interrupt)
 	mov al, 20h
 	out 20h, al
 
-	popState
+	pop_state
 	iretq
 %endmacro
 
 
-getRegisters:
+get_registers:
     mov rax, registers
     mov byte[flag],0
 
@@ -135,25 +135,25 @@ nice:
 	int 0x20
 	ret
 
-getFlag:
+get_flag:
 	movzx rax, byte[flag]
 	ret
 
-%macro exceptionHandler 1
+%macro exception_handler 1
     push rsp
     push qword[rsp + 8]
-	pushState
+	push_state
 	;Guardo el estado del registros
-    saveRegistersState
+    save_registers_state
     mov byte[flag],0
 
 	;llamo a funcion en c que imprime los registros
 	mov rdi, %1 ; pasaje de parametro
-	call exceptionDispatcher
-	popState
+	call exception_dispatcher
+	pop_state
 	add rsp, 16
 
-	call getStackBase
+	call get_stack_base
 	mov [rsp+24], rax
     mov rax, userland
     mov [rsp], rax
@@ -176,7 +176,7 @@ _sti:
 	sti
 	ret
 
-picMasterMask:
+pic_master_mask:
 	push rbp
     mov rbp, rsp
     mov ax, di
@@ -184,7 +184,7 @@ picMasterMask:
     pop rbp
     retn
 
-picSlaveMask:
+pic_slave_mask:
 	push    rbp
     mov     rbp, rsp
     mov     ax, di  ; ax = mascara de 16 bits
@@ -196,9 +196,9 @@ picSlaveMask:
 ;8254 Timer (Timer Tick)
 _irq00Handler:
 
-	pushState
+	push_state
 	mov rdi, 0
-	call irqDispatcher
+	call irq_dispatcher
 
 	mov rdi, rsp
 	call schedule
@@ -207,27 +207,27 @@ _irq00Handler:
 	mov al, 20h
 	out 20h, al
 
-	popState 
+	pop_state 
 	iretq
 
 ;Keyboard
 _irq01Handler:
     push rsp
     push qword[rsp + 8]
-    pushState
+    push_state
     mov rax, 0
     in al, 60h
     cmp al,27h
     jne handle
-    saveRegistersState
+    save_registers_state
     mov byte[flag],1
     mov al, 20h
     out 20h, al
-    popState
+    pop_state
     add rsp, 16
     iretq
 handle:
-    popState
+    pop_state
     add rsp, 16
 	irqHandlerMaster 1
 
@@ -267,7 +267,7 @@ _irq80Handler:
     mov rsi, rdi
     mov rdi, 0x80
 
-    call irqDispatcher
+    call irq_dispatcher
 
     pop r9
     mov rsp, rbp
@@ -283,10 +283,10 @@ _irq80Handler:
 
 ;Zero Division Exception
 _exception0Handler:
-	exceptionHandler 0
+	exception_handler 0
 
 _exception6Handler:
-	exceptionHandler 6
+	exception_handler 6
 
 
 

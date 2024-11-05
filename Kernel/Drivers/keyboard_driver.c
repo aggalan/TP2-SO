@@ -18,10 +18,10 @@
 #define CTRL_RLS 0x9D
 #define EXTENDED_KEY 0xE0
 
-static uint8_t keyMapRow = 0;
+static uint8_t key_map_row = 0;
 static uint8_t control_pressed = 0;
 
-static uint8_t scancodeToAscii[] = {
+static uint8_t scancode_to_ascii[] = {
 
     0, 27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=',
     '\b', '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']',
@@ -33,7 +33,7 @@ static uint8_t scancodeToAscii[] = {
 
 };
 
-static uint8_t scancodeShiftToAscii[] = {
+static uint8_t scancode_shift_to_ascii[] = {
 
     0, 27, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+',
     '\b', '\t', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}',
@@ -45,11 +45,11 @@ static uint8_t scancodeShiftToAscii[] = {
 
 };
 
-static uint8_t *keyMap[] = {scancodeToAscii, scancodeShiftToAscii};
+static uint8_t *key_map[] = {scancode_to_ascii, scancode_shift_to_ascii};
 
 void keyboard_handler()
 {
-  uint16_t code = getKey();
+  uint16_t code = get_key();
 
   if (code == CTRL)
   {
@@ -63,7 +63,7 @@ void keyboard_handler()
   }
   else if (code == EXTENDED_KEY)
   {
-    code = getKey();
+    code = get_key();
     if (code == CTRL)
     {
       control_pressed = 1;
@@ -78,30 +78,30 @@ void keyboard_handler()
 
   if (code < 0x80)
   { // Key pressed
-    char *buff = getBufferAddress();
-    int buff_pos = getBufferPosition();
+    char *buff = get_buffer_address();
+    int buff_pos = get_buffer_position();
     if (code == LEFT_SHIFT || code == RIGHT_SHIFT)
     {
-      keyMapRow = 1;
+      key_map_row = 1;
     }
     else if (control_pressed)
     {
-      if (keyMap[keyMapRow][code] == 'c' || keyMap[keyMapRow][code] == 'C')
+      if (key_map[key_map_row][code] == 'c' || key_map[key_map_row][code] == 'C')
       {
           kill_foreground_process();
           return;
       }
-      else if(keyMap[keyMapRow][code] == 'd' || keyMap[keyMapRow][code] == 'D')
+      else if(key_map[key_map_row][code] == 'd' || key_map[key_map_row][code] == 'D')
       {
           buff[buff_pos] = EOF;
-          incBufferLen(1);
+          inc_buffer_len(1);
       }
     }
-    else if (keyMap[keyMapRow][code] != 0)
+    else if (key_map[key_map_row][code] != 0)
     {
-      buff[buff_pos] = keyMap[keyMapRow][code];
-      incBufferLen(1);
-      setPos(buff_pos);
+      buff[buff_pos] = key_map[key_map_row][code];
+      inc_buffer_len(1);
+      set_pos(buff_pos);
     }
       wake_up_shell();
   }
@@ -110,7 +110,7 @@ void keyboard_handler()
     code -= 0x80;
     if (code == LEFT_SHIFT || code == RIGHT_SHIFT)
     {
-      keyMapRow &= 0xFE;
+      key_map_row &= 0xFE;
     }
   }
 

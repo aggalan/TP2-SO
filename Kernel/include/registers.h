@@ -14,6 +14,6 @@ typedef struct registerStruct
 extern int register_snapshot_taken;
 extern registerStruct registers;
 
-void printRegisters(registerStruct *registers_dumped);
+void print_registers(registerStruct *registers_dumped);
 
 #endif

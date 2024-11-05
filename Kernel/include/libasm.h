@@ -1,15 +1,14 @@
-// This is a personal academic project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+
 #ifndef LIBASM_H
 #define LIBASM_H
 #include <stdint.h>
 // Returns minutes in gmt
-char *getMinutes();
+char *get_minutes();
 // Returns seconds in gmt
-char *getSeconds();
+char *get_seconds();
 // Returns hours in gmt
-char *getHours();
-uint16_t getKey();
+char *get_hours();
+uint16_t get_key();
 uint8_t inb(uint8_t);
 void outb(uint8_t, uint8_t);
 void acquire(uint64_t *lock);

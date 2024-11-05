@@ -3,7 +3,7 @@ global create_context
 
 EXTERN exit_process
 
-callWrapper:
+call_wrapper:
     call rdx
     mov rdi, rax
     call exit_process
@@ -16,7 +16,7 @@ create_context:
     push rdi
     push 0x202
     push 0x8
-    push callWrapper
+    push call_wrapper
     push rbp
     push rax
     push rbx

@@ -1,15 +1,15 @@
-GLOBAL cpuVendor
-GLOBAL getKey
-GLOBAL getHours
-GLOBAL getMinutes
-GLOBAL getSeconds
+GLOBAL cpu_vendor
+GLOBAL get_key
+GLOBAL get_hours
+GLOBAL get_minutes
+GLOBAL get_seconds
 GLOBAL inb
 GLOBAL outb
 GLOBAL acquire
 GLOBAL release
 section .text
     
-cpuVendor:
+cpu_vendor:
     push rbp
     mov rbp, rsp
 
@@ -33,7 +33,7 @@ cpuVendor:
     pop rbp
     ret
 
-getKey:
+get_key:
   push rbp
   mov rbp, rsp
   mov rax, 0
@@ -43,7 +43,7 @@ _good:
   pop rbp
   ret
 
- getHours:
+ get_hours:
       push rbp
       mov rbp, rsp
       xor rax, rax
@@ -61,7 +61,7 @@ _good:
       pop rbp
       ret
 
-  getMinutes:
+  get_minutes:
       push rbp
       mov rbp, rsp
      xor rax, rax
@@ -79,7 +79,7 @@ _good:
       pop rbp
       ret
 
-  getSeconds:
+  get_seconds:
       push rbp
       mov rbp, rsp
     xor rax, rax

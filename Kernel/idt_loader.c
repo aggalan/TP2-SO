@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include <stdint.h>
 #include <idt_loader.h>
 #include <defs.h>
@@ -30,8 +32,8 @@ void load_idt()
   setup_IDT_entry(0x80, (uint64_t)&_irq80Handler);
 
   // Solo interrupcion timer tick habilitadas
-  picMasterMask(0xFC);
-  picSlaveMask(0xFF);
+  pic_master_mask(0xFC);
+  pic_slave_mask(0xFF);
 
   _sti();
 }

@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include <naive_console.h>
 
 static char buffer[64] = {'0'};
@@ -45,7 +47,7 @@ void ncPrintBin(uint64_t value)
 
 void ncPrintBase(uint64_t value, uint32_t base)
 {
-	uintToBase(value, buffer, base);
+	u_int_to_base(value, buffer, base);
 	ncPrint(buffer);
 }
 
@@ -58,9 +60,9 @@ void ncClear()
 	currentVideo = video;
 }
 
-int getHours();
-int getMinutes();
-int getSeconds();
+int get_hours();
+int get_minutes();
+int get_seconds();
 int gmtM3(int hours)
 {
 	hours = (hours + 21) % 24;
@@ -68,15 +70,15 @@ int gmtM3(int hours)
 }
 void clock(char *buffer)
 {
-	int digits = uintToBase(gmtM3(getHours()), buffer, 10);
+	int digits = u_int_to_base(gmtM3(get_hours()), buffer, 10);
 	buffer[digits++] = ':';
-	digits += uintToBase(getMinutes(), buffer + digits, 10);
+	digits += u_int_to_base(get_minutes(), buffer + digits, 10);
 	buffer[digits++] = ':';
-	digits += uintToBase(getSeconds(), buffer + digits, 10);
+	digits += u_int_to_base(get_seconds(), buffer + digits, 10);
 	buffer[digits++] = '\0';
 }
 
-uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)
+uint32_t u_int_to_base(uint64_t value, char *buffer, uint32_t base)
 {
 	char *p = buffer;
 	char *p1, *p2;

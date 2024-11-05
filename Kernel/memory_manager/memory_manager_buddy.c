@@ -52,7 +52,7 @@ void *mm_malloc(uint32_t size)
 {
     if (size == 0 || size > total_memory_size)
     {
-        drawWord1("NOT ENOUGH MEMORY FOR ALLOCATION");
+        draw_word_white("NOT ENOUGH MEMORY FOR ALLOCATION");
         return NULL;
     }
 
@@ -67,7 +67,7 @@ void *mm_malloc(uint32_t size)
 
     if (order > MAX_ORDER)
     {
-        drawWord1("NOT ENOUGH MEMORY FOR ALLOCATION");
+        draw_word_white("NOT ENOUGH MEMORY FOR ALLOCATION");
         return NULL;
     }
 
@@ -79,7 +79,7 @@ void *mm_malloc(uint32_t size)
 
     if (index >= AMOUNT_OF_ORDERS)
     {
-        drawWord1("NO SUITABLE BLOCK FOUND FOR ALLOCATION");
+        draw_word_white("NO SUITABLE BLOCK FOUND FOR ALLOCATION");
         return NULL;
     }
 
@@ -113,14 +113,14 @@ void mm_free(void *ptr)
     if (ptr == NULL || (uintptr_t)ptr < (uintptr_t)base_address ||
         (uintptr_t)ptr >= (uintptr_t)base_address + total_memory_size)
     {
-        drawWord1("INVALID MEMORY ADDRESS TO FREE");
+        draw_word_white("INVALID MEMORY ADDRESS TO FREE");
         return;
     }
 
     Block *block = (Block *)((uintptr_t)ptr - sizeof(Block));
     if (block->status != ALLOCATED)
     {
-        drawWord1("INVALID MEMORY ADDRESS TO FREE");
+        draw_word_white("INVALID MEMORY ADDRESS TO FREE");
         return;
     }
 
@@ -173,18 +173,18 @@ void mm_free(void *ptr)
 
 void mm_status()
 {
-    drawWord1("Running on Buddy System");
-    newLine();
-    drawWord1("Memory Status:");
-    newLine();
-    drawWord1("Total Memory: ");
-    drawNumber(memory_status.total_memory);
-    newLine();
-    drawWord1("Used Memory: ");
-    drawNumber(memory_status.used_memory);
-    newLine();
-    drawWord1("Free Memory: ");
-    drawNumber(memory_status.free_memory);
-    newLine();
+    draw_word_white("Running on Buddy System");
+    newline();
+    draw_word_white("Memory Status:");
+    newline();
+    draw_word_white("Total Memory: ");
+    draw_number(memory_status.total_memory);
+    newline();
+    draw_word_white("Used Memory: ");
+    draw_number(memory_status.used_memory);
+    newline();
+    draw_word_white("Free Memory: ");
+    draw_number(memory_status.free_memory);
+    newline();
 }
 #endif

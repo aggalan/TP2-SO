@@ -43,7 +43,7 @@ void mm_init(void *base, uint64_t size)
 
     if (total > HEAP_SIZE)
     {
-        drawWord1("NOT ENOUGH MEMORY FOR HEAP INITIALIZATION");
+        draw_word_white("NOT ENOUGH MEMORY FOR HEAP INITIALIZATION");
         return;
     }
 
@@ -117,7 +117,7 @@ void *mm_malloc(uint32_t size)
 
     if (required > mm.blocks - mm.used)
     {
-        drawWord1("NOT ENOUGH MEMORY FOR ALLOCATION");
+        draw_word_white("NOT ENOUGH MEMORY FOR ALLOCATION");
         return NULL;
     }
 
@@ -130,7 +130,7 @@ void *mm_malloc(uint32_t size)
 
     if (ptr == NULL)
     {
-        drawWord1("NOT ENOUGH MEMORY FOR ALLOCATION");
+        draw_word_white("NOT ENOUGH MEMORY FOR ALLOCATION");
         return NULL;
     }
 
@@ -149,7 +149,7 @@ void mm_free(void *ptr)
 
     if (index > mm.blocks || mm.bitmap[index] != START)
     {
-        // drawWord1("INVALID MEMORY ADDRESS TO FREE");
+        // draw_word_white("INVALID MEMORY ADDRESS TO FREE");
         return;
     }
 
@@ -164,16 +164,16 @@ void mm_free(void *ptr)
 
 void mm_status()
 {
-    drawWord1("Running on Bitmap System");
-    newLine();
-    drawWord1("TOTAL: ");
-    drawNumber(mm.status.total_memory);
-    newLine();
-    drawWord1("USED: ");
-    drawNumber(mm.status.used_memory);
-    newLine();
-    drawWord1("FREE: ");
-    drawNumber(mm.status.free_memory);
-    newLine();
+    draw_word_white("Running on Bitmap System");
+    newline();
+    draw_word_white("TOTAL: ");
+    draw_number(mm.status.total_memory);
+    newline();
+    draw_word_white("USED: ");
+    draw_number(mm.status.used_memory);
+    newline();
+    draw_word_white("FREE: ");
+    draw_number(mm.status.free_memory);
+    newline();
 }
 #endif

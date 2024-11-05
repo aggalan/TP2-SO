@@ -1,5 +1,4 @@
-// This is a personal academic project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+
 #ifndef LIB_H
 #define LIB_H
 
@@ -9,7 +8,7 @@ void *memset(void *destination, int32_t character, uint64_t length);
 
 void *memcpy(void *destination, const void *source, uint64_t length);
 
-char *cpuVendor(char *result);
+char *cpu_vendor(char *result);
 
 // freezes for the amount of ms indicated
 void sleepms(int ms);

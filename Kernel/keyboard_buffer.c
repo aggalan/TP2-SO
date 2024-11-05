@@ -5,42 +5,42 @@ static struct keyboard_buffer buff = {0, 0, {0}};
 
 static buff_ptr ptr = &buff;
 
-void incBufferLen(int n)
+void inc_buffer_len(int n)
 {
-    ptr->bufferLen += n;
+    ptr->buffer_len += n;
 }
 
-int getBufferPosition()
+int get_buffer_position()
 {
-    return ptr->bufferPos;
+    return ptr->buffer_pos;
 }
-void setPos(int newPosition)
+void set_pos(int newPosition)
 {
-    ptr->bufferPos = newPosition % BUFF_SIZE;
+    ptr->buffer_pos = newPosition % BUFF_SIZE;
 }
-char *getBufferAddress()
+char *get_buffer_address()
 {
     return ptr->buffer;
 }
-char getCharAt(int position)
+char get_char_at(int position)
 {
     return ptr->buffer[position % BUFF_SIZE];
 }
-void consumeBufferAt(int pos)
+void consume_buffer_at(int pos)
 {
     ptr->buffer[pos] = 0;
-    incBufferLen(-1);
-    setPos(pos + 1);
+    inc_buffer_len(-1);
+    set_pos(pos + 1);
 }
-void cleanBuffer()
+void clean_buffer()
 {
     char *bufferAux = ptr->buffer;
-    for (int i = 0; i < ptr->bufferLen; i++)
+    for (int i = 0; i < ptr->buffer_len; i++)
     {
         bufferAux[i] = '\0';
     }
 }
-int getBufferLen()
+int get_buffer_len()
 {
-    return ptr->bufferLen;
+    return ptr->buffer_len;
 }

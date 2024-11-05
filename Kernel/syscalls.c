@@ -22,20 +22,20 @@ ssize_t sys_write(int descriptor, const char *str, int len, uint32_t hexColor)
         case STDOUT:
             PCB * pcb = get_current();
             if (pcb->fds[STDOUT] == STDOUT) {
-                drawWordLen(hexColor, str, len);
+                draw_word_len(hexColor, str, len);
                 return len;
             } else {
                 return sys_write(pcb->fds[STDOUT], str, len, hexColor);
             }
         case ERROUT:
-            drawWordLen(0x00ff0000, str, len);
+            draw_word_len(0x00ff0000, str, len);
             return len;
         case FD_TYPE_PIPE:
             return pipe_write(descriptor, str, len);
         case FD_TYPE_ANON_PIPE:
             return anon_pipe_write(descriptor, str, len);
         default:
-            drawWord(0x00ff0000, "no such descriptor");
+            draw_word(0x00ff0000, "no such descriptor");
             return -1;
     }
 }
@@ -57,13 +57,13 @@ ssize_t sys_read(int descriptor, char *save, int len)
         case FD_TYPE_ANON_PIPE:
             return anon_pipe_read(descriptor, save, len);
         default:
-            drawWord(0x00ff0000, "no such descriptor");
+            draw_word(0x00ff0000, "no such descriptor");
             break;
     }
 
 //    if (descriptor != STDIN)
 //    {
-//        drawWord(0x00ff0000, "no such descriptor");
+//        draw_word(0x00ff0000, "no such descriptor");
 //    }
 
     return -1;
@@ -79,33 +79,33 @@ int shell_read(char *save, int len) {
 
     block_shell_read();
 
-    int n = getBufferPosition();
+    int n = get_buffer_position();
 
-    if (getCharAt(n) == 0)
+    if (get_char_at(n) == 0)
     {
         *save = 0;
         return 0;
     }
 
-    if(getCharAt(n) == EOF){
+    if(get_char_at(n) == EOF){
         *save = EOF;
-        consumeBufferAt(n);
+        consume_buffer_at(n);
         return EOF;
     }
     
 
-    int length = MIN(len, getBufferLen());
+    int length = MIN(len, get_buffer_len());
 
     for (int i = 0; i < length; i++)
     {
-        n = getBufferPosition();
-        save[i] = getCharAt(n);
-        consumeBufferAt(n);
+        n = get_buffer_position();
+        save[i] = get_char_at(n);
+        consume_buffer_at(n);
     }
     return length;
 }
 
-void twoChars(char *first, int j, char *app)
+void two_chars(char *first, int j, char *app)
 {
     for (int i = 0; i < 2; i++)
     {
@@ -130,16 +130,16 @@ void irq_clock(char *rsi)
 
 int irq_print_registers(uint32_t rsi)
 {
-    if (getFlag() || rsi == 1)
+    if (get_flag() || rsi == 1)
     {
-        if (getFlag() == 0)
+        if (get_flag() == 0)
         {
-            drawWord(0x00FF0000, "You must take a screenshot first, press : and try again.\n");
+            draw_word(0x00FF0000, "You must take a screenshot first, press : and try again.\n");
             return 0;
         }
-        printRegisters(getRegisters(), 0x00ffffff);
+        print_registers(get_registers(), 0x00ffffff);
     }
-    printRegisters(getRegisters(), rsi);
+    print_registers(get_registers(), rsi);
     return 0;
 }
 
@@ -158,31 +158,31 @@ int irq_ticks_elapsed()
     return ticks_elapsed();
 }
 
-uint16_t irq_getHeight()
+uint16_t irq_get_height()
 {
-    return getHeight();
+    return get_height();
 }
 
-uint16_t irq_getWidth()
+uint16_t irq_get_width()
 {
-    return getWidth();
+    return get_width();
 }
 
-int irq_moveCursorX(uint16_t rsi)
+int irq_move_cursor_x(uint16_t rsi)
 {
-    moveCursorX(rsi);
+    move_cursor_x(rsi);
     return 0;
 }
 
-int irq_moveCursorY(uint16_t rsi)
+int irq_move_cursor_y(uint16_t rsi)
 {
-    moveCursorY(rsi);
+    move_cursor_y(rsi);
     return 0;
 }
 
-int irq_drawRectangle(uint32_t rsi, uint32_t rdx, uint32_t rcx, uint32_t r8, uint32_t r9)
+int irq_draw_rectangle(uint32_t rsi, uint32_t rdx, uint32_t rcx, uint32_t r8, uint32_t r9)
 {
-    drawRectangle(rsi, rdx, rcx, r8, r9);
+    draw_rectangle(rsi, rdx, rcx, r8, r9);
     return 0;
 }
 
@@ -192,9 +192,9 @@ int irq_sleepms(uint32_t rsi)
     return 0;
 }
 
-int irq_setFontSize(uint32_t rsi)
+int irq_set_font_size(uint32_t rsi)
 {
-    return (int)setFontSize(rsi);
+    return (int)set_font_size(rsi);
 }
 
 int irq_beep()
@@ -338,9 +338,9 @@ ssize_t irq_pipe_write(int rsi, char * rdx, size_t rcx)
 }
 char irq_get_char_at(int rsi)
 {
-    return getCharAt(rsi);
+    return get_char_at(rsi);
 }
 int irq_get_buffer_position()
 {
-    return getBufferPosition();
+    return get_buffer_position();
 }

@@ -13,13 +13,13 @@ syscall_func_t syscalls[] = {
     [4] = (syscall_func_t)irq_print_registers,
     [5] = (syscall_func_t)irq_clear,
     [6] = (syscall_func_t)irq_ticks_elapsed,
-    [7] = (syscall_func_t)irq_getHeight,
-    [8] = (syscall_func_t)irq_getWidth,
-    [9] = (syscall_func_t)irq_moveCursorX,
-    [10] = (syscall_func_t)irq_moveCursorY,
-    [11] = (syscall_func_t)irq_drawRectangle,
+    [7] = (syscall_func_t)irq_get_height,
+    [8] = (syscall_func_t)irq_get_width,
+    [9] = (syscall_func_t)irq_move_cursor_x,
+    [10] = (syscall_func_t)irq_move_cursor_y,
+    [11] = (syscall_func_t)irq_draw_rectangle,
     [12] = (syscall_func_t)irq_sleepms,
-    [13] = (syscall_func_t)irq_setFontSize,
+    [13] = (syscall_func_t)irq_set_font_size,
     [14] = (syscall_func_t)irq_beep,
     [15] = (syscall_func_t)irq_mm_status,
     [16] = (syscall_func_t)irq_annihilate,
@@ -54,7 +54,7 @@ syscall_func_t syscalls[] = {
 static void int_20();
 static void int_21();
 static uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
-void irqDispatcher(uint64_t irq, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9)
+void irq_dispatcher(uint64_t irq, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9)
 {
     switch (irq)
     {
