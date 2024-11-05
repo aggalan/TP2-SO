@@ -335,3 +335,8 @@ int irq_get_buffer_position()
 {
     return getBufferPosition();
 }
+
+pid_t irq_get_parent_pid()
+{
+    return get_parent_pid();
+}

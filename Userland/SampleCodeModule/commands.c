@@ -463,3 +463,9 @@ void wc_process(char *args)
         call_create_process(wc, 0, 1, argv, 1);
     }
 }
+
+void phylo_init_process(){
+    char * argv[] = {"phylo"};
+    call_create_process(phylo_init, 0, 1, argv, 1);
+    return;
+}

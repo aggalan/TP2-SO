@@ -123,5 +123,7 @@ ssize_t call_pipe_read(int fd, char * buff, size_t bytes_r);
 
 ssize_t call_pipe_write(int fd, char * buff, size_t bytes_w);
 
+pid_t call_get_parent_pid();
+
 
 #endif /* USERSYSCALLS_H */

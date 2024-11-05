@@ -3,7 +3,10 @@
 #ifndef _COMMANDS_H_
 #define _COMMANDS_H_
 
+#include "phylo.h"
+
 #define EOF -1
+
 
 void cmd_help(char *args);
 void cmd_tests();
@@ -34,5 +37,6 @@ void cat();
 int is_vowel(char c);
 void filter();
 void wc();
+void phylo_init_process();
 
 #endif

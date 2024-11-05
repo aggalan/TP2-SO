@@ -25,4 +25,6 @@ pid_t get_active_pid();
 
 void killed();
 
+pid_t get_parent_pid();
+
 #endif

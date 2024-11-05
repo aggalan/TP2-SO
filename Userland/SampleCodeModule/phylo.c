@@ -11,16 +11,18 @@
 #define WHITE 0xFFFFFF
 
 int num_philosophers = 0;
-int last = 0;
+volatile int last = 0;
+volatile int eating_count = 0;
 
 int mutex_id;
-int rw_id;
 int add_remove;
 int fork_states[MAX_PHYLO];
 int fork_sem_ids[MAX_PHYLO];
-int phylo_qty = 0;
 int phylo_pid[MAX_PHYLO];
+int handler_pid = 0; // Store handler process ID
 
+void cleanup();
+void handle(uint64_t id);
 void add_philosopher();
 void remove_phylo();
 void philosopher(uint64_t id);
@@ -30,7 +32,6 @@ void test(uint64_t id);
 void think(uint64_t id);
 void eat(uint64_t id);
 void print_phylo();
-void handle();
 int left(int i);
 int right(int i);
 void initialize();
@@ -50,158 +51,251 @@ void initialize()
 {
     num_philosophers = 0;
     last = 0;
+    eating_count = 0;
 }
-int eating = 0;
 
 int phylo_init()
 {
     initialize();
+
     mutex_id = call_sem_init(1);
-    rw_id = call_sem_init(1);
     add_remove = call_sem_init(1);
+
     for (int i = 0; i < MAX_PHYLO; i++)
     {
         fork_sem_ids[i] = call_sem_init(0);
         fork_states[i] = THINKING;
     }
+
     print(WHITE, "Philosopher's problem initialized.\n Press 'a' to add a philosopher, 'r' to remove one, 'q' to quit.\n");
 
+    char *argv[] = {"handler"};
+    // Add initial philosophers
     for (int i = 0; i < INITIAL_PHYLO; i++)
     {
         add_philosopher();
-        phylo_qty++;
+        call_sleepms(50);
     }
-    char *argv[] = {"phylo"};
 
-    call_create_process(handle, 0, 1, argv, 1);
+    handler_pid = call_create_process(handle, 0, 1, argv, 1);
 
-    while (!last)
+    // Main loop waiting for termination
+    while (!last && call_get_parent_pid() != 0)
     {
-        for (int i = 0; i < num_philosophers; i++)
-        {
-            phylo_qty--;
-            call_kill(phylo_pid[i]);
-            call_sem_close(fork_sem_ids[i]);
-        }
+        call_sleepms(100);
     }
-    call_sem_close(mutex_id);
-    call_sem_close(rw_id);
-    call_sem_close(add_remove);
+
+    // Cleanup all processes and resources
+    cleanup();
+    
+    // Ensure we return to shell
     return 0;
 }
 
-void handle()
+void cleanup()
+{
+    // First signal all philosophers to stop and unblock any waiting ones
+    last = 1;
+    
+    // Force release all semaphores that might be blocking
+    call_sem_post(mutex_id);
+    call_sem_post(add_remove);
+    for (int i = 0; i < num_philosophers; i++)
+    {
+        call_sem_post(fork_sem_ids[i]);
+    }
+    
+    // Give processes time to notice last flag
+    call_sleepms(100);
+    
+    // Kill handler first
+    if (handler_pid > 0)
+    {
+        call_kill(handler_pid);
+        call_sleepms(50);  // Give handler time to exit
+    }
+
+    // Kill all philosopher processes
+    for (int i = 0; i < num_philosophers; i++)
+    {
+        if (phylo_pid[i] > 0)
+        {
+            call_kill(phylo_pid[i]);
+        }
+    }
+
+    // Final cleanup of semaphores
+    for (int i = 0; i < MAX_PHYLO; i++)
+    {
+        call_sem_close(fork_sem_ids[i]);
+    }
+
+    call_sem_close(mutex_id);
+    call_sem_close(add_remove);
+}
+
+void handle(uint64_t id)
 {
     char c;
-    int times_eaten = 0;
-    int pos = 0;
-    pos = call_get_buffer_position();
+
     while (!last)
     {
-        if (times_eaten < eating)
-        {
-            times_eaten = eating;
-            print_phylo();
-        }
-        if (pos <= call_get_buffer_position())
-        {
-            c = call_get_char_at(pos++ - 1);
-        }
-        if (c == 'a' || c == 'A')
-        {
-            if (num_philosophers < MAX_PHYLO)
-            {
-                add_philosopher();
-                phylo_qty++;
-            }
-        }
-        else if (c == 'r' || c == 'R')
-        {
-            call_sem_wait(mutex_id);
-            if (num_philosophers > MIN_PHYLO)
-            {
-                num_philosophers--;
-                remove_phylo();
-            }
-            else
-            {
-                print(WHITE, "Min philosophers reached.\n");
-            }
-        }
-        else if (c == 'q' || c == 'Q')
+        // Check if parent process is still alive
+        if (call_get_parent_pid() == 0)
         {
             last = 1;
+            return;  // Exit immediately
+        }
+
+        if (getC(&c) != EOF && c != 0)
+        {
+            if (c == 'q' || c == 'Q')
+            {
+                // Signal termination
+                last = 1;
+                
+                // Force release all semaphores that might be blocking
+                call_sem_post(mutex_id);
+                call_sem_post(add_remove);
+                for (int i = 0; i < num_philosophers; i++)
+                {
+                    call_sem_post(fork_sem_ids[i]);
+                }
+                
+                // Exit handler immediately
+                return;
+            }
+            
+            // Only process other commands if not terminating
+            if (!last)
+            {
+                if (c == 'a' || c == 'A')
+                {
+                    if (num_philosophers < MAX_PHYLO)
+                    {
+                        add_philosopher();
+                    }
+                    else
+                    {
+                        // print(WHITE, "Max philosophers reached (%d)\n", MAX_PHYLO);
+                    }
+                }
+                else if (c == 'r' || c == 'R')
+                {
+                    if (num_philosophers > MIN_PHYLO)
+                    {
+                        remove_phylo();
+                    }
+                    else
+                    {
+                        // print(WHITE, "Min philosophers reached (%d)\n", MIN_PHYLO);
+                    }
+                }
+            }
         }
     }
 }
+void philosopher(uint64_t id)
+{
+    while (!last)
+    {
+        // Check if parent process is still alive
+        if (call_get_parent_pid() == 0)
+        {
+            break;
+        }
+
+        think(id);
+        
+        // Check last before taking forks
+        if (last) break;
+        
+        take_forks(id);
+        
+        // Check again after getting forks
+        if (last)
+        {
+            put_forks(id);
+            break;
+        }
+        
+        eat(id);
+        put_forks(id);
+    }
+}
+
 
 void add_philosopher()
 {
-    call_sem_wait(mutex_id);
-    int philosopher_num = num_philosophers;
-    fork_states[philosopher_num] = THINKING;
+    call_sem_wait(add_remove);
 
     if (num_philosophers < MAX_PHYLO)
     {
-        num_philosophers++;
-        print(WHITE, "Philosopher %d added.\n", num_philosophers);
+        int philosopher_num = num_philosophers;
+        char *argv[] = {"phil"};
+
+        // Create the philosopher process
+        phylo_pid[philosopher_num] = call_create_process(philosopher, 0, philosopher_num, argv, 1);
+
+        if (phylo_pid[philosopher_num] > 0)
+        {
+            fork_states[philosopher_num] = THINKING;
+            num_philosophers++;
+        }
+        else
+        {
+            print(WHITE, "Failed to create philosopher process\n");
+        }
     }
-    else
-    {
-        print(WHITE, "Max philosophers reached.\n");
-    }
+
     call_sem_post(add_remove);
 }
 
 void remove_phylo()
 {
     call_sem_wait(add_remove);
+
     if (num_philosophers > MIN_PHYLO)
     {
         int philosopher_num = num_philosophers - 1;
-        if (fork_states[num_philosophers] == EATING)
-        {
-            call_sem_post(add_remove);
-            call_sleepms(100);
-            call_sem_wait(add_remove);
-        }
-        int left_phylo = left(num_philosophers);
-        int right_phylo = right(num_philosophers);
-        test(left_phylo);
-        test(right_phylo);
-        call_kill(phylo_pid[num_philosophers]);
-        fork_states[num_philosophers] = THINKING;
-        call_sem_close(fork_sem_ids[num_philosophers]);
-        num_philosophers--;
-    }
-    call_sem_post(add_remove);
-}
 
-void philosopher(uint64_t id)
-{
-    while (!last)
-    {
-        think(id);
-        take_forks(id);
-        eat(id);
-        put_forks(id);
+        // Wait for philosopher to finish eating
+        call_sem_wait(mutex_id);
+
+        if (fork_states[philosopher_num] == EATING)
+        {
+            // print(WHITE, "Philosopher is eating, try again later\n");
+            call_sem_post(mutex_id);
+            call_sem_post(add_remove);
+            return;
+        }
+
+        if (call_kill(phylo_pid[philosopher_num]) == 0)
+        {
+            num_philosophers--;
+            // print(WHITE, "Removed philosopher \n");
+            // print_phylo();
+        }
+
+        call_sem_post(mutex_id);
     }
+
+    call_sem_post(add_remove);
 }
 
 void take_forks(uint64_t id)
 {
+    // Check last before waiting on mutex
+    if (last) return;
+    
     call_sem_wait(mutex_id);
     fork_states[id] = HUNGRY;
-    call_sem_post(rw_id);
     test(id);
-    if (fork_states[id] != EATING)
+    call_sem_post(mutex_id);
+
+    if (!last && fork_states[id] != EATING)  // Check last before waiting
     {
-        call_sem_wait(mutex_id);
         call_sem_wait(fork_sem_ids[id]);
-    }
-    else
-    {
-        call_sem_post(mutex_id);
     }
 }
 
@@ -209,7 +303,7 @@ void put_forks(uint64_t id)
 {
     call_sem_wait(mutex_id);
     fork_states[id] = THINKING;
-    call_sem_post(rw_id);
+    // print_phylo();
     test(left(id));
     test(right(id));
     call_sem_post(mutex_id);
@@ -217,42 +311,45 @@ void put_forks(uint64_t id)
 
 void test(uint64_t id)
 {
-    if (fork_states[id] == HUNGRY && fork_states[left(id)] != EATING && fork_states[right(id)] != EATING)
+    if(last)
+    return;
+    if (fork_states[id] == HUNGRY &&
+        fork_states[left(id)] != EATING &&
+        fork_states[right(id)] != EATING)
     {
         fork_states[id] = EATING;
+        print_phylo();
         call_sem_post(fork_sem_ids[id]);
     }
 }
 
 void think(uint64_t id)
 {
-    call_sleepms(100);
+    call_sleepms(100 + (call_get_ticks() % 200));
 }
 
 void eat(uint64_t id)
 {
-    if (fork_states[id] == EATING)
-    {
-        eating++;
-        call_sleepms(100);
-    }
+    call_sleepms(100 + (call_get_ticks() % 200));
 }
 
 void print_phylo()
 {
-    call_sem_wait(mutex_id);
-    print(WHITE, "State of the table with %d philosophers:\n", num_philosophers);
+    print(WHITE, "Table state (%d philosophers): ", num_philosophers);
     for (int i = 0; i < num_philosophers; i++)
     {
-        if (fork_states[i] == EATING)
+        switch (fork_states[i])
         {
-            print(WHITE, "E  ");
-        }
-        else
-        {
-            print(WHITE, "T  ");
+        case THINKING:
+            print(WHITE, "T ");
+            break;
+        case HUNGRY:
+            print(WHITE, "H ");
+            break;
+        case EATING:
+            print(WHITE, "E ");
+            break;
         }
     }
     print(WHITE, "\n");
-    call_sem_post(mutex_id);
 }

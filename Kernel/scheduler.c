@@ -64,6 +64,16 @@ pid_t get_current_pid()
     return pcb->pid;
 }
 
+pid_t get_parent_pid()
+{
+    PCB *pcb = get_current();
+    if (pcb == NULL)
+    {
+        return -1;
+    }
+    return pcb->ppid;
+}
+
 pid_t running_process()
 {
     return processes->current->data->pid;

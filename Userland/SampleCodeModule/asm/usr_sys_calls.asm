@@ -42,6 +42,7 @@ GLOBAL call_pipe_read
 GLOBAL call_pipe_write
 GLOBAL call_get_char_at
 GLOBAL call_get_buffer_position
+GLOBAL call_get_parent_pid
 
 
 section .text
@@ -95,7 +96,7 @@ call_annihilate:
     call_to_handler 16
 call_get_buffer_position:
     call_to_handler 17
-call_prio_test:
+call_get_parent_pid:
     call_to_handler 18
 call_block:
     call_to_handler 19

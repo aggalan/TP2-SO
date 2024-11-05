@@ -108,7 +108,8 @@ command_t commands[] = {
     {"loop", busy_wait, "Creates a process whose purpose is to be monitored"},
     {"cat", cat_process, "Prints the input received."},
     {"filter", filter_process, "Filters the input received."},
-    {"wc", wc_process, "Counts the words in the input received."}};
+    {"wc", wc_process, "Counts the words in the input received."},
+    {"phylo", phylo_init_process, "Initializes the philosopher's problem."}};
 
 void line_read(char *buffer)
 {
