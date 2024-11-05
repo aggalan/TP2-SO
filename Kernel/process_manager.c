@@ -67,12 +67,14 @@ pid_t create_process(uint64_t fn, int * fds, uint64_t argc, char **argv, int gro
     }
     if(fds == NULL)
     {
-        int default_fds[3] = {STDIN, STDOUT, ERROUT};
-        fds = default_fds;
+        pcb->fds[0] = STDIN;
+        pcb->fds[1] = STDOUT;
+        pcb->fds[2] = ERROUT;
+    } else {
+        pcb->fds[0] = fds[0];
+        pcb->fds[1] = fds[1];
+        pcb->fds[2] = fds[2];
     }
-    pcb->fds[0] = fds[0];
-    pcb->fds[1] = fds[1];
-    pcb->fds[2] = fds[2];
 
     pcb->base = (uint64_t)mm_malloc(STACK);
     if ((void *)pcb->base == NULL)

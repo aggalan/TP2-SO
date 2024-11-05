@@ -95,7 +95,6 @@ void keyboard_handler()
       {
           buff[buff_pos] = EOF;
           incBufferLen(1);
-          return;
       }
     }
     else if (keyMap[keyMapRow][code] != 0)
@@ -104,6 +103,7 @@ void keyboard_handler()
       incBufferLen(1);
       setPos(buff_pos);
     }
+      wake_up_shell();
   }
   else
   { // Key released
@@ -113,8 +113,6 @@ void keyboard_handler()
       keyMapRow &= 0xFE;
     }
   }
-
-  wake_up_shell();
 
   return;
 }
