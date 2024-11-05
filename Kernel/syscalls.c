@@ -327,3 +327,11 @@ ssize_t irq_pipe_write(int rsi, char * rdx, size_t rcx)
 {
     return pipe_write(rsi, rdx, rcx);
 }
+char irq_get_char_at(int rsi)
+{
+    return getCharAt(rsi);
+}
+int irq_get_buffer_position()
+{
+    return getBufferPosition();
+}
