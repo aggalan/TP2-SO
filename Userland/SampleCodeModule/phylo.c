@@ -21,6 +21,7 @@
 typedef enum { THINKING, HUNGRY, EATING } State;
 
 int global_count;
+int removing;
 
 State philo_state[MAX_PHYLO];
 int philo_pid[MAX_PHYLO];
@@ -40,6 +41,7 @@ void print_phylo();
 int phylo_init()
 {
     global_count = 0;
+    removing = 0;
 
     if((mutex = call_sem_init(1)) == -1){
         return -1;
@@ -108,6 +110,7 @@ int add_philo(){
 
 int remove_philo(){
     call_sem_wait(mutex);
+    removing = 1;
     int id = global_count - 1;
     while(philo_state[LEFT(id)] == EATING || philo_state[RIGHT(id)] == EATING){
         call_sem_post(mutex);
@@ -122,6 +125,7 @@ int remove_philo(){
     putC('\n', WHITE);
     global_count--;
     philo_pid[id] = -1;
+    removing = 0;
     call_sem_post(mutex);
     return 0;
 }
@@ -142,10 +146,13 @@ int philo(int argc, char ** argv){
 
 void take_forks(int i){
     call_sem_wait(mutex);
-    philo_state[i] = HUNGRY;
-    test(i);
+    if(!removing){
+        philo_state[i] = HUNGRY;
+        test(i);
+    }
     call_sem_post(mutex);
-    call_sem_wait(sem_philo[i]);
+    if(philo_state[i] == EATING)
+        call_sem_wait(sem_philo[i]);
 }
 
 void put_forks(int i){
