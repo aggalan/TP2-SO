@@ -19,6 +19,7 @@ static pid_t pids = 0;
 PCB * idle_proc = NULL;
 PCB * shell_process;
 PCB * foreground_process = NULL;
+PCB * io_process = NULL;
 
 PCB *create_pcb(void *fn, uint8_t prio, uint64_t argc, char **argv);
 PCB *get_idle();
@@ -78,6 +79,7 @@ pid_t create_process(uint64_t fn, int * fds, uint64_t argc, char **argv, int gro
         if (fds[0] != 0) {
             signal_anon_pipe_open(pcb->pid, fds[0], STDIN);
         } else {
+            io_process = pcb;
             signal_anon_pipe_open(pcb->pid, fds[1], STDOUT);
         }
     }
@@ -128,12 +130,14 @@ pid_t create_process(uint64_t fn, int * fds, uint64_t argc, char **argv, int gro
         add_pcb(pcb->pid, pcb);
         add_process(pcb, pcb->priority);
         shell_process = pcb;
+        io_process = pcb;
     }
 
     if (ground && pcb->ppid == 1)
     {
         foreground_process = pcb;
         wait_pid(pcb->pid);
+
     }
 
     return pcb->pid;
@@ -196,7 +200,7 @@ pid_t kill_process_pid(pid_t pid)
 
     if (pcb->fds[0] != 0) {
         signal_anon_pipe_close(pid, pcb->fds[0]);
-        mm_free(pcb->fds);
+        mm_free(pcb->fds);//SACAAAAAAAARRRRRRRRR
     } else if(pcb->fds[1] != 1) {
         signal_anon_pipe_close(pid, pcb->fds[1]);
         mm_free(pcb->fds);
@@ -212,6 +216,9 @@ pid_t kill_process_pid(pid_t pid)
         remove_child(parent, pid);
         if (is_waited && parent->state == WAITING)
         {
+            if (parent->pid == 1) {
+                io_process = shell_process;
+            }
             parent->state = READY;
         }
         remove_process(pid);
@@ -356,9 +363,12 @@ pid_t wait_pid(pid_t pid_to_wait)
 }
 
 void block_shell_read() {
-    if (foreground_process != NULL && (foreground_process->state == RUNNING || foreground_process->state == READY)) {
-        foreground_process->updated = 0;
-        foreground_process->state = BLOCKED_IO;
+    if (io_process != NULL && (io_process->state == RUNNING || io_process->state == READY) && shell_process->state == WAITING) {
+//        draw_word_white("HERE I AM, BLOCKED PID: ");
+//        draw_number(io_process->pid);
+//        newline();
+        io_process->updated = 0;
+        io_process->state = BLOCKED_IO;
         nice();
     } else if (shell_process->state == RUNNING || shell_process->state == READY) {
         shell_process->updated = 0;
@@ -368,8 +378,11 @@ void block_shell_read() {
 }
 
 void wake_up_shell() {
-    if (foreground_process->state == BLOCKED_IO) {
-        foreground_process->state = READY;
+    if (io_process->state == BLOCKED_IO) {
+//        draw_word_white("HERE I AM, AWAKENED PID: ");
+//        draw_number(io_process->pid);
+//        newline();
+        io_process->state = READY;
     } else if (shell_process->state == BLOCKED_IO) {
         shell_process->state = READY;
     }
