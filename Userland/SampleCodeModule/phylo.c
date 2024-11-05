@@ -21,7 +21,6 @@
 typedef enum { THINKING, HUNGRY, EATING } State;
 
 int global_count;
-int inner_count;
 
 State philo_state[MAX_PHYLO];
 int philo_pid[MAX_PHYLO];
@@ -41,7 +40,6 @@ void print_phylo();
 int phylo_init()
 {
     global_count = 0;
-    inner_count = 0;
 
     if((mutex = call_sem_init(1)) == -1){
         return -1;
@@ -94,9 +92,11 @@ int add_philo(){
         return -1;
     }
     philo_state[id] = THINKING;
-    char buffer[MAX_BUFFER] = {0};
+    char * buffer = (char *)call_malloc(MAX_BUFFER);
     int_to_str(id, buffer);
-    char *argv[2] = {"philosopher", buffer};
+    char ** argv = (char **)call_malloc(2 * sizeof(char *));
+    argv[0] = "philosopher";
+    argv[1] = buffer;
     philo_pid[id] = call_create_process(philo, 0, 2, argv, 1);
     global_count++;
     putC('\n', WHITE);
@@ -128,9 +128,7 @@ int remove_philo(){
 
 
 int philo(int argc, char ** argv){
-    // print(WHITE, " %s \n",argv[1]);
-    // int i = satoi(argv[1]);
-    int i = inner_count++;
+    int i = satoi(argv[1]);
     philo_state[i] = THINKING;
     while(1){
         call_sleepms(THINKING_TIME);
