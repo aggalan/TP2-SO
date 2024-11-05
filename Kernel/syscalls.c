@@ -74,6 +74,7 @@ int shell_read(char *save, int len) {
 
     if(pcb->ground == 0 && pcb->pid != 1 && pcb->pid != 0){ //to mimic the behaviour of cat when running in background like linux
         kill_process_pid(pcb->pid);
+        return 0;
     }
 
     block_shell_read();

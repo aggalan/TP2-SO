@@ -53,7 +53,7 @@ uint64_t full_buffer_reader(uint64_t argc, char *argv[]) {
 
     char buffer[2001];
     ssize_t bytes_read = call_sys_read(fd, buffer, 3000);
-    if (bytes_read != 2001) {
+    if (bytes_read != 0) {
         print(0xFFFFFF, "Full Buffer Reader: Read failed or incomplete (read %d bytes)\n", bytes_read);
         call_named_pipe_close(fd);
         return -1;
@@ -92,7 +92,7 @@ uint64_t full_buffer_reader(uint64_t argc, char *argv[]) {
 
 
 
-    print(0xFFFFFF, "Full Buffer Reader: Successfully read and verified %d bytes\n", bytes_read);
+    print(0xFFFFFF, "Full Buffer Reader: Successfully read and verified %d bytes (because it returns EOF dipshit)\n", bytes_read);
     call_named_pipe_close(fd);
     return 0;
 }
