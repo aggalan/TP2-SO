@@ -53,4 +53,6 @@ void str_to_upper(char *str);
 // its purpose is to be monitored
 void loop();
 
+void int_to_str(uint64_t num, char *buffer);
+
 #endif // TPE_LIB_H
