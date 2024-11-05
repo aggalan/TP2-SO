@@ -141,6 +141,7 @@ pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int grou
     if (ground && pcb->ppid == 1)
     {
         foreground_process = pcb;
+        io_process = pcb;
         wait_pid(pcb->pid);
 
     }
