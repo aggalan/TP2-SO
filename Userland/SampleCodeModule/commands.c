@@ -368,13 +368,15 @@ int is_vowel(char c)
 void filter()
 {
     char c;
-    while (getC(&c) != EOF)
-    { // TRABAJAR CON EOF
+    ssize_t status = -1;
+
+    do { // TRABAJAR CON EOF
+        status = getC(&c);
         if (is_vowel(c))
         {
             putC(c, WHITE);
         }
-    }
+    }while (status != EOF && status != 0);
     putC('\n', WHITE);
 }
 
