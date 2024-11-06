@@ -1,5 +1,5 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
-// PVS-Studio Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include "Drivers/include/video_driver.h"
 #include "include/syscalls.h"
 #include "include/keyboard_buffer.h"
@@ -81,7 +81,6 @@ int shell_read(char *save, int len) {
    PCB * pcb = get_current();
 
    if(pcb->ground == 0 && pcb->pid > 1 && (pcb->ppid != 1 || !pcb->is_waited)){ //to mimic the behaviour of cat when running in background like linux
-        print_kernel(WHITE, "i killed nugget");
        kill_process_pid(pcb->pid);
        return 0;
    }

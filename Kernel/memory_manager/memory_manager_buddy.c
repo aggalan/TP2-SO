@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #ifdef BUDDY
 #include "./include/memory_manager.h"
 #include "../Drivers/include/video_driver.h"

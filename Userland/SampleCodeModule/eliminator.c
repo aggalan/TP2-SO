@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include "include/usr_sys_calls.h"
 #include "include/lib.h"
 #include "include/Buffer.h"
@@ -126,6 +128,7 @@ void buff_read(int len, int players)
     while (i > 0)
     {
         getC(&c);
+        call_clear();
         if (state == GAME)
         {
             if (c == 'w' && player1.prev_key != 's')
