@@ -106,7 +106,6 @@ command_t commands[] = {
     {"changeprio", cmd_changeprio, "Changes the priority of a process. (usage: changeprio <pid> <newPrio>)"},
     {"div_0", call_div0, "Generates a division by zero exception."},
     {"invalid_op", call_invalid_op, "Generates an invalid operation exception."},
-    {"get_registers", cmd_print_registers, "Prints the registers of the current process."},
     {"exit", cmd_exit, "Exits the shell."},
     {"loop", busy_wait, "Creates a process whose purpose is to be monitored"},
     {"cat", cat_process, "Prints the input received."},
