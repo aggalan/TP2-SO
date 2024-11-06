@@ -121,12 +121,12 @@ void named_pipe_close(int fd)
     if (pipe->write_pid == pid)
     {
         pipe->write_pid = -1;
-        //        my_sem_post(pipe->read_sem); //just in case i think necessary
+        my_sem_post(pipe->read_sem); //just in case i think necessary
     }
     else if (pipe->read_pid == pid)
     {
         pipe->read_pid = -1;
-        //        my_sem_post(pipe->write_sem); // just in case i think necessary
+        my_sem_post(pipe->write_sem); // just in case i think necessary
     }
     else
     {
@@ -167,20 +167,13 @@ ssize_t pipe_read(int fd, char *buff, size_t bytes_r)
     while (bytes_read < bytes_r)
     {
         my_sem_wait(pipe->read_sem);
-        //        if (pipe->read_pos != pipe->write_pos) {
-        //            buff[bytes_read++] = pipe->buff[pipe->read_pos];
-        //            pipe->read_pos = (pipe->read_pos + 1) % BUFFER_SIZE;
-        //        }
-        buff[bytes_read++] = pipe->buff[pipe->read_pos];
-        pipe->read_pos = (pipe->read_pos + 1) % BUFFER_SIZE;
-        if (pipe->read_pos == pipe->write_pos)
-        {
-            if (pipe->write_pid == -1)
-            {
-                return 0;
-            }
+        if (pipe->read_pos != pipe->write_pos) {
+            buff[bytes_read++] = pipe->buff[pipe->read_pos];
+            pipe->read_pos = (pipe->read_pos + 1) % BUFFER_SIZE;
         }
-
+        else if (pipe->write_pid == -1) {
+            return 0;
+        }
         my_sem_post(pipe->write_sem);
     }
 
@@ -207,6 +200,7 @@ ssize_t pipe_write(int fd, const char *buff, size_t bytes_w)
     while (bytes_written < bytes_w)
     {
         my_sem_wait(pipe->write_sem);
+
         if ((pipe->write_pos + 1) % BUFFER_SIZE != pipe->read_pos)
         {
             pipe->buff[pipe->write_pos] = buff[bytes_written++];
@@ -284,12 +278,12 @@ void signal_anon_pipe_close(pid_t pid, int fd)
     if (pipe->read_pid == pid)
     {
         pipe->read_pid = -1;
-        my_sem_post(pipe->write_pid);
+        my_sem_post(pipe->write_sem);
     }
     else if (pipe->write_pid == pid)
     {
         pipe->write_pid = -1;
-        my_sem_post(pipe->read_pid);
+        my_sem_post(pipe->read_sem);
     }
     else
     {

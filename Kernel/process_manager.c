@@ -85,7 +85,7 @@ pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int grou
         {
             signal_anon_pipe_open(pcb->pid, fds[0], STDIN);
         }
-        else
+        else if (fds[1] != 1)
         {
             io_process = pcb;
             signal_anon_pipe_open(pcb->pid, fds[1], STDOUT);
@@ -211,6 +211,7 @@ pid_t kill_process_pid(pid_t pid)
     }
     else if (pcb->fds[1] != 1)
     {
+
         signal_anon_pipe_close(pid, pcb->fds[1]);
         mm_free(pcb->fds);
     }
