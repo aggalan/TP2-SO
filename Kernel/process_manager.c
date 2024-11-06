@@ -87,7 +87,7 @@ pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int grou
         }
         else if (fds[1] != 1)
         {
-            io_process = pcb;
+            io_process = pcb; // this is valid because we do not offer the possibility of duping fds. that is why this only happens when using anonymous pipes, where the shell blocks.
             signal_anon_pipe_open(pcb->pid, fds[1], STDOUT);
         }
     }
