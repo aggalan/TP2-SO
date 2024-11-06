@@ -183,8 +183,6 @@ void loop()
         {
             flag = 1;
         }
-        // ESTO QUEDA FEO, DESCOMENTARLO PARA ENTREGAR FINAL O PREGUNTar
-        ;
 
     }
 }

@@ -160,15 +160,6 @@ void turn_red() {
 
     call_sys_read(STDIN, buff, 3000);
     call_sys_write(STDOUT, buff, str_len(buff), RED);
-//    if (b_read < 1024) {
-//        return;
-//    }
-//    for (int i = 0; i < 1024; i++) {
-//        buff[i] = 0;
-//    }
-//    b_read = call_sys_read(STDIN, buff, 1024);
-//    call_sys_write(STDOUT, buff, b_read, RED);
-
 }
 
 void piped_line_read(char * buffer) {
@@ -259,49 +250,41 @@ void piped_line_read(char * buffer) {
 
     call_waitpid(pid1);
     call_waitpid(pid2);
-
 }
 
 void extract_commands(const char *buffer, char *command1, char *command2) {
     int len = str_len(buffer);
     int i = 0;
 
-    // Initialize commands to empty strings
     command1[0] = '\0';
     command2[0] = '\0';
 
-    // Find the position of the pipe
     while (i < len && buffer[i] != '|') {
-        // If we encounter a non-space character, we start filling command1
         if (buffer[i] != ' ') {
-            // Copy characters to command1
             int j = 0;
             while (i < len && buffer[i] != ' ' && buffer[i] != '|') {
                 command1[j++] = buffer[i++];
             }
-            command1[j] = '\0'; // Null-terminate command1
+            command1[j] = '\0';
         }
         i++;
     }
 
-    // Skip past the pipe and any spaces
     while (i < len && (buffer[i] == ' ' || buffer[i] == '|')) {
         i++;
     }
 
-    // Now, fill command2
     int j = 0;
     while (i < len) {
-        // Copy characters to command2
         if (buffer[i] != ' ') {
             while (i < len && buffer[i] != ' ') {
                 command2[j++] = buffer[i++];
             }
-            break; // We have captured the command, break out of the loop
+            break; 
         }
         i++;
     }
-    command2[j] = '\0'; // Null-terminate command2
+    command2[j] = '\0';
 }
 
 int shell_init()
@@ -412,46 +395,36 @@ int is_space(char c) {
 int is_pipe_valid(const char *buffer) {
     int len = str_len(buffer);
 
-    // Edge case: Check if there's no content or no pipe
     if (len == 0) return 0;
 
-    int found_command = 0;       // 1 if we've started a command
-    int expecting_pipe = 0;      // 1 if we're expecting a pipe after a command
+    int found_command = 0;      
+    int expecting_pipe = 0;     
     int found_pipe = 0;
-    int command_word_length = 0; // Length of the current command word
+    int command_word_length = 0; 
 
     for (int i = 0; i < len; i++) {
         if (buffer[i] == '|') {
-            // Invalid if `|` is at the start or end
             if (i == 0 || i == len - 1) {
                 return 0;
             }
-            // Invalid if we haven't found a command before this pipe
             if (!found_command) {
                 return 0;
             }
-            // Reset for the next command after the pipe
             found_command = 0;
             expecting_pipe = 0;
             found_pipe = 1;
             command_word_length = 0;
         } else if (buffer[i] == ' ') {
-            // Space detected, check if we are inside a command word
             if (command_word_length > 0) {
-                // If we've already found a word and expecting a pipe next, multiple words detected
                 if (expecting_pipe) {
                     return 0;
                 }
-                // Set to expect a pipe after this command
                 expecting_pipe = 1;
             }
         } else {
-            // Non-space, non-pipe character (part of a command word)
             command_word_length++;
             found_command = 1;
         }
-    }
-
-    // Ensure there's a valid command after the last pipe
+    } 
     return found_command && found_pipe;
 }
