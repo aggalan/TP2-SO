@@ -43,7 +43,7 @@ int irq_set_font_size(uint32_t rsi);
 int irq_beep();
 int irq_mm_status();
 int case_17();
-int case_18();
+void irq_pipes_status();
 int irq_annihilate();
 pid_t irq_block_process(pid_t rsi);
 pid_t irq_unblock_process(pid_t rsi);

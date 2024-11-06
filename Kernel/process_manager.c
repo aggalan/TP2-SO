@@ -192,13 +192,13 @@ pid_t kill_process_pid(pid_t pid)
     if (pcb->fds[0] != 0)
     {
         signal_anon_pipe_close(pid, pcb->fds[0]);
-        mm_free(pcb->fds);
+        //mm_free(pcb->fds);
     }
     else if (pcb->fds[1] != 1)
     {
 
         signal_anon_pipe_close(pid, pcb->fds[1]);
-        mm_free(pcb->fds);
+        //mm_free(pcb->fds);
     }
 
     abandon_children(pcb); // the children have been abandoned, the shell adopted them.
@@ -386,7 +386,6 @@ void hash_map_init()
 void free_PCB(PCB *pcb)
 {
     mm_free((void *)(pcb->base - STACK + 1));
-    mm_free(pcb->fds);
     mm_free(pcb);
 }
 

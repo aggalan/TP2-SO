@@ -125,4 +125,6 @@ ssize_t call_pipe_write(int fd, char *buff, size_t bytes_w);
 
 int call_anon_pipe_create();
 
+void call_pipes_status();
+
 #endif /* USERSYSCALLS_H */

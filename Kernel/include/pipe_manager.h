@@ -50,4 +50,6 @@ void signal_anon_pipe_open(pid_t pid, int fd, int end);
 
 void signal_anon_pipe_close(pid_t pid, int fd);
 
+void pipes_status();
+
 #endif

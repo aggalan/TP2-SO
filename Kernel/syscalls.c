@@ -348,3 +348,7 @@ int irq_get_buffer_position()
 {
     return get_buffer_position();
 }
+void irq_pipes_status()
+{
+    pipes_status();
+}
