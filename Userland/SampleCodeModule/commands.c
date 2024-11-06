@@ -8,7 +8,6 @@
 #include "include/lib.h"
 #include "include/eliminator.h"
 
-#define WHITE 0xFFFFFFFF
 #define MAX_LENGTH 1024
 
 static int ampersen_searcher(char *str);

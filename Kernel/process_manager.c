@@ -12,7 +12,6 @@
 #include "include/fd_manager.h"
 #include "include/pipe_manager.h"
 
-#define WHITE 0xFFFFFFFF
 
 hash_map_ADT map;
 static pid_t pids = 0;

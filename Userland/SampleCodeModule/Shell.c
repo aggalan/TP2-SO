@@ -10,7 +10,7 @@
 #include "tests/test_sync.h"
 #include "include/commands.h"
 #include <stddef.h>
-#define WHITE 0xFFFFFFFF
+
 
 typedef void (*command_func_t)(char *args);
 

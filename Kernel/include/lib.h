@@ -10,6 +10,8 @@ void *memcpy(void *destination, const void *source, uint64_t length);
 
 char *cpu_vendor(char *result);
 
+#define WHITE 0xFFFFFF
+
 // freezes for the amount of ms indicated
 void sleepms(uint32_t ms);
 int str_len(const char *str);

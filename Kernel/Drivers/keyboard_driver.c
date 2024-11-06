@@ -12,7 +12,6 @@
 #include "../include/lib.h"
 
 #define EOF -1
-#define WHITE 0xFFFFFFFF
 
 #define LEFT_SHIFT 0x2A
 #define RIGHT_SHIFT 0x36

@@ -7,7 +7,6 @@
 #include <lib.h>
 #include "../include/keyboard_buffer.h"
 #include "../include/lib.h"
-#define WHITE 0xFFFFFFFF
 
 struct vbe_mode_info_structure
 {
