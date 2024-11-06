@@ -167,11 +167,6 @@ void busy_wait()
     call_create_process(loop, 0, 1, argv, 0);
 }
 
-void cmd_eliminator(char *args)
-{
-    start_eliminator();
-}
-
 void cmd_time(char *args)
 {
     char time[9];

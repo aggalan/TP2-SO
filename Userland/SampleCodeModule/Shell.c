@@ -35,7 +35,6 @@ void turn_red();
 
 static command_t commands[] = {
     {"help", cmd_help, "Displays this help message.", true},
-    {"eliminator", cmd_eliminator, "Starts the eliminator.", false},
     {"clear", call_clear, "Clears the screen.", false},
     {"status", call_status, "Displays the status of the memory in the system.", true},
     {"tests", cmd_tests, "Displays runnable tests", false},
