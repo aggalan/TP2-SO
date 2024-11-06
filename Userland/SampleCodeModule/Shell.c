@@ -182,8 +182,19 @@ void piped_line_read(char *buffer)
             {
                 print(RED, "Command %s is not pipeable\n", commands[i].command);
                 return;
+            } else if (str_cmp(commands[i].command, "filter") == 0) {
+                func1 = filter;
             }
-            func1 = commands[i].func;
+             else if (str_cmp(commands[i].command, "cat") == 0) {
+                func1 = cat;
+            }
+             else if (str_cmp(commands[i].command, "wc") == 0) {
+                func1 = wc;
+            }
+            else {
+                func1 = commands[i].func;
+            }
+
         }
         if (str_cmp(cut_string(command2), commands[i].command) == 0)
         {
@@ -191,8 +202,20 @@ void piped_line_read(char *buffer)
             {
                 print(RED, "Command %s is not pipeable\n", commands[i].command);
                 return;
+            } else if (str_cmp(commands[i].command, "filter") == 0) {
+                func2 = filter;
             }
-            func2 = commands[i].func;
+            else if (str_cmp(commands[i].command, "cat") == 0) {
+                func2 = cat;
+            }
+            else if (str_cmp(commands[i].command, "wc") == 0) {
+                func2 = wc;
+            }
+
+            else {
+                func2 = commands[i].func;
+            }
+
         }
     }
 
