@@ -302,7 +302,7 @@ void cat()
     ssize_t status = -1;
 
     do
-    { 
+    {
         status = getC(&c);
         if (c != 0 && c != -1)
         {
@@ -327,7 +327,7 @@ int is_vowel(char c)
            c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
 }
 
-void filter() //it does not contemplate the backspace so it saves very vowel, even if you errase it
+void filter() // it does not contemplate the backspace so it saves very vowel, even if you errase it
 {
     char c;
     ssize_t status = -1;
@@ -343,17 +343,12 @@ void filter() //it does not contemplate the backspace so it saves very vowel, ev
             {
                 command[i++] = c;
             }
-        
-            if (c == '\n')
-            {
-                command[i] = '\0';
-                i = 0;
-                print(WHITE, "%s", command);
-                command[0] = '\0';
-            }
         }
 
     } while (status != EOF && status != 0);
+    print(WHITE, "\n");
+    command[i] = '\0';
+    print(WHITE, "%s", command);
     putC('\n', WHITE);
 }
 
@@ -364,7 +359,7 @@ void wc()
     ssize_t status = -1;
 
     do
-    { 
+    {
         status = getC(&c);
         if (c == '\n')
         {
@@ -460,7 +455,7 @@ void wc_process(char *args)
     }
 }
 
-void phylo_init_process(char * args)
+void phylo_init_process(char *args)
 {
     char *argv[1] = {"phylo"};
     int ampersen = ampersen_searcher(args);

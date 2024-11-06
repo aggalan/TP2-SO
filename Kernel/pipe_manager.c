@@ -17,6 +17,9 @@ pipe_t **global_pipe_table;
 void pipe_table_init()
 {
     global_pipe_table = (pipe_t **)mm_malloc(sizeof(pipe_t *) * MAX_PIPES);
+    if(global_pipe_table == NULL){
+        return;
+    }
     for (int i = 0; i < MAX_PIPES; i++)
     {
         global_pipe_table[i] = NULL;
@@ -222,8 +225,20 @@ ssize_t pipe_write(int fd, const char *buff, size_t bytes_w)
 int anon_pipe_create()
 {
     pipe_t *pipe = (pipe_t *)mm_malloc(sizeof(pipe_t));
+    if(pipe == NULL){
+        return -1;
+    }
     pipe->buff = (char *)mm_malloc(sizeof(char) * BUFFER_SIZE);
+    if(pipe->buff == NULL){
+        mm_free(pipe);
+        return -1;
+    }
     pipe->name = (char *)mm_malloc(sizeof(char) * (str_len("anon") + 1));
+    if(pipe->name == NULL){
+        mm_free(pipe->buff);
+        mm_free(pipe);
+        return -1;
+    }
     str_cpy(pipe->name, "anon");
     pipe->write_pos = 0;
     pipe->read_pos = 0;
