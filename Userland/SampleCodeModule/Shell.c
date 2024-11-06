@@ -81,7 +81,7 @@ void buffer_control()
         char c;
         getC(&c);
 
-        if (c != 0 && c != '\t' && c != EOF)
+        if (c != 0 && c != '\t' && c != (char)EOF)
         {
             if (c == '\n')
             {

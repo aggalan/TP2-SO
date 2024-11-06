@@ -18,9 +18,15 @@
 #define CTRL 0x1D
 #define CTRL_RLS 0x9D
 #define EXTENDED_KEY 0xE0
+#define ESC 0x01
+#define LEFT_ALT 0x38
+#define RIGHT_ALT 0xB8
+#define DELETE 0x53
+#define CAPS_LOCK 0x3A
 
 static uint8_t key_map_row = 0;
 static uint8_t control_pressed = 0;
+static uint8_t caps_lock_pressed = 0;
 
 static uint8_t scancode_to_ascii[] = {
 
@@ -84,6 +90,16 @@ void keyboard_handler()
     if (code == LEFT_SHIFT || code == RIGHT_SHIFT)
     {
       key_map_row = 1;
+      return;
+    }
+    else if (code == ESC || code == LEFT_ALT || code == RIGHT_ALT || code == DELETE)
+    {
+      return;
+    }
+    else if (code == CAPS_LOCK)
+    {
+      caps_lock_pressed = !caps_lock_pressed;
+      return;
     }
     else if (control_pressed)
     {
@@ -101,10 +117,18 @@ void keyboard_handler()
     }
     else if (key_map[key_map_row][code] != 0)
     {
-      buff[buff_pos] = key_map[key_map_row][code];
+      if (caps_lock_pressed)
+      {
+        buff[buff_pos] = key_map[1][code]; 
+      }
+      else
+      {
+        buff[buff_pos] = key_map[0][code];
+      }
       inc_buffer_len(1);
       set_pos(buff_pos);
     }
+
     wake_up_shell();
   }
   else
@@ -113,6 +137,14 @@ void keyboard_handler()
     if (code == LEFT_SHIFT || code == RIGHT_SHIFT)
     {
       key_map_row &= 0xFE;
+    }
+    else if (code == ESC)
+    {
+ 
+    }
+    else if (key_map[key_map_row][code] == 0)
+    {
+      return;
     }
   }
 

@@ -96,7 +96,7 @@ int shell_read(char *save, int len) {
         return 0;
     }
 
-    if (get_char_at(n) == EOF)
+    if (get_char_at(n) == (char)EOF)
     {
         *save = EOF;
         consume_buffer_at(n);
