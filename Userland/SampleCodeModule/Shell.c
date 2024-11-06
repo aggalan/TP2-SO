@@ -10,7 +10,7 @@
 #include "tests/test_sync.h"
 #include "include/commands.h"
 #include <stddef.h>
-#define WHITE 0xFFFFFFFF
+
 
 typedef void (*command_func_t)(char *args);
 
@@ -94,7 +94,6 @@ command_t commands[] = {
     {"help", cmd_help, "Displays this help message."},
     {"eliminator", cmd_eliminator, "Starts the eliminator."},
     {"clear", call_clear, "Clears the screen."},
-    {"set_font", cmd_set_font, "Sets the font size."},
     {"status", call_status, "Displays the status of the memory in the system."},
     {"tests", cmd_tests, "Displays runnable tests"},
     {"ps", cmd_ps, "Displays the processes in the system."},
@@ -107,7 +106,6 @@ command_t commands[] = {
     {"changeprio", cmd_changeprio, "Changes the priority of a process. (usage: changeprio <pid> <newPrio>)"},
     {"div_0", call_div0, "Generates a division by zero exception."},
     {"invalid_op", call_invalid_op, "Generates an invalid operation exception."},
-    {"get_registers", cmd_print_registers, "Prints the registers of the current process."},
     {"exit", cmd_exit, "Exits the shell."},
     {"loop", busy_wait, "Creates a process whose purpose is to be monitored"},
     {"cat", cat_process, "Prints the input received."},
@@ -161,33 +159,12 @@ void turn_red() {
 
     call_sys_read(STDIN, buff, 3000);
     call_sys_write(STDOUT, buff, str_len(buff), RED);
-//    if (b_read < 1024) {
-//        return;
-//    }
-//    for (int i = 0; i < 1024; i++) {
-//        buff[i] = 0;
-//    }
-//    b_read = call_sys_read(STDIN, buff, 1024);
-//    call_sys_write(STDOUT, buff, b_read, RED);
-
 }
 
 void piped_line_read(char * buffer) {
     char command1[20];
     char command2[20];
     extract_commands(buffer, command1, command2);
-    int fd = call_anon_pipe_create();
-    static char * argv[] = {"LOL"};
-    static char * argv2[] = {"DIE"};
-    int * fds = (int *) call_malloc(sizeof(int) * 3);
-    fds[0] = 0;
-    fds[1] = fd;
-    fds[2] = 2;
-    int * fds2 = (int *) call_malloc(sizeof(int) * 3);
-    fds2[0] = fd;
-    fds2[1] = 1;
-    fds2[2] = 2;
-
     command_func_t func1 = NULL;
     command_func_t func2 = NULL;
 
@@ -203,6 +180,14 @@ void piped_line_read(char * buffer) {
                 func1 = cat;
             } else if (str_cmp(commands[i].command, "filter") == 0) {
                 func1 = filter;
+            } else if (str_cmp(commands[i].command, "div_0") == 0) {
+                print(RED, "CANNOT PIPE DIVISION BY ZERO\n");
+                return;
+            } else if (str_cmp(commands[i].command, "invalid_op") == 0) {
+                print(RED, "CANNOT PIPE INVALID OPERATION\n");
+                return;
+            } else if (str_cmp(commands[i].command, "get_registers") == 0) {
+                print(RED, "CANNOT PIPE get_registers\n");
             }
         }
         if (str_cmp(cut_string(command2), commands[i].command) == 0)
@@ -214,6 +199,14 @@ void piped_line_read(char * buffer) {
                 func2 = cat;
             } else if (str_cmp(commands[i].command, "filter") == 0) {
                 func2 = filter;
+            } else if (str_cmp(commands[i].command, "div_0") == 0) {
+                print(RED, "CANNOT PIPE DIVISION BY ZERO\n");
+                return;
+            } else if (str_cmp(commands[i].command, "invalid_op") == 0) {
+                print(RED, "CANNOT PIPE INVALID OPERATION\n");
+                return;
+            } else if (str_cmp(commands[i].command, "get_registers") == 0) {
+                print(RED, "CANNOT PIPE get_registers\n");
             }
         }
     }
@@ -231,61 +224,65 @@ void piped_line_read(char * buffer) {
     }
 
     if (func1 == NULL || func2 == NULL) {
+        put_string(buffer, WHITE);
+        put_string(": command not found", WHITE);
+        put_string("\n", WHITE);
         return;
     }
 
+    int fd = call_anon_pipe_create();
+    static char * argv[] = {"P1"};
+    static char * argv2[] = {"P2"};
+    int * fds = (int *) call_malloc(sizeof(int) * 3);
+    fds[0] = 0;
+    fds[1] = fd;
+    fds[2] = 2;
+    int * fds2 = (int *) call_malloc(sizeof(int) * 3);
+    fds2[0] = fd;
+    fds2[1] = 1;
+    fds2[2] = 2;
 
     pid_t pid1 = call_create_process(func1, fds, 1, argv, 0);
     pid_t pid2 = call_create_process(func2, fds2, 1, argv2, 0);
 
 
     call_waitpid(pid1);
-//    print(WHITE, "PROCESS 1 FINISHED");
     call_waitpid(pid2);
-//    print(WHITE, "PROCESS 2 FINISHED");
-
 }
 
 void extract_commands(const char *buffer, char *command1, char *command2) {
     int len = str_len(buffer);
     int i = 0;
 
-    // Initialize commands to empty strings
     command1[0] = '\0';
     command2[0] = '\0';
 
-    // Find the position of the pipe
     while (i < len && buffer[i] != '|') {
-        // If we encounter a non-space character, we start filling command1
         if (buffer[i] != ' ') {
-            // Copy characters to command1
             int j = 0;
             while (i < len && buffer[i] != ' ' && buffer[i] != '|') {
                 command1[j++] = buffer[i++];
             }
-            command1[j] = '\0'; // Null-terminate command1
+            command1[j] = '\0';
         }
         i++;
     }
 
-    // Skip past the pipe and any spaces
     while (i < len && (buffer[i] == ' ' || buffer[i] == '|')) {
         i++;
     }
 
-    // Now, fill command2
     int j = 0;
     while (i < len) {
-        // Copy characters to command2
         if (buffer[i] != ' ') {
             while (i < len && buffer[i] != ' ') {
                 command2[j++] = buffer[i++];
             }
-            break; // We have captured the command, break out of the loop
+            break; 
         }
         i++;
     }
-    command2[j] = '\0'; // Null-terminate command2
+    command2[j] = '\0';
 }
 
 int shell_init()
@@ -396,46 +393,36 @@ int is_space(char c) {
 int is_pipe_valid(const char *buffer) {
     int len = str_len(buffer);
 
-    // Edge case: Check if there's no content or no pipe
     if (len == 0) return 0;
 
-    int found_command = 0;       // 1 if we've started a command
-    int expecting_pipe = 0;      // 1 if we're expecting a pipe after a command
+    int found_command = 0;      
+    int expecting_pipe = 0;     
     int found_pipe = 0;
-    int command_word_length = 0; // Length of the current command word
+    int command_word_length = 0; 
 
     for (int i = 0; i < len; i++) {
         if (buffer[i] == '|') {
-            // Invalid if `|` is at the start or end
             if (i == 0 || i == len - 1) {
                 return 0;
             }
-            // Invalid if we haven't found a command before this pipe
             if (!found_command) {
                 return 0;
             }
-            // Reset for the next command after the pipe
             found_command = 0;
             expecting_pipe = 0;
             found_pipe = 1;
             command_word_length = 0;
         } else if (buffer[i] == ' ') {
-            // Space detected, check if we are inside a command word
             if (command_word_length > 0) {
-                // If we've already found a word and expecting a pipe next, multiple words detected
                 if (expecting_pipe) {
                     return 0;
                 }
-                // Set to expect a pipe after this command
                 expecting_pipe = 1;
             }
         } else {
-            // Non-space, non-pipe character (part of a command word)
             command_word_length++;
             found_command = 1;
         }
-    }
-
-    // Ensure there's a valid command after the last pipe
+    } 
     return found_command && found_pipe;
 }

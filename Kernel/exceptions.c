@@ -20,7 +20,7 @@ void exception_dispatcher(int exception)
         invalid_opcode();
     }
     print_registers(get_registers(), 0x00ff0000);
-    draw_word(0x00ff0000, "Press any key to continue");
+    print_kernel(0x00ff0000, "Press any key to continue");
     while (1)
     {
         char c;
@@ -36,7 +36,7 @@ void exception_dispatcher(int exception)
 
 static void zero_division()
 {
-    draw_word(0x00FF0000, "Cannot divide by 0");
+    print_kernel(0x00FF0000, "Cannot divide by 0");
     newline();
     return;
 }
@@ -44,6 +44,6 @@ static void zero_division()
 static void invalid_opcode()
 {
 
-    draw_word(0x00FF0000, "Error:Invalid opcode");
+    print_kernel(0x00FF0000, "Error:Invalid opcode");
     newline();
 }

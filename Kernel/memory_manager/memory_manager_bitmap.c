@@ -4,6 +4,7 @@
 #include "./include/memory_manager.h"
 #include "../Drivers/include/video_driver.h"
 #include "scheduler.h"
+#include "lib.h"
 
 typedef struct memory_manager
 {
@@ -43,7 +44,7 @@ void mm_init(void *base, uint64_t size)
 
     if (total > HEAP_SIZE)
     {
-        draw_word_white("NOT ENOUGH MEMORY FOR HEAP INITIALIZATION");
+        print_kernel(WHITE, "NOT ENOUGH MEMORY FOR HEAP INITIALIZATION");
         return;
     }
 
@@ -117,7 +118,7 @@ void *mm_malloc(uint32_t size)
 
     if (required > mm.blocks - mm.used)
     {
-        draw_word_white("NOT ENOUGH MEMORY FOR ALLOCATION");
+        print_kernel(WHITE, "NOT ENOUGH MEMORY FOR ALLOCATION");
         return NULL;
     }
 
@@ -130,7 +131,7 @@ void *mm_malloc(uint32_t size)
 
     if (ptr == NULL)
     {
-        draw_word_white("NOT ENOUGH MEMORY FOR ALLOCATION");
+        print_kernel(WHITE, "NOT ENOUGH MEMORY FOR ALLOCATION");
         return NULL;
     }
 
@@ -149,7 +150,7 @@ void mm_free(void *ptr)
 
     if (index > mm.blocks || mm.bitmap[index] != START)
     {
-        // draw_word_white("INVALID MEMORY ADDRESS TO FREE");
+        // print_kernel(WHITE, "INVALID MEMORY ADDRESS TO FREE");
         return;
     }
 
@@ -164,16 +165,6 @@ void mm_free(void *ptr)
 
 void mm_status()
 {
-    draw_word_white("Running on Bitmap System");
-    newline();
-    draw_word_white("TOTAL: ");
-    draw_number(mm.status.total_memory);
-    newline();
-    draw_word_white("USED: ");
-    draw_number(mm.status.used_memory);
-    newline();
-    draw_word_white("FREE: ");
-    draw_number(mm.status.free_memory);
-    newline();
+    print_kernel(WHITE, "Running on Bitmap System\n TOTAL: %d\n USED: %d\n FREE: %d\n", mm.status.total_memory, mm.status.used_memory, mm.status.free_memory);
 }
 #endif

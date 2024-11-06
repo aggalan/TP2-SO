@@ -12,6 +12,7 @@
 #include "include/fd_manager.h"
 #include "include/pipe_manager.h"
 
+
 hash_map_ADT map;
 static pid_t pids = 0;
 #define DEFAULT_PRIORITY 1
@@ -19,6 +20,7 @@ static pid_t pids = 0;
 PCB *idle_proc = NULL;
 PCB *shell_process;
 PCB *foreground_process = NULL;
+PCB *io_process = NULL;
 
 PCB *create_pcb(void *fn, uint8_t prio, uint64_t argc, char **argv);
 PCB *get_idle();
@@ -85,6 +87,7 @@ pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int grou
         }
         else
         {
+            io_process = pcb;
             signal_anon_pipe_open(pcb->pid, fds[1], STDOUT);
         }
     }
@@ -132,11 +135,13 @@ pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int grou
         add_pcb(pcb->pid, pcb);
         add_process(pcb, pcb->priority);
         shell_process = pcb;
+        io_process = pcb;
     }
 
     if (ground && pcb->ppid == 1)
     {
         foreground_process = pcb;
+        io_process = pcb;
         wait_pid(pcb->pid);
     }
 
@@ -220,6 +225,10 @@ pid_t kill_process_pid(pid_t pid)
         remove_child(parent, pid);
         if (is_waited && parent->state == WAITING)
         {
+            if (parent->pid == 1)
+            {
+                io_process = shell_process;
+            }
             parent->state = READY;
         }
         remove_process(pid);
@@ -365,10 +374,10 @@ pid_t wait_pid(pid_t pid_to_wait)
 
 void block_shell_read()
 {
-    if (foreground_process != NULL && (foreground_process->state == RUNNING || foreground_process->state == READY))
+    if (io_process != NULL && (io_process->state == RUNNING || io_process->state == READY) && shell_process->state == WAITING)
     {
-        foreground_process->updated = 0;
-        foreground_process->state = BLOCKED_IO;
+        io_process->updated = 0;
+        io_process->state = BLOCKED_IO;
         nice();
     }
     else if (shell_process->state == RUNNING || shell_process->state == READY)
@@ -381,9 +390,9 @@ void block_shell_read()
 
 void wake_up_shell()
 {
-    if (foreground_process->state == BLOCKED_IO)
+    if (io_process->state == BLOCKED_IO)
     {
-        foreground_process->state = READY;
+        io_process->state = READY;
     }
     else if (shell_process->state == BLOCKED_IO)
     {
@@ -439,20 +448,9 @@ void kill_foreground_process()
 
 void print_processes()
 {
-    draw_word_white("There are ");
-    draw_number(map->size);
-    draw_word_white(" processes in the system");
-    newline();
-    draw_word_white("PID    ");
-    draw_word_white("NAME          ");
-    draw_word_white("PRIORITY   ");
-    draw_word_white("STACK BASE   ");
-    draw_word_white("RSP        ");
+    print_kernel(WHITE, "There are %d processes in the system\n", map->size);
+    print_kernel(WHITE, "PID    NAME          PRIORITY   STACK BASE   RSP        STATE    GROUND\n");
 
-    draw_word_white("STATE    ");
-
-    draw_word_white("GROUND");
-    newline();
     for (int i = 0, j = 0; j < map->size && i < MAX_MAP_SIZE; i++)
     {
         if (map->PCB_arr[i] != NULL)
@@ -460,7 +458,7 @@ void print_processes()
             map_node *aux = map->PCB_arr[i];
             while (aux != NULL)
             {
-                draw_number(aux->key);
+                print_kernel(WHITE, "%d", aux->key);
 
                 pid_t beaut = aux->key;
                 int m = 0;
@@ -471,16 +469,16 @@ void print_processes()
                 }
                 for (int z = 0; z < (6 - m); z++)
                 {
-                    draw_word_white(" ");
+                    print_kernel(WHITE, " ");
                 }
-                draw_word_white(aux->value->name);
+                print_kernel(WHITE, "%s", aux->value->name);
                 for (int z = 0; z < 14 - str_len(aux->value->name); z++)
                 {
-                    draw_word_white(" ");
+                    print_kernel(WHITE, " ");
                 }
 
-                draw_number(aux->value->priority);
-                draw_word_white("          ");
+                print_kernel(WHITE, "%d          ", aux->value->priority);
+
                 address_to_string((void *)aux->value->base);
 
                 unsigned long beaut2 = aux->value->base;
@@ -492,12 +490,12 @@ void print_processes()
                 }
                 for (int z = 0; z < (10 - m); z++)
                 {
-                    draw_word_white(" ");
+                    print_kernel(WHITE, " ");
                 }
 
                 address_to_string((void *)aux->value->rsp);
 
-                beaut2 = aux->value->base;
+                beaut2 = aux->value->rsp;
                 m = 0;
                 while (beaut2 / 16 > 0)
                 {
@@ -506,7 +504,7 @@ void print_processes()
                 }
                 for (int z = 0; z < (8 - m); z++)
                 {
-                    draw_word_white(" ");
+                    print_kernel(WHITE, " ");
                 }
 
                 char *buff = NULL;
@@ -531,22 +529,22 @@ void print_processes()
                     buff = "EXITED";
                     break;
                 }
-                draw_word_white(buff);
+                print_kernel(WHITE, "%s", buff);
                 for (int z = 0; z < 9 - str_len(buff); z++)
                 {
-                    draw_word_white(" ");
+                    print_kernel(WHITE, " ");
                 }
 
                 switch (aux->value->ground)
                 {
                 case 0:
-                    draw_word_white("BACKGROUND");
+                    print_kernel(WHITE, "BACKGROUND");
                     break;
                 case 1:
-                    draw_word_white("FOREGROUND");
+                    print_kernel(WHITE, "FOREGROUND");
                     break;
                 }
-                newline();
+                print_kernel(WHITE, "\n");
                 j++;
                 aux = aux->next;
             }

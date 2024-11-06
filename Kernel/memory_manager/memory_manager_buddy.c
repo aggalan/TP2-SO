@@ -4,6 +4,7 @@
 #include "./include/memory_manager.h"
 #include "../Drivers/include/video_driver.h"
 #include <stdint.h>
+#include "lib.h"
 
 #define MAX_ORDER 20
 #define MIN_ORDER 5
@@ -52,7 +53,7 @@ void *mm_malloc(uint32_t size)
 {
     if (size == 0 || size > total_memory_size)
     {
-        draw_word_white("NOT ENOUGH MEMORY FOR ALLOCATION");
+        print_kernel(WHITE, "NOT ENOUGH MEMORY FOR ALLOCATION");
         return NULL;
     }
 
@@ -67,7 +68,7 @@ void *mm_malloc(uint32_t size)
 
     if (order > MAX_ORDER)
     {
-        draw_word_white("NOT ENOUGH MEMORY FOR ALLOCATION");
+        print_kernel(WHITE, "NOT ENOUGH MEMORY FOR ALLOCATION");
         return NULL;
     }
 
@@ -79,7 +80,7 @@ void *mm_malloc(uint32_t size)
 
     if (index >= AMOUNT_OF_ORDERS)
     {
-        draw_word_white("NO SUITABLE BLOCK FOUND FOR ALLOCATION");
+        print_kernel(WHITE, "NO SUITABLE BLOCK FOUND FOR ALLOCATION");
         return NULL;
     }
 
@@ -113,14 +114,14 @@ void mm_free(void *ptr)
     if (ptr == NULL || (uintptr_t)ptr < (uintptr_t)base_address ||
         (uintptr_t)ptr >= (uintptr_t)base_address + total_memory_size)
     {
-        draw_word_white("INVALID MEMORY ADDRESS TO FREE");
+        print_kernel(WHITE, "INVALID MEMORY ADDRESS TO FREE");
         return;
     }
 
     Block *block = (Block *)((uintptr_t)ptr - sizeof(Block));
     if (block->status != ALLOCATED)
     {
-        draw_word_white("INVALID MEMORY ADDRESS TO FREE");
+        print_kernel(WHITE, "INVALID MEMORY ADDRESS TO FREE");
         return;
     }
 
@@ -173,18 +174,6 @@ void mm_free(void *ptr)
 
 void mm_status()
 {
-    draw_word_white("Running on Buddy System");
-    newline();
-    draw_word_white("Memory Status:");
-    newline();
-    draw_word_white("Total Memory: ");
-    draw_number(memory_status.total_memory);
-    newline();
-    draw_word_white("Used Memory: ");
-    draw_number(memory_status.used_memory);
-    newline();
-    draw_word_white("Free Memory: ");
-    draw_number(memory_status.free_memory);
-    newline();
+    print_kernel(WHITE, "Running on Buddy System\n Memory Status:\n Total Memory: %d\n Used Memory: %d\n Free Memory: %d\n", memory_status.total_memory, memory_status.used_memory, memory_status.free_memory);
 }
 #endif

@@ -8,7 +8,6 @@
 #include "include/lib.h"
 #include "include/eliminator.h"
 
-#define WHITE 0xFFFFFFFF
 #define MAX_LENGTH 1024
 
 static int ampersen_searcher(char *str);
@@ -23,15 +22,10 @@ void cmd_print_registers()
     call_print_registers(1);
 }
 
-void mm_test(char * args)
+void mm_test(char *args)
 {
-    // char **argv_mm = (char **)(uintptr_t)call_malloc(2 * sizeof(char *));
-    // argv_mm[0] = (char *)call_malloc(sizeof(char) * (str_len("mem test") + 1));
-    // str_cpy(argv_mm[0], "mem test");
-    // argv_mm[1] = (char *)call_malloc(sizeof(char) * (str_len("266240") + 1));
-    // str_cpy(argv_mm[1], "266240");
 
-    static char * argv[2] = {"mem test", "266240"};
+    static char *argv[2] = {"mem test", "266240"};
 
     int ampersen = ampersen_searcher(args);
 
@@ -50,15 +44,9 @@ void mm_test(char * args)
     }
     return;
 }
-void process_test(char * args)
+void process_test(char *args)
 {
-    // char **argv_process = (char **)(uintptr_t)call_malloc(2 * sizeof(char *));
-    // argv_process[0] = (char *)call_malloc(sizeof(char) * (str_len("process test") + 1));
-    // str_cpy(argv_process[0], "process test");
-    // argv_process[1] = (char *)call_malloc(sizeof(char) * (str_len("10") + 1));
-    // str_cpy(argv_process[1], "10");
-
-    static char * argv[2] = {"process test",  "10"};
+    static char *argv[2] = {"process test", "10"};
 
     int ampersen = ampersen_searcher(args);
 
@@ -78,11 +66,7 @@ void process_test(char * args)
 }
 void prio_test(char *args)
 {
-    // char **argv_priority = (char **)(uintptr_t)call_malloc(sizeof(char *));
-    // argv_priority[0] = (char *)call_malloc(sizeof(char) * (str_len("priority test") + 1));
-    // str_cpy(argv_priority[0], "priority test");
-
-    char * argv[1] = {"priority test"};
+    char *argv[1] = {"priority test"};
 
     int ampersen = ampersen_searcher(args);
 
@@ -103,20 +87,10 @@ void prio_test(char *args)
 
 void sync_test(char *args)
 {
-    // char **argv_sync = (char **)(uintptr_t)call_malloc(4 * sizeof(char *));
 
-    // argv_sync[0] = (char *)call_malloc(sizeof(char) * (str_len("sync test") + 1));
-    // argv_sync[1] = (char *)call_malloc(sizeof(char));
-    // argv_sync[2] = (char *)call_malloc(sizeof(char));
-    // argv_sync[3] = (char *)call_malloc(sizeof(char));
-
-    // str_cpy(argv_sync[0], "sync test");
-    // str_cpy(argv_sync[3], "0");
-
-    char * argv[4];
+    char *argv[4];
     argv[0] = "sync test";
     argv[3] = "0";
-
 
     char *str = args + str_len("sync ");
     int aux = str_len(cut_string(str));
@@ -125,15 +99,9 @@ void sync_test(char *args)
     if (str_to_int(n) < 1)
     {
         print(WHITE, "INVALID N VALUE\n");
-        // for (int i = 0; i < 4; i++)
-        // {
-        //     call_free(argv_sync[i]);
-        // }
-        // call_free(argv_sync);
         return;
     }
 
-    //str_cpy(argv_sync[1], n);
     argv[1] = n;
 
     str += aux + 1;
@@ -142,7 +110,6 @@ void sync_test(char *args)
 
     if (str_cmp(cut_string(str), "-no-sem") == 0)
     {
-        //str_cpy(argv_sync[2], "0");
         argv[2] = "0";
 
         if (ampersen_searcher(aux2))
@@ -156,14 +123,13 @@ void sync_test(char *args)
     }
     else if (str_cmp(cut_string(str), "&") == 0)
     {
-        //str_cpy(argv_sync[2], "1");
         argv[2] = "1";
         call_create_process(test_sync, 0, 4, argv, 0);
     }
     else if (*str == 0)
     {
-        // str_cpy(argv[2], "1");
-        argv[2]= "1";
+
+        argv[2] = "1";
         call_create_process(test_sync, 0, 4, argv, 1);
     }
     else
@@ -174,11 +140,8 @@ void sync_test(char *args)
 
 void pipe_test(char *args)
 {
-    // char **argv_pipes = (char **)call_malloc(sizeof(char *));
-    // argv_pipes[0] = (char *)call_malloc(sizeof(char) * (str_len("pipes test") + 1));
-    // str_cpy(argv_pipes[0], "pipes test");
 
-    char * argv[1] = {"pipes test"};
+    char *argv[1] = {"pipes test"};
 
     int ampersen = ampersen_searcher(args);
 
@@ -199,10 +162,7 @@ void pipe_test(char *args)
 
 void busy_wait()
 {
-    // char **argv_loop = (char **)(uintptr_t)call_malloc(sizeof(char *));
-    // argv_loop[0] = (char *)call_malloc(sizeof(char) * (str_len("loop") + 1));
-    // str_cpy(argv_loop[0], "loop");
-    char * argv[1] = {"loop"};
+    char *argv[1] = {"loop"};
     call_create_process(loop, 0, 1, argv, 0);
 }
 
@@ -213,7 +173,7 @@ void cmd_eliminator(char *args)
 
 void cmd_time(char *args)
 {
-    char time[9]; // Viene dada por el formato hh:mm:ss por eso son 8 mas la terminacion en cero
+    char time[9];
     call_time_clock(time);
     put_string(time, WHITE);
     put_string("\n", WHITE);
@@ -340,7 +300,8 @@ void cat()
     int i = 0;
     ssize_t status = -1;
 
-    do{ // TRABAJR CON EOF
+    do
+    { 
         status = getC(&c);
         if (c != 0 && c != -1)
         {
@@ -354,7 +315,7 @@ void cat()
                 command[0] = '\0';
             }
         }
-    }while (status != EOF && status != 0);
+    } while (status != EOF && status != 0);
     putC('\n', WHITE);
     return;
 }
@@ -365,16 +326,33 @@ int is_vowel(char c)
            c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
 }
 
-void filter()
+void filter() //it does not contemplate the backspace so it saves very vowel, even if you errase it
 {
     char c;
-    while (getC(&c) != EOF)
-    { // TRABAJAR CON EOF
-        if (is_vowel(c))
+    ssize_t status = -1;
+    char command[MAX_LENGTH] = {0};
+    int i = 0;
+    do
+    {
+        status = getC(&c);
+        if (c != 0 && c != -1)
         {
             putC(c, WHITE);
+            if (is_vowel(c))
+            {
+                command[i++] = c;
+            }
+        
+            if (c == '\n')
+            {
+                command[i] = '\0';
+                i = 0;
+                print(WHITE, "%s", command);
+                command[0] = '\0';
+            }
         }
-    }
+
+    } while (status != EOF && status != 0);
     putC('\n', WHITE);
 }
 
@@ -384,17 +362,18 @@ void wc()
     char c;
     ssize_t status = -1;
 
-    do{ // TRABAJ CON EOF
+    do
+    { 
         status = getC(&c);
         if (c == '\n')
         {
             lines++;
         }
-        if(c != 0 && c != -1)
+        if (c != 0 && c != -1)
         {
             putC(c, WHITE);
         }
-    }while (status != EOF && status != 0);
+    } while (status != EOF && status != 0);
     putC('\n', WHITE);
     put_string("Lines: ", WHITE);
     put_int(lines, WHITE);
@@ -424,11 +403,8 @@ static int ampersen_searcher(char *input)
 
 void cat_process(char *args)
 {
-    // char **argv = (char **)(uintptr_t)call_malloc(sizeof(char *));
-    // argv[0] = (char *)call_malloc(sizeof(char) * (str_len("cat") + 1));
-    // str_cpy(argv[0], "cat");
 
-    char * argv[1] = {"cat"};
+    char *argv[1] = {"cat"};
     int ampersen = ampersen_searcher(args);
     if (ampersen == -1)
     {
@@ -443,15 +419,12 @@ void cat_process(char *args)
     {
         call_create_process(cat, 0, 1, argv, 1);
     }
+        call_ps();
 }
 
 void filter_process(char *args)
 {
-    // char **argv = (char **)(uintptr_t)call_malloc(sizeof(char *));
-    // argv[0] = (char *)call_malloc(sizeof(char) * (str_len("filter") + 1));
-    // str_cpy(argv[0], "filter");
-
-    char * argv[1] = {"filter"};
+    char *argv[1] = {"filter"};
     int ampersen = ampersen_searcher(args);
     if (ampersen == -1)
     {
@@ -470,10 +443,7 @@ void filter_process(char *args)
 
 void wc_process(char *args)
 {
-    // char **argv = (char **)(uintptr_t)call_malloc(sizeof(char *));
-    // argv[0] = (char *)call_malloc(sizeof(char) * (str_len("wc") + 1));
-    // str_cpy(argv[0], "wc");
-    char * argv[1] = {"wc"};
+    char *argv[1] = {"wc"};
     int ampersen = ampersen_searcher(args);
     if (ampersen == -1)
     {
