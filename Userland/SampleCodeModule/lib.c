@@ -117,18 +117,22 @@ char *cut_string(char *str)
     return str;
 }
 
-char * str_chr(const char *s, int c) {
-    while (*s != '\0') {
-        if (*s == (char)c) {
+char *str_chr(const char *s, int c)
+{
+    while (*s != '\0')
+    {
+        if (*s == (char)c)
+        {
             return (char *)s;
         }
         s++;
     }
-    
-    if (c == '\0') {
+
+    if (c == '\0')
+    {
         return (char *)s;
     }
-    
+
     return (void *)0;
 }
 
@@ -141,14 +145,17 @@ int pow(int base, int pow)
     }
     return toR;
 }
-int str_to_int(char *str) {
+int str_to_int(char *str)
+{
     int n = str_len(str);
     int rta = 0;
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++)
+    {
         // Check if the character is not a digit
-        if (str[i] < '0' || str[i] > '9') {
-            return -1;  // Return -1 if a non-numeric character is found
+        if (str[i] < '0' || str[i] > '9')
+        {
+            return -1; // Return -1 if a non-numeric character is found
         }
         // Convert character to integer and add it to the result
         rta += (str[i] - '0') * pow(10, n - i - 1);
@@ -187,15 +194,18 @@ void loop()
     }
 }
 
-int log(uint64_t n) {
+int log(uint64_t n)
+{
     int i = 0;
     while (n /= 10)
         i++;
     return i;
 }
 
-void int_to_str(uint64_t n, char * buffer) {
-    if (n == 0) {
+void int_to_str(uint64_t n, char *buffer)
+{
+    if (n == 0)
+    {
         buffer[0] = '0';
         buffer[1] = '\0';
         return;
@@ -205,10 +215,11 @@ void int_to_str(uint64_t n, char * buffer) {
     int i = 0;
 
     len += log(n) + 1;
-    while (n != 0) {
+    while (n != 0)
+    {
         int r = n % 10;
-        buffer[len - i++ - 1] = (r > 9) ? (r - 10) + 'A' : r + '0';
+        buffer[len - i++ - 1] = r + '0';
         n /= 10;
     }
-    buffer[i] = '\0';
+    buffer[len] = '\0';
 }

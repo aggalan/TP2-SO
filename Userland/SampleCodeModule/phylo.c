@@ -174,8 +174,6 @@ void print_phylo()
         switch (philo_state[i])
         {
         case THINKING:
-            print(WHITE, " . ");
-            break;
         case HUNGRY:
             print(WHITE, " . ");
             break;
