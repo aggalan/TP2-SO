@@ -1,7 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include <stdint.h>
-
+#include "include/test_util.h"
 #include "../include/lib.h"
 #include "../include/usr_sys_calls.h"
 // Random

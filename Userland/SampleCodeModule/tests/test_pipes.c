@@ -78,7 +78,6 @@ uint64_t full_buffer_reader(uint64_t argc, char *argv[])
         }
     }
 
-
     // Verify data integrity
 
     print(0xFFFFFF, "Full Buffer Reader: Successfully read and verified %d bytes (because it returns EOF dipshit)\n", bytes_read);

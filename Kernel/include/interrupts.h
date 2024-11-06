@@ -12,16 +12,16 @@
 
 #include <stdint.h>
 
-void _irq00Handler(void);
-void _irq01Handler(void);
-void _irq02Handler(void);
-void _irq03Handler(void);
-void _irq04Handler(void);
-void _irq05Handler(void);
-void _irq80Handler(void);
+void _irq_00_handler(void);
+void _irq_01_handler(void);
+void _irq_02_handler(void);
+void _irq_03_handler(void);
+void _irq_04_handler(void);
+void _irq_05_handler(void);
+void _irq_80_handler(void);
 
-void _exception0Handler(void);
-void _exception6Handler(void);
+void _exception_0_handler(void);
+void _exception_6_handler(void);
 void _cli(void);
 void save_registers_state();
 uint64_t *get_registers();

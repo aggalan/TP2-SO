@@ -93,7 +93,7 @@ void *call_malloc(uint64_t size);
 
 void call_free(void *ptr);
 
-pid_t call_create_process(void *entryPoint, int * fds, int argc, char *argv[], int ground);
+pid_t call_create_process(void *entryPoint, int *fds, int argc, char *argv[], int ground);
 
 void call_ps();
 
@@ -119,11 +119,10 @@ int call_named_pipe_open(char *name, int mode);
 
 void call_named_pipe_close(int fd);
 
-ssize_t call_pipe_read(int fd, char * buff, size_t bytes_r);
+ssize_t call_pipe_read(int fd, char *buff, size_t bytes_r);
 
-ssize_t call_pipe_write(int fd, char * buff, size_t bytes_w);
+ssize_t call_pipe_write(int fd, char *buff, size_t bytes_w);
 
 int call_anon_pipe_create();
-
 
 #endif /* USERSYSCALLS_H */

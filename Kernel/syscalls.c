@@ -47,9 +47,8 @@ ssize_t sys_read(int descriptor, char *save, int len)
 {
     fd_entry *entry = fd_get_entry(descriptor);
     switch (entry->fd_type)
-    { // aca deberia switcher en algo como fd_table[fd]->type. pafa ver si es pipe u otra cosa
+    {
     case STDIN:
-        //            return shell_read(save, len);
         PCB *pcb = get_current();
         if (pcb->fds[STDIN] == STDIN)
         {
@@ -68,23 +67,18 @@ ssize_t sys_read(int descriptor, char *save, int len)
         break;
     }
 
-    //    if (descriptor != STDIN)
-    //    {
-    //        draw_word(0x00ff0000, "no such descriptor");
-    //    }
-
     return -1;
 }
 
+int shell_read(char *save, int len)
+{
+    PCB *pcb = get_current();
 
-int shell_read(char *save, int len) {
-   PCB * pcb = get_current();
-
-   if(pcb->ground == 0 && pcb->pid > 1 && (pcb->ppid != 1 || !pcb->is_waited)){ //to mimic the behaviour of cat when running in background like linux
-       kill_process_pid(pcb->pid);
-       return 0;
-   }
-
+    if (pcb->ground == 0 && pcb->pid > 1 && (pcb->ppid != 1 || !pcb->is_waited))
+    { // to mimic the behaviour of cat when running in background like linux
+        kill_process_pid(pcb->pid);
+        return 0;
+    }
 
     block_shell_read();
 

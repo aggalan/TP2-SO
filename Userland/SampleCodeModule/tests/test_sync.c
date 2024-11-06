@@ -1,9 +1,9 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include "../include/usr_sys_calls.h"
-#include "test_util.h"
+#include "include/test_util.h"
 #include "../include/lib.h"
-#include "./test_sync.h"
+#include "include/test_sync.h"
 #include <stddef.h>
 
 #define TOTAL_PAIR_PROCESSES 2
@@ -98,7 +98,6 @@ uint64_t test_sync(uint64_t argc, char *argv[])
   if (satoi(argv[2]))
     call_sem_close(sem_id);
 
-  
   call_free(argv[0]);
   call_free(argv[1]);
   call_free(argv[2]);

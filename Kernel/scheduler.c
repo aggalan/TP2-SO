@@ -127,7 +127,7 @@ uint64_t schedule(uint64_t rsp)
     while (processes->current->data->state != READY)
     {
 
-        if (processes->current == aux && processes->current->data->state != READY)
+        if (processes->current == aux)
         {
             process_has_run = IDLE;
             idle_p->state = RUNNING;

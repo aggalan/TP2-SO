@@ -173,7 +173,7 @@ void draw_char(uint32_t hex_color, char character)
 		if (i % 2 == 0 && i != 0)
 		{
 			current = x;
-			y += size_x; // Salto a la siguiente fila de píxeles
+			y += size_x;
 		}
 		font[i + index * 32] & (char)0x01 ? draw_square(hex_color, size_x, current, y) : 0;
 		current += size_x;
@@ -181,10 +181,9 @@ void draw_char(uint32_t hex_color, char character)
 
 		for (int j = 0; j < 8; j++)
 		{
-			// Comprueba cada bit de la fuente y dibuja un píxel si está activo
 			((uint8_t)font[i + (index * 32)] & (uint8_t)aux) >> j ? draw_square(hex_color, size_x, current, y) : 0;
-			current += size_x; // Avanza a la siguiente posición horizontal
-			aux <<= 1;		   // Desplaza el bit auxiliar hacia la izquierda
+			current += size_x;
+			aux <<= 1;
 		}
 	}
 	cursor_x += size_x * 8;
@@ -199,24 +198,20 @@ void address_to_string(void *ptr)
 {
 	unsigned long address = (unsigned long)ptr;
 	char hex_chars[] = "0123456789ABCDEF";
-	char buffer[20]; // Local buffer for the address string
+	char buffer[20];
 	int i = 0;
-	int start = 2; // For "0x" prefix
-
-	// Add "0x" prefix to indicate hexadecimal
+	int start = 2;
 	buffer[0] = '0';
 	buffer[1] = 'x';
 
-	// Fill the buffer from end to start with hex digits
 	for (i = start; address > 0; i++)
 	{
 		buffer[i] = hex_chars[address % 16];
 		address /= 16;
 	}
 
-	buffer[i] = '\0'; // Null-terminate the string
+	buffer[i] = '\0';
 
-	// Reverse the portion of the string that contains the hexadecimal representation
 	for (int j = start, k = i - 1; j < k; j++, k--)
 	{
 		char temp = buffer[j];
@@ -224,7 +219,7 @@ void address_to_string(void *ptr)
 		buffer[k] = temp;
 	}
 
-	print_kernel(WHITE, buffer); // Call draw_word_white to print the string directly
+	print_kernel(WHITE, buffer);
 }
 
 void draw_number(int value)

@@ -5,9 +5,9 @@
 #include "include/lib.h"
 #include "include/usr_sys_calls.h"
 #include "include/eliminator.h"
-#include "tests/test_processes.h"
-#include "tests/test_util.h"
-#include "tests/test_sync.h"
+#include "tests/include/test_processes.h"
+#include "tests/include/test_util.h"
+#include "tests/include/test_sync.h"
 #include "include/commands.h"
 #include <stddef.h>
 
@@ -182,19 +182,23 @@ void piped_line_read(char *buffer)
             {
                 print(RED, "Command %s is not pipeable\n", commands[i].command);
                 return;
-            } else if (str_cmp(commands[i].command, "filter") == 0) {
+            }
+            else if (str_cmp(commands[i].command, "filter") == 0)
+            {
                 func1 = filter;
             }
-             else if (str_cmp(commands[i].command, "cat") == 0) {
+            else if (str_cmp(commands[i].command, "cat") == 0)
+            {
                 func1 = cat;
             }
-             else if (str_cmp(commands[i].command, "wc") == 0) {
+            else if (str_cmp(commands[i].command, "wc") == 0)
+            {
                 func1 = wc;
             }
-            else {
+            else
+            {
                 func1 = commands[i].func;
             }
-
         }
         if (str_cmp(cut_string(command2), commands[i].command) == 0)
         {
@@ -202,20 +206,24 @@ void piped_line_read(char *buffer)
             {
                 print(RED, "Command %s is not pipeable\n", commands[i].command);
                 return;
-            } else if (str_cmp(commands[i].command, "filter") == 0) {
+            }
+            else if (str_cmp(commands[i].command, "filter") == 0)
+            {
                 func2 = filter;
             }
-            else if (str_cmp(commands[i].command, "cat") == 0) {
+            else if (str_cmp(commands[i].command, "cat") == 0)
+            {
                 func2 = cat;
             }
-            else if (str_cmp(commands[i].command, "wc") == 0) {
+            else if (str_cmp(commands[i].command, "wc") == 0)
+            {
                 func2 = wc;
             }
 
-            else {
+            else
+            {
                 func2 = commands[i].func;
             }
-
         }
     }
 

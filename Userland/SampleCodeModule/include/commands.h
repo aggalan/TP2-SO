@@ -27,13 +27,13 @@ void busy_wait();
 void call_div0();
 void call_invalid_op();
 char re_size(char *buffer);
-void cat_process(char * args);
-void filter_process(char * args);
-void wc_process(char * args);
+void cat_process(char *args);
+void filter_process(char *args);
+void wc_process(char *args);
 void cat();
 int is_vowel(char c);
 void filter();
 void wc();
-void phylo_init_process(char * args);
+void phylo_init_process(char *args);
 
 #endif

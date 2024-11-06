@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include <stdint.h>
 #include "../include/lib.h"
-#include "test_util.h"
+#include "include/test_util.h"
 #include "../include/usr_sys_calls.h"
 
 #define MINOR_WAIT 100000000 // TODO: Change this value to prevent a process from flooding the screen
@@ -22,11 +22,6 @@ void test_prio()
    char **mem_loc[TOTAL_PROCESSES];
    for (int i = 0; i < TOTAL_PROCESSES; i++)
    {
-      // char **argvAux = (char **)(uintptr_t)call_malloc(sizeof(char *));
-      // argvAux[0] = (char *)call_malloc(sizeof(char) * (str_len("endless loop print") + 1));
-      // str_cpy(argvAux[0], "endless loop print");
-      // argvAux[1] = (char *)call_malloc(sizeof(char) * (str_len("100000000") + 1));
-      // str_cpy(argvAux[1], "100000000");
       char *argvAux[2] = {"endless loop print", "100000000"};
       mem_loc[i] = argvAux;
    }
@@ -60,9 +55,6 @@ void test_prio()
       call_unblock(pids[i]);
 
    bussy_wait(WAIT);
-
-   // pid_t waited_pid = call_waitpid(pids[1]);
-   // pid_t waited_pid_2 = call_waitpid(pids[2]);
 
    print(0xFFFFFF, "\nKILLING...\n");
 

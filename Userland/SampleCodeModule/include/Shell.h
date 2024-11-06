@@ -3,6 +3,6 @@
 #ifndef SHELL_H
 #define SHELL_H
 
-int shell_init();   //Function to initialize shell
+int shell_init(); // Function to initialize shell
 
-#endif //SHELL_H
+#endif // SHELL_H

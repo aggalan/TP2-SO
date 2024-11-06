@@ -15,7 +15,7 @@ typedef struct Block
 {
     uint8_t order;
     struct Block *next;
-    BlockStatus status;
+    block_status status;
 } __attribute__((aligned(PAGE_SIZE))) Block; // had a problem with allignement so i searched and got this answer which fixes everything
 
 Block *free_lists[AMOUNT_OF_ORDERS];
@@ -49,7 +49,6 @@ void mm_init(void *mem_start, uint64_t mem_size)
 
     free_lists[MAX_ORDER - MIN_ORDER] = first_block;
 }
-
 
 void *mm_malloc(uint32_t size)
 {
@@ -103,7 +102,6 @@ void *mm_malloc(uint32_t size)
 
     return (void *)align_up((uintptr_t)block + sizeof(Block), PAGE_SIZE);
 }
-
 
 void mm_free(void *ptr)
 {

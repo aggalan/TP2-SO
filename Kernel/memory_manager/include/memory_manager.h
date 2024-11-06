@@ -10,7 +10,6 @@
 #define HEAP_SIZE 0x10000000 // 256MB heap
 #define BLOCK_SIZE 32        //  bytes per block
 
-
 typedef struct memory_status_t
 {
     uint64_t total_memory;
@@ -18,12 +17,12 @@ typedef struct memory_status_t
     uint64_t free_memory;
 } memory_status_t;
 
-typedef enum BlockStatus
+typedef enum block_status
 {
     FREE,
     ALLOCATED,
     START
-} BlockStatus;
+} block_status;
 
 void *mm_malloc(uint32_t size);
 void mm_free(void *ptr);

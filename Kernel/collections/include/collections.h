@@ -71,7 +71,7 @@ typedef struct node_sem
 } node_sem;
 
 typedef struct queue_sem
-{ // es circular que last apunte a first
+{
     node_sem *first;
     node_sem *last;
     uint64_t size;

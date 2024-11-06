@@ -121,12 +121,12 @@ void named_pipe_close(int fd)
     if (pipe->write_pid == pid)
     {
         pipe->write_pid = -1;
-        my_sem_post(pipe->read_sem); //just in case i think necessary
+        my_sem_post(pipe->read_sem); 
     }
     else if (pipe->read_pid == pid)
     {
         pipe->read_pid = -1;
-        my_sem_post(pipe->write_sem); // just in case i think necessary
+        my_sem_post(pipe->write_sem); 
     }
     else
     {
@@ -239,7 +239,7 @@ int anon_pipe_create()
     pipe->write_sem = my_sem_init(1);
     pipe->read_sem = my_sem_init(0);
     pipe->ref_count = 0;
-    pipe->index = -1; // not on the table
+    pipe->index = -1;
 
     pipe->read_pid = -1;
     pipe->write_pid = -1;

@@ -5,16 +5,16 @@ GLOBAL pic_slave_mask
 GLOBAL haltcpu
 GLOBAL _hlt
 
-GLOBAL _irq00Handler
-GLOBAL _irq01Handler
-GLOBAL _irq02Handler
-GLOBAL _irq03Handler
-GLOBAL _irq04Handler
-GLOBAL _irq05Handler
-GLOBAL _irq80Handler
+GLOBAL _irq_00_handler
+GLOBAL _irq_01_handler
+GLOBAL _irq_02_handler
+GLOBAL _irq_03_handler
+GLOBAL _irq_04_handler
+GLOBAL _irq_05_handler
+GLOBAL _irq_80_handler
 
-GLOBAL _exception0Handler
-GLOBAL _exception6Handler
+GLOBAL _exception_0_handler
+GLOBAL _exception_6_handler
 GLOBAL get_registers
 GLOBAL print_registers_asm
 GLOBAL get_flag
@@ -108,7 +108,7 @@ SECTION .text
 	pop rbp
 %endmacro
 
-%macro irqHandlerMaster 1
+%macro irq_handle_master 1
 	push_state
 
 	mov rdi, %1 ; pasaje de parametro
@@ -190,7 +190,7 @@ pic_slave_mask:
     retn
 
 ;8254 Timer (Timer Tick)
-_irq00Handler:
+_irq_00_handler:
 
 	push_state
 	mov rdi, 0
@@ -207,7 +207,7 @@ _irq00Handler:
 	iretq
 
 ;Keyboard
-_irq01Handler:
+_irq_01_handler:
     push rsp
     push qword[rsp + 8]
     push_state
@@ -225,25 +225,25 @@ _irq01Handler:
 handle:
     pop_state
     add rsp, 16
-	irqHandlerMaster 1
+	irq_handle_master 1
 
 ;Cascade pic never called
-_irq02Handler:
-	irqHandlerMaster 2
+_irq_02_handler:
+	irq_handle_master 2
 
 ;Serial Port 2 and 4
-_irq03Handler:
-	irqHandlerMaster 3
+_irq_03_handler:
+	irq_handle_master 3
 
 ;Serial Port 1 and 3
-_irq04Handler:
-	irqHandlerMaster 4
+_irq_04_handler:
+	irq_handle_master 4
 
 ;USB
-_irq05Handler:
-	irqHandlerMaster 5
+_irq_05_handler:
+	irq_handle_master 5
 
-_irq80Handler:
+_irq_80_handler:
 
  	push rbx
 	push r12
@@ -277,10 +277,10 @@ _irq80Handler:
 
 
 ;Zero Division Exception
-_exception0Handler:
+_exception_0_handler:
 	exception_handler 0
 
-_exception6Handler:
+_exception_6_handler:
 	exception_handler 6
 
 

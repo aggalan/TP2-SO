@@ -12,7 +12,6 @@
 #include "include/fd_manager.h"
 #include "include/pipe_manager.h"
 
-
 hash_map_ADT map;
 static pid_t pids = 0;
 #define DEFAULT_PRIORITY 1
@@ -37,15 +36,6 @@ pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int grou
 {
 
     PCB *pcb = (PCB *)mm_malloc(sizeof(PCB));
-    // if (pcb == NULL)
-    // {
-    //     for (int i = 0; i < argc; i++) // he who uncomments this shall bear the sacred burden of uncovering the
-    //     {                              // truth behind the reason as of why this destroys everything.
-    //         mm_free(argv[i]);          // may god bear witness to your brave attempt, for only he, and the person i was when this code was written, know how to fix it
-    //     } // godspeed.
-    //     mm_free(argv);
-    //     return -1;
-    // }
 
     pcb->rip = fn;
     pcb->state = READY;
@@ -95,11 +85,6 @@ pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int grou
     pcb->base = (uint64_t)mm_malloc(STACK);
     if ((void *)pcb->base == NULL)
     {
-        // for (int i = 0; i < argc; i++) // he who uncomments this shall bear the sacred burden of uncovering the
-        // {                              // truth behind the reason as of why this destroys everything.
-        //     mm_free(argv[i]);          // may god bear witness to your brave attempt, for only he, and the person i was when this code was written, know how to fix it
-        // } // godspeed.
-        // mm_free(argv);
         mm_free(pcb->fds);
         mm_free(pcb);
         return -1;
@@ -131,7 +116,7 @@ pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int grou
 
     if (pcb->pid == 1)
     {
-        pcb->priority = 5; // shell should have higher priority
+        pcb->priority = 5;
         add_pcb(pcb->pid, pcb);
         add_process(pcb, pcb->priority);
         shell_process = pcb;
@@ -239,14 +224,6 @@ pid_t kill_process_pid(pid_t pid)
             nice();
         }
         return pid;
-    }
-
-    if (pcb->is_waited)
-    {
-        remove_child(parent, pid);
-        parent->state = READY;
-        remove_process(pid);
-        remove_pcb(pid);
     }
     else
     {
@@ -408,12 +385,7 @@ void hash_map_init()
 
 void free_PCB(PCB *pcb)
 {
-    // for (int i = 0; i < pcb->argc; i++)
-    // {
-    //     mm_free(pcb->argv[i]);
-    // }
     mm_free((void *)(pcb->base - STACK + 1));
-    mm_free(pcb->argv);
     mm_free(pcb->fds);
     mm_free(pcb);
 }
@@ -431,7 +403,7 @@ int remove_pcb(pid_t key)
         free_PCB(status);
         return 1;
     }
-    return 0; // RECORDAR: VER SI FALLA EL REMOVE PCB CHEQUEAR
+    return 0;
 }
 
 PCB *find_pcb(pid_t key)

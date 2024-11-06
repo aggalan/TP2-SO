@@ -23,7 +23,6 @@ static void load_module(uint8_t **module, void *target_module_address)
 
 	memcpy(target_module_address, *module, module_size);
 	*module += module_size;
-
 }
 
 static uint32_t readUint32(uint8_t **address)

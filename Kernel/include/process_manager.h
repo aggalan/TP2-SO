@@ -38,7 +38,7 @@ typedef struct PCB
     int priority;
     int updated;
     int is_waited;
-    int * fds;
+    int *fds;
     struct child_node *child;
 } PCB;
 
@@ -48,7 +48,7 @@ typedef struct child_node
     struct child_node *next;
 } child_node;
 
-pid_t create_process(uint64_t fn, int * fds, uint64_t argc, char **argv, int ground);
+pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int ground);
 
 pid_t kill_process();
 

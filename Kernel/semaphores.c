@@ -7,7 +7,7 @@
 #include "../Drivers/include/video_driver.h"
 #include "./collections/include/collections.h"
 #include "process_manager.h"
-#define MAX_SEMAPHORES 20
+#define MAX_SEMAPHORES 100
 
 int wait(sem *semaphore);
 int post(sem *semaphore);

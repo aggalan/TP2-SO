@@ -1,9 +1,9 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include "../include/usr_sys_calls.h"
-#include "test_util.h"
+#include "include/test_util.h"
 #include "../include/lib.h"
-#include "test_processes.h"
+#include "include/test_processes.h"
 
 enum State
 {
@@ -79,7 +79,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
               print(0xFFFFFF, "test_processes: ERROR killing process\n");
               return -1;
             }
-            call_waitpid(p_rqs[rq].pid); // si queres que corra para siempre descoment esto y anda joya
+            call_waitpid(p_rqs[rq].pid);
             p_rqs[rq].state = KILLED;
             alive--;
           }

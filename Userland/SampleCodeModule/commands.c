@@ -2,9 +2,9 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 #include "include/commands.h"
 #include "include/usr_sys_calls.h"
-#include "tests/test_processes.h"
-#include "tests/test_util.h"
-#include "tests/test_sync.h"
+#include "tests/include/test_processes.h"
+#include "tests/include/test_util.h"
+#include "tests/include/test_sync.h"
 #include "include/lib.h"
 #include "include/eliminator.h"
 #include "include/phylo.h"
@@ -88,7 +88,7 @@ void prio_test(char *args)
 
 void sync_test(char *args)
 {
-    // Aca hay que usar el malloc porque se pierde la referencia sino
+    // Malloc must be used here becauas eotherwise the reference to the argvs are lost
     char **argv_sync = (char **)(uintptr_t)call_malloc(4 * sizeof(char *));
 
     argv_sync[0] = (char *)call_malloc(sizeof(char) * (str_len("sync test") + 1));
@@ -333,7 +333,7 @@ int is_vowel(char c)
            c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
 }
 
-void filter() // it does not contemplate the backspace so it saves very vowel, even if you errase it
+void filter()
 {
     char c;
     ssize_t status = -1;

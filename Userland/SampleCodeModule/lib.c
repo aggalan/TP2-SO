@@ -56,7 +56,7 @@ void print(int color, const char *format, ...)
                 putC('-', color);
                 num = -num;
             }
-            put_int(num, color); // Assuming put_int is a function that prints positive numbers
+            put_int(num, color);
             format += 2;
         }
         else if (*format == '%' && *(format + 1) == 's')
@@ -92,7 +92,7 @@ void str_cpy(char *dest, const char *src)
         dest++;
         src++;
     }
-    *dest = '\0'; // Add the null terminator
+    *dest = '\0';
 }
 
 int str_cmp(char *str1, char *str2)
@@ -152,19 +152,16 @@ int str_to_int(char *str)
 
     for (int i = 0; i < n; i++)
     {
-        // Check if the character is not a digit
         if (str[i] < '0' || str[i] > '9')
         {
-            return -1; // Return -1 if a non-numeric character is found
+            return -1;
         }
-        // Convert character to integer and add it to the result
         rta += (str[i] - '0') * pow(10, n - i - 1);
     }
 
     return rta;
 }
 
-// Function to convert a string to uppercase
 void str_to_upper(char *str)
 {
     while (*str)

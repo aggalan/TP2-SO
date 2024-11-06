@@ -30,7 +30,7 @@ int str_cmp(char *str1, char *str2);
 void str_cpy(char *dest, const char *src);
 
 // Returns a pointer to the first occurrence of the character c in the string s.
-char * str_chr(const char *s, int c); 
+char *str_chr(const char *s, int c);
 
 // copy str on an auxiliar char * until first space
 char *cut_string(char *str);

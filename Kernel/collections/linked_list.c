@@ -81,11 +81,10 @@ int insert(PCB *data, uint8_t priority, linked_list_ADT list)
         aux = new_node;
     }
     list->size += priority;
-    //    list->total_size += priority;
     return 1;
 }
 
-int remove(pid_t pid_remove, linked_list_ADT list) // modularizar esta funcion
+int remove(pid_t pid_remove, linked_list_ADT list)
 {
 
     node_t *node = find(pid_remove, list);
