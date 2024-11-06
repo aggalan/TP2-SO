@@ -419,6 +419,7 @@ void cat_process(char *args)
     {
         call_create_process(cat, 0, 1, argv, 1);
     }
+        call_ps();
 }
 
 void filter_process(char *args)

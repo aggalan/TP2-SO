@@ -165,18 +165,6 @@ void piped_line_read(char * buffer) {
     char command1[20];
     char command2[20];
     extract_commands(buffer, command1, command2);
-    int fd = call_anon_pipe_create();
-    static char * argv[] = {"P1"};
-    static char * argv2[] = {"P2"};
-    int * fds = (int *) call_malloc(sizeof(int) * 3);
-    fds[0] = 0;
-    fds[1] = fd;
-    fds[2] = 2;
-    int * fds2 = (int *) call_malloc(sizeof(int) * 3);
-    fds2[0] = fd;
-    fds2[1] = 1;
-    fds2[2] = 2;
-
     command_func_t func1 = NULL;
     command_func_t func2 = NULL;
 
@@ -242,6 +230,17 @@ void piped_line_read(char * buffer) {
         return;
     }
 
+    int fd = call_anon_pipe_create();
+    static char * argv[] = {"P1"};
+    static char * argv2[] = {"P2"};
+    int * fds = (int *) call_malloc(sizeof(int) * 3);
+    fds[0] = 0;
+    fds[1] = fd;
+    fds[2] = 2;
+    int * fds2 = (int *) call_malloc(sizeof(int) * 3);
+    fds2[0] = fd;
+    fds2[1] = 1;
+    fds2[2] = 2;
 
     pid_t pid1 = call_create_process(func1, fds, 1, argv, 0);
     pid_t pid2 = call_create_process(func2, fds2, 1, argv2, 0);

@@ -78,12 +78,13 @@ ssize_t sys_read(int descriptor, char *save, int len)
 
 
 int shell_read(char *save, int len) {
-//    PCB * pcb = get_current();
+   PCB * pcb = get_current();
 
-//    if(pcb->ground == 0 && pcb->pid != 1 && pcb->pid != 0){ //to mimic the behaviour of cat when running in background like linux
-//        kill_process_pid(pcb->pid);
-//        return 0;
-//    }
+   if(pcb->ground == 0 && pcb->pid > 1 && (pcb->ppid != 1 || !pcb->is_waited)){ //to mimic the behaviour of cat when running in background like linux
+        print_kernel(WHITE, "i killed nugget");
+       kill_process_pid(pcb->pid);
+       return 0;
+   }
 
 
     block_shell_read();

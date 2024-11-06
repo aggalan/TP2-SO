@@ -171,18 +171,18 @@ void loop()
 {
     int flag = 1;
     int ticks = 0;
+    pid_t pid = call_get_current_pid();
     while (1)
     {
         ticks = call_get_ticks();
-        if (ticks % 100 == 0 && flag)
+        if (ticks % (5 * pid) == 0 && flag)
         {
-            print(0xFFFFFF, "%d", call_get_current_pid());
+            print(0xFFFFFF, "%d", pid);
             flag = 0;
         }
         else if (ticks % 18 == 1 && !flag)
         {
             flag = 1;
         }
-
     }
 }
