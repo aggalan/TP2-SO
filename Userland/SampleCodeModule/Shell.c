@@ -108,6 +108,7 @@ command_t commands[] = {
     {"invalid_op", call_invalid_op, "Generates an invalid operation exception."},
     {"exit", cmd_exit, "Exits the shell."},
     {"loop", busy_wait, "Creates a process whose purpose is to be monitored"},
+    {"phylo", phylo_init_process, "Initializes interactive philosopher's dining problem."},
     {"cat", cat_process, "Prints the input received."},
     {"filter", filter_process, "Filters the input received."},
     {"wc", wc_process, "Counts the words in the input received."},

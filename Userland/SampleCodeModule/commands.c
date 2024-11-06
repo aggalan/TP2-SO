@@ -7,6 +7,7 @@
 #include "tests/test_sync.h"
 #include "include/lib.h"
 #include "include/eliminator.h"
+#include "include/phylo.h"
 
 #define MAX_LENGTH 1024
 
@@ -419,7 +420,6 @@ void cat_process(char *args)
     {
         call_create_process(cat, 0, 1, argv, 1);
     }
-        call_ps();
 }
 
 void filter_process(char *args)
@@ -457,5 +457,24 @@ void wc_process(char *args)
     else
     {
         call_create_process(wc, 0, 1, argv, 1);
+    }
+}
+
+void phylo_init_process(char * args)
+{
+    char *argv[1] = {"phylo"};
+    int ampersen = ampersen_searcher(args);
+    if (ampersen == -1)
+    {
+        print(WHITE, "Syntax error on or near '&'\n");
+        return;
+    }
+    else if (ampersen)
+    {
+        print(WHITE, "Philosopher's problem can all be run in foreground\n");
+    }
+    else
+    {
+        call_create_process(phylo_init, 0, 1, argv, 1);
     }
 }
