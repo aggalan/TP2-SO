@@ -15,7 +15,8 @@ typedef void (*command_func_t)(char *args);
 #define false 0
 #define true 1
 
-typedef struct {
+typedef struct
+{
     char *command;
     command_func_t func;
     const char *description;
@@ -56,34 +57,37 @@ static command_t commands[] = {
     {"cat", cat_process, "Prints the input received.", true},
     {"filter", filter_process, "Filters the input received.", true},
     {"wc", wc_process, "Counts the words in the input received.", true},
-    {"red", turn_red, "To test the anonymous pipe. It reads from stdin and prints to the screen in red.", true}
-};
+    {"red", turn_red, "To test the anonymous pipe. It reads from stdin and prints to the screen in red.", true}};
 
 static command_t tests[] = {
     {"mem", mm_test, "Runs the memory test.", false},
     {"process", process_test, "Runs the process test.", false},
     {"prio", prio_test, "Runs the priority test.", false},
     {"sync", sync_test, "Runs the sync test. (usage: sync <N value> [-no-sem])", false},
-    {"pipes", pipe_test, "Runs the pipes test.", false}
-};
+    {"pipes", pipe_test, "Runs the pipes test.", false}};
 
-
-void starting_line() {
+void starting_line()
+{
     char *starting_line = "$>";
     put_string(starting_line, GREEN);
     clear_buffer(buffer);
 }
 
-void buffer_control() {
+void buffer_control()
+{
     int i = 0;
-    while (1) {
+    while (1)
+    {
         char c;
         getC(&c);
 
-        if (c != 0 && c != '\t' && c != EOF) {
-            if (c == '\n') {
+        if (c != 0 && c != '\t' && c != EOF)
+        {
+            if (c == '\n')
+            {
                 putC(c, WHITE);
-                if (i == 0) {
+                if (i == 0)
+                {
                     clear_buffer(buffer);
                     return;
                 }
@@ -91,13 +95,19 @@ void buffer_control() {
                 line_read(buffer, 0);
                 clear_buffer(buffer);
                 return;
-            } else if (c == '\b') {
-                if (i > 0) {
+            }
+            else if (c == '\b')
+            {
+                if (i > 0)
+                {
                     i--;
                     putC(c, WHITE);
                 }
-            } else {
-                if (i < BUFFER_SIZE) {
+            }
+            else
+            {
+                if (i < BUFFER_SIZE)
+                {
                     buffer[i++] = c;
                     putC(c, WHITE);
                 }
@@ -106,29 +116,36 @@ void buffer_control() {
     }
 }
 
-void line_read(char *buffer, int *fds) {
+void line_read(char *buffer, int *fds)
+{
     normalize_whitespace(buffer);
-    if (is_pipe_valid(buffer)) {
+    if (is_pipe_valid(buffer))
+    {
         piped_line_read(buffer);
         return;
     }
     char *command_copy = (char *)call_malloc(sizeof(char) * (str_len(buffer) + 1));
-    if (command_copy == NULL) {
+    if (command_copy == NULL)
+    {
         put_string("Error: malloc failed\n", WHITE);
         return;
     }
     str_cpy(command_copy, buffer);
     char *command = cut_string(command_copy);
-    for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++) {
-        if (str_cmp(command, commands[i].command) == 0) {
+    for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
+    {
+        if (str_cmp(command, commands[i].command) == 0)
+        {
             commands[i].func(buffer);
             call_free(command_copy);
             return;
         }
     }
 
-    for (int i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
-        if (str_cmp(command, tests[i].command) == 0) {
+    for (int i = 0; i < sizeof(tests) / sizeof(tests[0]); i++)
+    {
+        if (str_cmp(command, tests[i].command) == 0)
+        {
             tests[i].func(buffer);
             call_free(command_copy);
             return;
@@ -141,13 +158,15 @@ void line_read(char *buffer, int *fds) {
     call_free(command_copy);
 }
 
-void turn_red() {
+void turn_red()
+{
     char buff[3000] = {0};
     call_sys_read(STDIN, buff, 3000);
     call_sys_write(STDOUT, buff, str_len(buff), RED);
 }
 
-void piped_line_read(char *buffer) {
+void piped_line_read(char *buffer)
+{
     char command1[20];
     char command2[20];
     extract_commands(buffer, command1, command2);
@@ -155,40 +174,53 @@ void piped_line_read(char *buffer) {
     command_func_t func1 = NULL;
     command_func_t func2 = NULL;
 
-    int comm1 = 0;
-    int comm2 = 0;
-
-    for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++) {
-        if (str_cmp(cut_string(command1), commands[i].command) == 0) {
+    for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
+    {
+        if (str_cmp(cut_string(command1), commands[i].command) == 0)
+        {
+            if (commands[i].is_pipeable == false)
+            {
+                print(RED, "Command %s is not pipeable\n", commands[i].command);
+                return;
+            }
             func1 = commands[i].func;
-            comm1 = i;
         }
-        if (str_cmp(cut_string(command2), commands[i].command) == 0) {
+        if (str_cmp(cut_string(command2), commands[i].command) == 0)
+        {
+            if (commands[i].is_pipeable == false)
+            {
+                print(RED, "Command %s is not pipeable\n", commands[i].command);
+                return;
+            }
             func2 = commands[i].func;
-            comm2 = i;
         }
     }
 
-    for (int i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
-        if (str_cmp(cut_string(command1), tests[i].command) == 0) {
+    for (int i = 0; i < sizeof(tests) / sizeof(tests[0]); i++)
+    {
+        if (str_cmp(cut_string(command1), tests[i].command) == 0)
+        {
+            if (commands[i].is_pipeable == false)
+            {
+                print(RED, "Command %s is not pipeable\n", tests[i].command);
+                return;
+            }
             func1 = tests[i].func;
         }
-        if (str_cmp(cut_string(command2), tests[i].command) == 0) {
+        if (str_cmp(cut_string(command2), tests[i].command) == 0)
+        {
+            if (commands[i].is_pipeable == false)
+            {
+                print(RED, "Command %s is not pipeable\n", tests[i].command);
+                return;
+            }
             func2 = tests[i].func;
         }
     }
 
-
-    if (func1 == NULL || func2 == NULL) {
+    if (func1 == NULL || func2 == NULL)
+    {
         print(RED, "Command not found\n");
-        return;
-    }
-    if (!commands[comm1].is_pipeable ) {
-        print(RED, "%s not pipeable\n", commands[comm1].command);
-        return;
-    }
-    if (!commands[comm2].is_pipeable) {
-        print(RED, "%s not pipeable\n", commands[comm2].command);
         return;
     }
 
@@ -211,17 +243,21 @@ void piped_line_read(char *buffer) {
     call_waitpid(pid2);
 }
 
-void extract_commands(const char *buffer, char *command1, char *command2) {
+void extract_commands(const char *buffer, char *command1, char *command2)
+{
     int len = str_len(buffer);
     int i = 0;
 
     command1[0] = '\0';
     command2[0] = '\0';
 
-    while (i < len && buffer[i] != '|') {
-        if (buffer[i] != ' ') {
+    while (i < len && buffer[i] != '|')
+    {
+        if (buffer[i] != ' ')
+        {
             int j = 0;
-            while (i < len && buffer[i] != ' ' && buffer[i] != '|') {
+            while (i < len && buffer[i] != ' ' && buffer[i] != '|')
+            {
                 command1[j++] = buffer[i++];
             }
             command1[j] = '\0';
@@ -229,14 +265,18 @@ void extract_commands(const char *buffer, char *command1, char *command2) {
         i++;
     }
 
-    while (i < len && (buffer[i] == ' ' || buffer[i] == '|')) {
+    while (i < len && (buffer[i] == ' ' || buffer[i] == '|'))
+    {
         i++;
     }
 
     int j = 0;
-    while (i < len) {
-        if (buffer[i] != ' ') {
-            while (i < len && buffer[i] != ' ') {
+    while (i < len)
+    {
+        if (buffer[i] != ' ')
+        {
+            while (i < len && buffer[i] != ' ')
+            {
                 command2[j++] = buffer[i++];
             }
             break;
@@ -246,36 +286,48 @@ void extract_commands(const char *buffer, char *command1, char *command2) {
     command2[j] = '\0';
 }
 
-int is_pipe_valid(const char *buffer) {
+int is_pipe_valid(const char *buffer)
+{
     int len = str_len(buffer);
 
-    if (len == 0) return 0;
+    if (len == 0)
+        return 0;
 
     int found_command = 0;
     int expecting_pipe = 0;
     int found_pipe = 0;
     int command_word_length = 0;
 
-    for (int i = 0; i < len; i++) {
-        if (buffer[i] == '|') {
-            if (i == 0 || i == len - 1) {
+    for (int i = 0; i < len; i++)
+    {
+        if (buffer[i] == '|')
+        {
+            if (i == 0 || i == len - 1)
+            {
                 return 0;
             }
-            if (!found_command) {
+            if (!found_command)
+            {
                 return 0;
             }
             found_command = 0;
             expecting_pipe = 0;
             found_pipe = 1;
             command_word_length = 0;
-        } else if (buffer[i] == ' ') {
-            if (command_word_length > 0) {
-                if (expecting_pipe) {
+        }
+        else if (buffer[i] == ' ')
+        {
+            if (command_word_length > 0)
+            {
+                if (expecting_pipe)
+                {
                     return 0;
                 }
                 expecting_pipe = 1;
             }
-        } else {
+        }
+        else
+        {
             command_word_length++;
             found_command = 1;
         }
@@ -283,61 +335,76 @@ int is_pipe_valid(const char *buffer) {
     return found_command && found_pipe;
 }
 
-int is_space(char c) {
+int is_space(char c)
+{
     return c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r';
 }
 
-void normalize_whitespace(char *str) {
+void normalize_whitespace(char *str)
+{
     int i = 0, j = 0;
     int space_found = 0;
 
-    while (is_space((unsigned char)str[i])) {
+    while (is_space((unsigned char)str[i]))
+    {
         i++;
     }
 
-    while (str[i] != '\0') {
-        if (!is_space((unsigned char)str[i])) {
+    while (str[i] != '\0')
+    {
+        if (!is_space((unsigned char)str[i]))
+        {
             str[j++] = str[i];
             space_found = 0;
-        } else if (!space_found) {
+        }
+        else if (!space_found)
+        {
             str[j++] = ' ';
             space_found = 1;
         }
         i++;
     }
 
-    if (j > 0 && str[j - 1] == ' ') {
+    if (j > 0 && str[j - 1] == ' ')
+    {
         j--;
     }
 
     str[j] = '\0';
 }
 
-int shell_init() {
+int shell_init()
+{
     char *start = "Welcome to IncFont OS, type help to get a list of commands.\n";
     put_string(start, GREEN);
     clear_buffer(buffer);
-    while (!exit_flag) {
+    while (!exit_flag)
+    {
         starting_line();
         buffer_control();
     }
     return 0;
 }
 
-void cmd_help(char *args) {
+void cmd_help(char *args)
+{
     put_string("The following commands may be used: \n", WHITE);
     int max_len = 0;
     int aux = 0;
-    for (int j = 0; j < sizeof(commands) / sizeof(commands[0]); j++) {
-        if ((aux = str_len(commands[j].command)) > max_len) {
+    for (int j = 0; j < sizeof(commands) / sizeof(commands[0]); j++)
+    {
+        if ((aux = str_len(commands[j].command)) > max_len)
+        {
             max_len = aux;
         }
     }
     max_len += 2;
-    for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++) {
+    for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
+    {
         put_string(commands[i].command, WHITE);
         put_string(": ", WHITE);
-        for (int z = 0; z < (max_len - str_len(commands[i].command)); z++) {
+        for (int z = 0; z < (max_len - str_len(commands[i].command)); z++)
+        {
             put_string(" ", WHITE);
         }
         put_string(commands[i].description, WHITE);
@@ -345,21 +412,26 @@ void cmd_help(char *args) {
     }
 }
 
-void cmd_tests() {
+void cmd_tests()
+{
     call_clear();
     put_string("The following tests may be run: \n", WHITE);
     int max_len = 0;
     int aux = 0;
-    for (int j = 0; j < sizeof(tests) / sizeof(tests[0]); j++) {
-        if ((aux = str_len(tests[j].command)) > max_len) {
+    for (int j = 0; j < sizeof(tests) / sizeof(tests[0]); j++)
+    {
+        if ((aux = str_len(tests[j].command)) > max_len)
+        {
             max_len = aux;
         }
     }
     max_len += 2;
-    for (int i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
+    for (int i = 0; i < sizeof(tests) / sizeof(tests[0]); i++)
+    {
         put_string(tests[i].command, WHITE);
         put_string(": ", WHITE);
-        for (int z = 0; z < (max_len - str_len(tests[i].command)); z++) {
+        for (int z = 0; z < (max_len - str_len(tests[i].command)); z++)
+        {
             put_string(" ", WHITE);
         }
         put_string(tests[i].description, WHITE);
@@ -367,7 +439,8 @@ void cmd_tests() {
     }
 }
 
-void cmd_exit(char *args) {
+void cmd_exit(char *args)
+{
     exit_flag = 1;
     call_clear();
     clear_buffer(args);

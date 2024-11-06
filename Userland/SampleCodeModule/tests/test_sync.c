@@ -98,5 +98,11 @@ uint64_t test_sync(uint64_t argc, char *argv[])
   if (satoi(argv[2]))
     call_sem_close(sem_id);
 
+  
+  call_free(argv[0]);
+  call_free(argv[1]);
+  call_free(argv[2]);
+  call_free(argv[3]);
+
   return 1;
 }
