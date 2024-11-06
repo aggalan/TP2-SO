@@ -186,3 +186,29 @@ void loop()
         }
     }
 }
+
+int log(uint64_t n) {
+    int i = 0;
+    while (n /= 10)
+        i++;
+    return i;
+}
+
+void int_to_str(uint64_t n, char * buffer) {
+    if (n == 0) {
+        buffer[0] = '0';
+        buffer[1] = '\0';
+        return;
+    }
+
+    unsigned int len = 0;
+    int i = 0;
+
+    len += log(n) + 1;
+    while (n != 0) {
+        int r = n % 10;
+        buffer[len - i++ - 1] = (r > 9) ? (r - 10) + 'A' : r + '0';
+        n /= 10;
+    }
+    buffer[i] = '\0';
+}
