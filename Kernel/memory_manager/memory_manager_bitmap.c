@@ -150,7 +150,7 @@ void mm_free(void *ptr)
 
     if (index > mm.blocks || mm.bitmap[index] != START)
     {
-        // print_kernel(WHITE, "INVALID MEMORY ADDRESS TO FREE");
+        print_kernel(WHITE, "INVALID MEMORY ADDRESS TO FREE");
         return;
     }
 
