@@ -72,6 +72,7 @@ int named_pipe_create(char *name)
             pipe->read_pid = -1;
             pipe->write_pid = -1;
 
+            pipe->index = i;
             pipe->fd = fd_allocate(pipe, FD_TYPE_PIPE);
             global_pipe_table[i] = pipe;
             return 1;
@@ -136,12 +137,12 @@ void named_pipe_close(int fd)
     pipe->ref_count--;
     if (pipe->ref_count == 0)
     {
+        global_pipe_table[pipe->index] = NULL;
         mm_free(pipe->buff);
         my_sem_close(pipe->write_sem);
         my_sem_close(pipe->read_sem);
         mm_free(pipe->name);
         fd_free(pipe->fd);
-        global_pipe_table[pipe->index] = NULL;
         mm_free(pipe);
     }
 }
