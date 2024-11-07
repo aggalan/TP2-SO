@@ -181,23 +181,11 @@ void put_forks(int i)
 
 void test(int i)
 {
-    if (i % 2)
+    if (philo_state[i] == HUNGRY && philo_state[LEFT(i)] != EATING && philo_state[RIGHT(i)] != EATING)
     {
-        if (philo_state[i] == HUNGRY && philo_state[LEFT(i)] != EATING && philo_state[RIGHT(i)] != EATING)
-        {
-            philo_state[i] = EATING;
-            print_phylo();
-            call_sem_post(sem_philo[i]);
-        }
-    }
-    else
-    {
-        if (philo_state[i] == HUNGRY && philo_state[RIGHT(i)] != EATING && philo_state[LEFT(i)] != EATING)
-        {
-            philo_state[i] = EATING;
-            print_phylo();
-            call_sem_post(sem_philo[i]);
-        }
+        philo_state[i] = EATING;
+        print_phylo();
+        call_sem_post(sem_philo[i]);
     }
 }
 
