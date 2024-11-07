@@ -47,7 +47,7 @@ void mm_test(char *args)
 }
 void process_test(char *args)
 {
-    static char *argv[2] = {"process test", "10"};
+    static char *argv[2] = {"process test", "7"};
 
     int ampersen = ampersen_searcher(args);
 
