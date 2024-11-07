@@ -173,24 +173,20 @@ void str_to_upper(char *str)
 
 void loop()
 {
-    int flag = 1;
-    int ticks = 0;
+    static int call_count = 0;
+    const int print_interval = 150000000; // Imprimir cada 10 llamadas
     pid_t pid = call_get_current_pid();
-    while (1)
+    
+    while(1){
+    call_count++;
+    
+    // Imprimir el PID cada 'print_interval' llamadas
+    if (call_count % print_interval == 0)
     {
-        ticks = call_get_ticks();
-        if (ticks % (5 * pid) == 0 && flag)
-        {
-            print(0xFFFFFF, "%d", pid);
-            flag = 0;
-        }
-        else if (ticks % 18 == 1 && !flag)
-        {
-            flag = 1;
-        }
+        print(0xFFFFFF, "%d", pid);
+    }
     }
 }
-
 int log(uint64_t n)
 {
     int i = 0;
