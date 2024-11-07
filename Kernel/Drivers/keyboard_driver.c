@@ -95,13 +95,14 @@ void keyboard_handler()
       if (key_map[key_map_row][code] == 'c' || key_map[key_map_row][code] == 'C')
       {
         kill_foreground_process();
-        print_kernel(WHITE, "\n");
+        print_kernel(WHITE, "^C\n");
         return;
       }
       else if (key_map[key_map_row][code] == 'd' || key_map[key_map_row][code] == 'D')
       {
         buff[buff_pos] = EOF;
         inc_buffer_len(1);
+        print_kernel(WHITE, "^D\n");
         wake_up_shell();
       }
     }
