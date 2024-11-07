@@ -36,6 +36,9 @@ pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int grou
 {
 
     PCB *pcb = (PCB *)mm_malloc(sizeof(PCB));
+    if (pcb == NULL) {
+        return -1;
+    }
 
     pcb->rip = fn;
     pcb->state = READY;
@@ -52,11 +55,6 @@ pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int grou
     pcb->fds = (int *)mm_malloc(sizeof(int) * 3);
     if (pcb->fds == NULL)
     {
-        for (int i = 0; i < argc; i++)
-        {
-            mm_free(argv[i]);
-        }
-        mm_free(argv);
         mm_free(pcb);
         return -1;
     }
@@ -93,29 +91,23 @@ pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int grou
 
     pcb->rsp = create_context(pcb->base, pcb->rip, argc, argv);
 
-    if (pcb->pid != 1)
+    if (pcb->pid == 0)
+    {
+        idle_proc = pcb;
+        return pcb->pid;
+    }
+
+    if (pcb->pid > 1)
     {
         PCB *parent = get_current();
         add_child(pcb, parent);
         pcb->ppid = parent->pid;
+        add_pcb(pcb->pid, pcb);
+        add_process(pcb, DEFAULT_PRIORITY);
     }
     else
     {
         pcb->ppid = -1;
-    }
-
-    if (pcb->pid == 0)
-    {
-        idle_proc = pcb;
-    }
-    else if (pcb->pid != 1)
-    {
-        add_pcb(pcb->pid, pcb);
-        add_process(pcb, DEFAULT_PRIORITY);
-    }
-
-    if (pcb->pid == 1)
-    {
         pcb->priority = 5;
         add_pcb(pcb->pid, pcb);
         add_process(pcb, pcb->priority);
@@ -192,13 +184,10 @@ pid_t kill_process_pid(pid_t pid)
     if (pcb->fds[0] != 0)
     {
         signal_anon_pipe_close(pid, pcb->fds[0]);
-        //mm_free(pcb->fds);
     }
     else if (pcb->fds[1] != 1)
     {
-
         signal_anon_pipe_close(pid, pcb->fds[1]);
-        //mm_free(pcb->fds);
     }
 
     abandon_children(pcb); // the children have been abandoned, the shell adopted them.
@@ -386,6 +375,7 @@ void hash_map_init()
 void free_PCB(PCB *pcb)
 {
     mm_free((void *)(pcb->base - STACK + 1));
+    mm_free(pcb->fds);
     mm_free(pcb);
 }
 
