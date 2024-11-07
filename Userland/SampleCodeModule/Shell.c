@@ -375,6 +375,15 @@ int is_space(char c)
     return c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r';
 }
 
+char to_lower(char c)
+{
+    if (c >= 'A' && c <= 'Z')
+    {
+        return c + ('a' - 'A');
+    }
+    return c;
+}
+
 void normalize_whitespace(char *str)
 {
     int i = 0, j = 0;
@@ -387,9 +396,10 @@ void normalize_whitespace(char *str)
 
     while (str[i] != '\0')
     {
-        if (!is_space((unsigned char)str[i]))
+        char current = to_lower(str[i]);
+        if (!is_space(current))
         {
-            str[j++] = str[i];
+            str[j++] = current;
             space_found = 0;
         }
         else if (!space_found)
