@@ -273,6 +273,9 @@ void piped_line_read(char *buffer)
 
     call_waitpid(pid1);
     call_waitpid(pid2);
+
+    call_free(fds);
+    call_free(fds2);
 }
 
 void extract_commands(const char *buffer, char *command1, char *command2)

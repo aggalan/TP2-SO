@@ -295,6 +295,8 @@ void signal_anon_pipe_close(pid_t pid, int fd)
         fd_free(fd);
         mm_free(pipe->buff);
         mm_free(pipe->name);
+        my_sem_close(pipe->write_sem);
+        my_sem_close(pipe->read_sem);
         mm_free(pipe);
     }
 }
