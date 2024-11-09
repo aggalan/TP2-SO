@@ -120,6 +120,8 @@ pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int grou
         foreground_process = pcb;
         io_process = pcb;
         wait_pid(pcb->pid);
+        foreground_process = NULL;
+        io_process = shell_process;
     }
 
     return pcb->pid;
@@ -176,10 +178,6 @@ pid_t kill_process_pid(pid_t pid)
     {
         return 0;
     }
-    if (pcb->ground)
-    {
-        foreground_process = NULL;
-    }
 
     if (pcb->fds[0] != 0)
     {
@@ -200,10 +198,6 @@ pid_t kill_process_pid(pid_t pid)
         remove_child(parent, pid);
         if (is_waited && parent->state == WAITING)
         {
-            if (parent->pid == 1)
-            {
-                io_process = shell_process;
-            }
             parent->state = READY;
         }
         remove_process(pid);
