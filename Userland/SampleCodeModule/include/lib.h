@@ -4,6 +4,7 @@
 #define TPE_LIB_H
 #include <stdint.h>
 #include "sys/types.h"
+#include <stddef.h>
 
 #define EOF -1
 #define WHITE 0xFFFFFF
@@ -84,6 +85,6 @@ void loop();
 
 void int_to_str(uint64_t num, char *buffer);
 
-void print_process_userland();
+process_list_t * print_process_userland();
 
 #endif // TPE_LIB_H

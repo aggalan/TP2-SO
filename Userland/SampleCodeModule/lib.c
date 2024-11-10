@@ -234,39 +234,31 @@ int count_digits(unsigned long num, int base) {
     return count;
 }
 
-void print_process_userland() {
+process_list_t * print_process_userland() {
     process_list_t * list = call_get_process_list();
-    if (!list) return;
+    if (!list) return NULL;
 
-    // Print header
     print(WHITE, "There are %d processes in the system\n", list->count);
     print(WHITE, "PID    NAME          PRIORITY   STACK BASE   RSP        STATE    GROUND\n");
 
-    // Print each process with exact spacing
     for (size_t i = 0; i < list->count; i++) {
         const process_info_t* proc = &list->processes[i];
 
-        // Print PID with padding
         print(WHITE, "%d", proc->pid);
         print_spaces(7 - count_digits(proc->pid, 10));
 
-        // Print NAME with padding
         print(WHITE, "%s", proc->name);
         print_spaces(14 - str_len(proc->name));
 
-        // Print PRIORITY with padding
         print(WHITE, "%d", proc->priority);
         print_spaces(11 - count_digits(proc->priority, 10));
 
-        // Print STACK BASE with padding (assuming it's already a string)
         print(WHITE, "%s", proc->stack_base);
         print_spaces(13 - str_len(proc->stack_base));
 
-        // Print RSP with padding (assuming it's already a string)
         print(WHITE, "%s", proc->rsp);
         print_spaces(11 - str_len(proc->rsp));
 
-        // Print STATE with padding
         const char* state_str;
         switch (proc->state) {
             case READY:   state_str = "READY";   break;
@@ -281,8 +273,9 @@ void print_process_userland() {
         print(WHITE, "%s", state_str);
         print_spaces(9 - str_len(state_str));
 
-        // Print GROUND
         print(WHITE, "%s\n", proc->ground == 0 ? "BACKGROUND" : "FOREGROUND");
     }
+
+    return list;
 
 }
