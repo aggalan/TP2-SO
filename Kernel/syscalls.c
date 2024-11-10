@@ -11,7 +11,7 @@
 
 #define MIN(x, y) x < y ? x : y
 
-int shell_read(char *save, int len);
+ssize_t shell_read(char *save, int len);
 
 ssize_t sys_write(int descriptor, const char *str, int len, uint32_t hexColor)
 {
@@ -69,7 +69,7 @@ ssize_t sys_read(int descriptor, char *save, int len)
     return -1;
 }
 
-int shell_read(char *save, int len)
+ssize_t shell_read(char *save, int len)
 {
     PCB *pcb = get_current();
 
