@@ -23,7 +23,7 @@ typedef struct pipe_t
     int read_sem;
     pid_t read_pid;
     pid_t write_pid;
-    int ref_count;
+    int end_closed;
 } pipe_t;
 
 void pipe_table_init();

@@ -86,26 +86,63 @@ uint64_t full_buffer_reader(uint64_t argc, char *argv[])
 }
 
 // Process that attempts to write more than buffer size
-uint64_t overflow_writer(uint64_t argc, char *argv[])
+uint64_t full_biffer_reader_2(uint64_t argc, char *argv[])
 {
     if (argc != 1)
         return -1;
 
-    int fd = call_named_pipe_open(PIPE_NAME, WRITE);
+    int fd = call_named_pipe_open(PIPE_NAME, READ);
     if (fd < 3)
-        return -1;
-
-    // Create an oversized message
-    char huge_message[TEST_BUFFER_SIZE * 2];
-    for (int i = 0; i < TEST_BUFFER_SIZE * 2 - 1; i++)
     {
-        huge_message[i] = 'X';
+        print(0xFFFFFF, "Full Buffer Reader 2: Failed to open pipe\n");
+        return -1;
     }
-    huge_message[TEST_BUFFER_SIZE * 2 - 1] = '\0';
 
-    // Attempt to write oversized message
-    ssize_t written = call_sys_write(fd, huge_message, TEST_BUFFER_SIZE * 2, 0xffffff);
-    print(0xFFFFFF, "Overflow Writer: Attempted write returned %d, (should be -1 since there is no reader active, this test makes no sense)\n", written);
+    char buffer[1024];
+    ssize_t bytes_read = call_sys_read(fd, buffer, 1024);
+    if (bytes_read != 1024)
+    {
+        print(0xFFFFFF, "Full Buffer Reader 2: Read failed or incomplete (read %d bytes)\n", bytes_read);
+        call_named_pipe_close(fd);
+        return -1;
+    }
+
+    for (int i = 0; i < 1024; i++)
+    {
+        if (buffer[i] != ('A' + (i % 26)))
+        {
+            print(0xFFFFFF, "Full Buffer Reader 2: Data corruption at position %d\n", i);
+            call_named_pipe_close(fd);
+            return -1;
+        }
+        buffer[i] = 0;
+    }
+
+    // Verify data integrity
+
+    print(0xFFFFFF, "Full Buffer Reader 2: Successfully read and verified %d bytes\n", bytes_read);
+
+    bytes_read = call_sys_read(fd, buffer, 1024);
+
+
+    if (bytes_read != 0)
+    {
+        print(0xFFFFFF, "Full Buffer Reader 2: Read failed or incomplete (read %d bytes)\n", bytes_read);
+        call_named_pipe_close(fd);
+        return -1;
+    }
+
+    for (int i = 0; i < 2000 - 1024; i++)
+    {
+        if (buffer[i] != ('A' + ((i + 1024) % 26)))
+        {
+            print(0xFFFFFF, "Full Buffer Reader 2: Data corruption at position %d\n", i);
+            call_named_pipe_close(fd);
+            return -1;
+        }
+    }
+
+    print(0xFFFFFF, "Full Buffer Reader 2: Successfully read and verified %d bytes (because it returns EOF dipshit)\n", bytes_read);
 
     call_named_pipe_close(fd);
     return 0;
@@ -152,7 +189,7 @@ void test_edge_cases()
     call_waitpid(writer_pid);
 
     //     Test buffer overflow attempt
-    print(0xFFFFFF, "\nTesting buffer overflow handling...\n");
+    print(0xFFFFFF, "\nTesting another case for overflow buffer...\n");
 
     if (call_named_pipe_create(PIPE_NAME) < 0)
     {
@@ -160,14 +197,21 @@ void test_edge_cases()
         return;
     }
 
-    writer_pid = call_create_process(overflow_writer, 0, 1, empty_args, 0);
+    reader_pid = call_create_process(full_biffer_reader_2, 0, 1, empty_args, 0);
+    writer_pid = call_create_process(full_buffer_writer, 0, 1, empty_args, 0);
     if (writer_pid == -1)
     {
         print(0xFFFFFF, "FAIL: Failed to create overflow writer process\n");
         return;
     }
+    if (reader_pid == -1)
+    {
+        print(0xFFFFFF, "FAIL: Failed to create overflow reader process\n");
+        return;
+    }
 
     call_waitpid(writer_pid);
+    call_waitpid(reader_pid);
     print(0xFFFFFF, "Edge case tests completed!\n\n");
 }
 

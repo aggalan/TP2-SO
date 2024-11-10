@@ -67,7 +67,7 @@ int named_pipe_create(char *name)
             pipe->read_pos = 0;
             pipe->write_sem = my_sem_init(1);
             pipe->read_sem = my_sem_init(0);
-            pipe->ref_count = 0;
+            pipe->end_closed = 0;
 
             pipe->read_pid = -1;
             pipe->write_pid = -1;
@@ -101,7 +101,6 @@ int named_pipe_open(char *name, int mode)
             {
                 return -1;
             }
-            global_pipe_table[i]->ref_count++;
 
             return global_pipe_table[i]->fd;
         }
@@ -122,11 +121,13 @@ void named_pipe_close(int fd)
     if (pipe->write_pid == pid)
     {
         pipe->write_pid = -1;
+        pipe->end_closed = 1;
         my_sem_post(pipe->read_sem); 
     }
     else if (pipe->read_pid == pid)
     {
         pipe->read_pid = -1;
+        pipe->end_closed = 1;
         my_sem_post(pipe->write_sem); 
     }
     else
@@ -134,8 +135,7 @@ void named_pipe_close(int fd)
         return;
     }
 
-    pipe->ref_count--;
-    if (pipe->ref_count == 0)
+    if (pipe->read_pid == -1 && pipe->write_pid == -1)
     {
         global_pipe_table[pipe->index] = NULL;
         mm_free(pipe->buff);
@@ -159,7 +159,7 @@ ssize_t pipe_read(int fd, char *buff, size_t bytes_r)
 
     pid_t pid = get_current_pid();
 
-    if (pipe->read_pid != pid)
+    if (pipe->read_pid != pid || (pipe->end_closed && pipe->read_pos == pipe->write_pos)) //por si lo llamann dsp se va a quedar bloqueado y sin razon
     {
         return -1;
     }
@@ -192,7 +192,7 @@ ssize_t pipe_write(int fd, const char *buff, size_t bytes_w)
 
     pid_t pid = get_current_pid();
 
-    if ((pipe->write_pid != pid || pipe->read_pid == -1))
+    if (pipe->write_pid != pid || pipe->end_closed)
     {
         return -1;
     }
@@ -239,8 +239,8 @@ int anon_pipe_create()
     pipe->read_pos = 0;
     pipe->write_sem = my_sem_init(1);
     pipe->read_sem = my_sem_init(0);
-    pipe->ref_count = 0;
     pipe->index = -1;
+    pipe->end_closed = 0;
 
     pipe->read_pid = -1;
     pipe->write_pid = -1;
@@ -279,19 +279,21 @@ void signal_anon_pipe_close(pid_t pid, int fd)
     if (pipe->read_pid == pid)
     {
         pipe->read_pid = -1;
+        pipe->end_closed = 1;
         my_sem_post(pipe->write_sem);
     }
     else if (pipe->write_pid == pid)
     {
         pipe->write_pid = -1;
+        pipe->end_closed = 1;
         my_sem_post(pipe->read_sem);
     }
     else
     {
         return;
     }
-    pipe->ref_count--;
-    if (pipe->ref_count == 0)
+
+    if (pipe->read_pid == -1 && pipe->write_pid == -1)
     {
         fd_free(fd);
         mm_free(pipe->buff);
@@ -322,7 +324,6 @@ void signal_anon_pipe_open(pid_t pid, int fd, int end)
     {
         return;
     }
-    pipe->ref_count++;
 }
 
 void pipes_status()
