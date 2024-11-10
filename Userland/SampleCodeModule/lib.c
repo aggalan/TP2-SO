@@ -216,3 +216,73 @@ void int_to_str(uint64_t n, char *buffer)
     }
     buffer[len] = '\0';
 }
+
+void print_spaces(int count) {
+    for (int i = 0; i < count; i++) {
+        print(WHITE, " ");
+    }
+}
+
+int count_digits(unsigned long num, int base) {
+    if (num == 0) return 1;
+
+    int count = 0;
+    while (num > 0) {
+        num /= base;
+        count++;
+    }
+    return count;
+}
+
+void print_process_userland() {
+    process_list_t * list = call_get_process_list();
+    if (!list) return;
+
+    // Print header
+    print(WHITE, "There are %d processes in the system\n", list->count);
+    print(WHITE, "PID    NAME          PRIORITY   STACK BASE   RSP        STATE    GROUND\n");
+
+    // Print each process with exact spacing
+    for (size_t i = 0; i < list->count; i++) {
+        const process_info_t* proc = &list->processes[i];
+
+        // Print PID with padding
+        print(WHITE, "%d", proc->pid);
+        print_spaces(7 - count_digits(proc->pid, 10));
+
+        // Print NAME with padding
+        print(WHITE, "%s", proc->name);
+        print_spaces(14 - str_len(proc->name));
+
+        // Print PRIORITY with padding
+        print(WHITE, "%d", proc->priority);
+        print_spaces(11 - count_digits(proc->priority, 10));
+
+        // Print STACK BASE with padding (assuming it's already a string)
+        print(WHITE, "%s", proc->stack_base);
+        print_spaces(13 - str_len(proc->stack_base));
+
+        // Print RSP with padding (assuming it's already a string)
+        print(WHITE, "%s", proc->rsp);
+        print_spaces(11 - str_len(proc->rsp));
+
+        // Print STATE with padding
+        const char* state_str;
+        switch (proc->state) {
+            case READY:   state_str = "READY";   break;
+            case BLOCKED: state_str = "BLOCKED"; break;
+            case RUNNING: state_str = "RUNNING"; break;
+            case ZOMBIE:  state_str = "ZOMBIE";  break;
+            case WAITING: state_str = "WAITING"; break;
+            case EXITED:  state_str = "EXITED";  break;
+            case BLOCKED_IO: state_str = "BLOCKED IO"; break;
+            default:      state_str = "UNKNOWN"; break;
+        }
+        print(WHITE, "%s", state_str);
+        print_spaces(9 - str_len(state_str));
+
+        // Print GROUND
+        print(WHITE, "%s\n", proc->ground == 0 ? "BACKGROUND" : "FOREGROUND");
+    }
+
+}

@@ -49,6 +49,8 @@ syscall_func_t syscalls[] = {
     [40] = (syscall_func_t)irq_pipe_read,
     [41] = (syscall_func_t)irq_pipe_write,
     [42] = (syscall_func_t)irq_anon_pipe_create,
+    [43] = (syscall_func_t)irq_get_process_list,
+    [44] = (syscall_func_t) irq_free_process_list,
 };
 
 static void int_20();

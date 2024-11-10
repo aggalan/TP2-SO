@@ -11,6 +11,7 @@
 #include "./collections/include/collections.h"
 #include "include/fd_manager.h"
 #include "include/pipe_manager.h"
+#include "include/lib.h"
 
 hash_map_ADT map;
 static pid_t pids = 0;
@@ -435,7 +436,10 @@ void print_processes()
 
                 print_kernel(WHITE, "%d          ", aux->value->priority);
 
-                address_to_string((void *)aux->value->base);
+                char address_buff[20];
+
+                address_to_string((void *)aux->value->base, address_buff);
+                print_kernel(WHITE, address_buff);
 
                 unsigned long beaut2 = aux->value->base;
                 m = 0;
@@ -449,7 +453,8 @@ void print_processes()
                     print_kernel(WHITE, " ");
                 }
 
-                address_to_string((void *)aux->value->rsp);
+                address_to_string((void *)aux->value->rsp, address_buff);
+                print_kernel(WHITE, address_buff);
 
                 beaut2 = aux->value->rsp;
                 m = 0;
@@ -505,5 +510,78 @@ void print_processes()
                 aux = aux->next;
             }
         }
+    }
+}
+
+
+
+const char* get_process_state_string(int state) {
+    switch (state) {
+        case READY:   return "READY";
+        case BLOCKED: return "BLOCKED";
+        case RUNNING: return "RUNNING";
+        case ZOMBIE:  return "ZOMBIE";
+        case WAITING: return "WAITING";
+        case EXITED:  return "EXITED";
+        case BLOCKED_IO: return "BLOCKED IO";
+        default:      return "UNKNOWN";
+    }
+}
+
+// Convert process ground to string
+const char* get_process_ground_string(int ground) {
+    return ground == 0 ? "BACKGROUND" : "FOREGROUND";
+}
+
+// Kernel function to get process information
+process_list_t* get_process_list() {
+    process_list_t* list = mm_malloc(sizeof(process_list_t));
+    if (!list) return NULL;
+
+    // Allocate space for maximum possible processes
+    list->processes = mm_malloc(sizeof(process_info_t) * map->size);
+    if (!list->processes) {
+        mm_free(list);
+        return NULL;
+    }
+
+    list->count = 0;
+
+    // Iterate through the process map
+    for (int i = 0, j = 0; j < map->size && i < MAX_MAP_SIZE; i++) {
+        if (map->PCB_arr[i] != NULL) {
+            map_node* aux = map->PCB_arr[i];
+
+            while (aux != NULL) {
+                process_info_t* proc = &list->processes[list->count];
+
+                // Copy process information
+                proc->pid = aux->key;
+                str_cpy(proc->name, aux->value->name);
+                proc->priority = aux->value->priority;
+                char address_buff[20];
+                address_to_string((void *)aux->value->base, address_buff);
+                str_cpy(proc->stack_base, address_buff);
+                address_to_string((void *)aux->value->rsp, address_buff);
+                str_cpy(proc->rsp, address_buff);
+                proc->state = aux->value->state;
+                proc->ground = aux->value->ground;
+
+                list->count++;
+                aux = aux->next;
+            }
+        }
+    }
+
+    return list;
+}
+
+// Helper function to free process list
+void free_process_list(process_list_t* list) {
+    if (list) {
+        if (list->processes) {
+            mm_free(list->processes);
+        }
+        mm_free(list);
     }
 }

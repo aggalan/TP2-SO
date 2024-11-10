@@ -71,5 +71,7 @@ ssize_t irq_pipe_write(int rsi, char *rdx, size_t rcx);
 char irq_get_char_at(int rsi);
 int irq_get_buffer_position();
 int irq_anon_pipe_create();
+process_list_t* irq_get_process_list();
+void irq_free_process_list(process_list_t* rsi);
 
 #endif // TPE_SYSCALLS_H

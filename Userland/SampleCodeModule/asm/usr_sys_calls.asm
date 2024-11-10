@@ -44,6 +44,8 @@ GLOBAL call_get_char_at
 GLOBAL call_get_buffer_position
 GLOBAL call_anon_pipe_create
 GLOBAL call_pipes_status
+GLOBAL call_get_process_list
+GLOBAL call_free_process_list
 
 
 section .text
@@ -147,6 +149,10 @@ call_pipe_write:
     call_to_handler 41
 call_anon_pipe_create:
     call_to_handler 42
+call_get_process_list:
+    call_to_handler 43
+call_free_process_list:
+    call_to_handler 44
 
 
 

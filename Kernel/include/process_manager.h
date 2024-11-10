@@ -48,6 +48,21 @@ typedef struct child_node
     struct child_node *next;
 } child_node;
 
+typedef struct process_info {
+    pid_t pid;
+    char name[32];
+    int priority;
+    char stack_base[20];
+    char rsp[20];
+    int state;
+    int ground;
+} process_info_t;
+
+typedef struct process_list {
+    process_info_t* processes;
+    size_t count;
+} process_list_t;
+
 pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int ground);
 
 pid_t kill_process();
@@ -75,6 +90,10 @@ int remove_pcb(pid_t key);
 PCB *find_pcb(pid_t key);
 
 void print_processes();
+
+process_list_t* get_process_list();
+
+void free_process_list(process_list_t* list);
 
 void kill_foreground_process();
 

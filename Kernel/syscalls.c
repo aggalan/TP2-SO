@@ -352,3 +352,11 @@ void irq_pipes_status()
 {
     pipes_status();
 }
+
+process_list_t* irq_get_process_list() {
+    return get_process_list();
+}
+
+void irq_free_process_list(process_list_t* list) {
+    free_process_list(list);
+}

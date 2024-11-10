@@ -15,7 +15,7 @@ static int ampersen_searcher(char *str);
 
 void cmd_ps()
 {
-    call_ps();
+    print_process_userland();
 }
 
 void cmd_print_registers()

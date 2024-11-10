@@ -49,7 +49,7 @@ void move_cursor_y(uint16_t posY);
 void draw_register(int reg, uint32_t colour);
 
 void draw_word_white(char *string);
-void address_to_string(void *ptr);
+void address_to_string(void *ptr, char * buffer);
 void draw_number(int value);
 void draw_number_color(int value, uint64_t fcolor, uint64_t bcolor);
 void int_to_str(int value, char *str, int base);

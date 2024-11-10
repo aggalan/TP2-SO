@@ -8,6 +8,34 @@
 #define EOF -1
 #define WHITE 0xFFFFFF
 
+
+typedef struct process_info {
+    pid_t pid;
+    char name[32];
+    int priority;
+    char stack_base[20];
+    char rsp[20];
+    int state;
+    int ground;
+} process_info_t;
+
+typedef struct process_list {
+    process_info_t* processes;
+    size_t count;
+} process_list_t;
+
+enum State
+{
+    BLOCKED,
+    READY,
+    RUNNING,
+    ZOMBIE,
+    KILLED,
+    WAITING,
+    EXITED,
+    BLOCKED_IO
+};
+
 // Reads a character from input and saves it in the pointer c.
 // Returns the number of characters saved.
 int getC(char *c);
@@ -55,5 +83,7 @@ void str_to_upper(char *str);
 void loop();
 
 void int_to_str(uint64_t num, char *buffer);
+
+void print_process_userland();
 
 #endif // TPE_LIB_H

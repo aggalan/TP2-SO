@@ -127,4 +127,8 @@ int call_anon_pipe_create();
 
 void call_pipes_status();
 
+process_list_t* call_get_process_list();
+
+void call_free_process_list(process_list_t* list);
+
 #endif /* USERSYSCALLS_H */

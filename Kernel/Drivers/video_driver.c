@@ -194,11 +194,10 @@ void draw_word_white(char *string)
 	draw_word(default_f_color, string);
 }
 
-void address_to_string(void *ptr)
+void address_to_string(void *ptr, char * buffer)
 {
 	unsigned long address = (unsigned long)ptr;
 	char hex_chars[] = "0123456789ABCDEF";
-	char buffer[20];
 	int i = 0;
 	int start = 2;
 	buffer[0] = '0';
@@ -218,8 +217,6 @@ void address_to_string(void *ptr)
 		buffer[j] = buffer[k];
 		buffer[k] = temp;
 	}
-
-	print_kernel(WHITE, buffer);
 }
 
 void draw_number(int value)
