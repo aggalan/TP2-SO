@@ -48,7 +48,8 @@ typedef struct child_node
     struct child_node *next;
 } child_node;
 
-typedef struct process_info {
+typedef struct process_info
+{
     pid_t pid;
     char name[32];
     int priority;
@@ -58,8 +59,9 @@ typedef struct process_info {
     int ground;
 } process_info_t;
 
-typedef struct process_list {
-    process_info_t* processes;
+typedef struct process_list
+{
+    process_info_t *processes;
     size_t count;
 } process_list_t;
 
@@ -91,9 +93,9 @@ PCB *find_pcb(pid_t key);
 
 void print_processes();
 
-process_list_t* get_process_list();
+process_list_t *get_process_list();
 
-void free_process_list(process_list_t* list);
+void free_process_list(process_list_t *list);
 
 void kill_foreground_process();
 

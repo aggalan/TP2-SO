@@ -15,8 +15,9 @@ static int ampersen_searcher(char *str);
 
 void cmd_ps()
 {
-    process_list_t * list = print_process_userland();
-    if (list != NULL) {
+    process_list_t *list = print_process_userland();
+    if (list != NULL)
+    {
         call_free_process_list(list);
     }
 }

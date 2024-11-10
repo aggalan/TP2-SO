@@ -119,7 +119,7 @@ call_free:
     call_to_handler 26
 call_create_process:
     call_to_handler 27
-call_ps:
+call_free_process_list:
     call_to_handler 28
 call_get_current_pid:
     call_to_handler 29
@@ -151,8 +151,6 @@ call_anon_pipe_create:
     call_to_handler 42
 call_get_process_list:
     call_to_handler 43
-call_free_process_list:
-    call_to_handler 44
 
 
 

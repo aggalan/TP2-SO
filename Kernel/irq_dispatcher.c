@@ -34,7 +34,7 @@ syscall_func_t syscalls[] = {
     [25] = (syscall_func_t)irq_mm_malloc,
     [26] = (syscall_func_t)irq_mm_free,
     [27] = (syscall_func_t)irq_create_process,
-    [28] = (syscall_func_t)irq_print_processes,
+    [28] = (syscall_func_t)irq_free_process_list,
     [29] = (syscall_func_t)irq_get_current_pid,
     [30] = (syscall_func_t)irq_kill_process,
     [31] = (syscall_func_t)irq_nice,
@@ -50,7 +50,7 @@ syscall_func_t syscalls[] = {
     [41] = (syscall_func_t)irq_pipe_write,
     [42] = (syscall_func_t)irq_anon_pipe_create,
     [43] = (syscall_func_t)irq_get_process_list,
-    [44] = (syscall_func_t) irq_free_process_list,
+
 };
 
 static void int_20();

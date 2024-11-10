@@ -36,8 +36,14 @@ PCB *get_idle()
 pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int ground)
 {
 
+    if (map->size >= MAX_PROCESSES)
+    {
+        return -1;
+    }
+
     PCB *pcb = (PCB *)mm_malloc(sizeof(PCB));
-    if (pcb == NULL) {
+    if (pcb == NULL)
+    {
         return -1;
     }
 
@@ -403,159 +409,36 @@ void kill_foreground_process()
     }
 }
 
-void print_processes()
+const char *get_process_ground_string(int ground)
 {
-    print_kernel(WHITE, "There are %d processes in the system\n", map->size);
-    print_kernel(WHITE, "PID    NAME          PRIORITY   STACK BASE   RSP        STATE    GROUND\n");
-
-    for (int i = 0, j = 0; j < map->size && i < MAX_MAP_SIZE; i++)
-    {
-        if (map->PCB_arr[i] != NULL)
-        {
-            map_node *aux = map->PCB_arr[i];
-            while (aux != NULL)
-            {
-                print_kernel(WHITE, "%d", aux->key);
-
-                pid_t beaut = aux->key;
-                int m = 0;
-                while (beaut / 10 > 0)
-                {
-                    beaut = beaut / 10;
-                    m++;
-                }
-                for (int z = 0; z < (6 - m); z++)
-                {
-                    print_kernel(WHITE, " ");
-                }
-                print_kernel(WHITE, "%s", aux->value->name);
-                for (int z = 0; z < 14 - str_len(aux->value->name); z++)
-                {
-                    print_kernel(WHITE, " ");
-                }
-
-                print_kernel(WHITE, "%d          ", aux->value->priority);
-
-                char address_buff[20];
-
-                address_to_string((void *)aux->value->base, address_buff);
-                print_kernel(WHITE, address_buff);
-
-                unsigned long beaut2 = aux->value->base;
-                m = 0;
-                while (beaut2 / 16 > 0)
-                {
-                    beaut2 = beaut2 / 16;
-                    m++;
-                }
-                for (int z = 0; z < (10 - m); z++)
-                {
-                    print_kernel(WHITE, " ");
-                }
-
-                address_to_string((void *)aux->value->rsp, address_buff);
-                print_kernel(WHITE, address_buff);
-
-                beaut2 = aux->value->rsp;
-                m = 0;
-                while (beaut2 / 16 > 0)
-                {
-                    beaut2 = beaut2 / 16;
-                    m++;
-                }
-                for (int z = 0; z < (8 - m); z++)
-                {
-                    print_kernel(WHITE, " ");
-                }
-
-                char *buff = NULL;
-                switch (aux->value->state)
-                {
-                case READY:
-                    buff = "READY";
-                    break;
-                case BLOCKED:
-                    buff = "BLOCKED";
-                    break;
-                case RUNNING:
-                    buff = "RUNNING";
-                    break;
-                case ZOMBIE:
-                    buff = "ZOMBIE";
-                    break;
-                case WAITING:
-                    buff = "WAITING";
-                    break;
-                case EXITED:
-                    buff = "EXITED";
-                    break;
-                }
-                print_kernel(WHITE, "%s", buff);
-                for (int z = 0; z < 9 - str_len(buff); z++)
-                {
-                    print_kernel(WHITE, " ");
-                }
-
-                switch (aux->value->ground)
-                {
-                case 0:
-                    print_kernel(WHITE, "BACKGROUND");
-                    break;
-                case 1:
-                    print_kernel(WHITE, "FOREGROUND");
-                    break;
-                }
-                print_kernel(WHITE, "\n");
-                j++;
-                aux = aux->next;
-            }
-        }
-    }
-}
-
-
-
-const char* get_process_state_string(int state) {
-    switch (state) {
-        case READY:   return "READY";
-        case BLOCKED: return "BLOCKED";
-        case RUNNING: return "RUNNING";
-        case ZOMBIE:  return "ZOMBIE";
-        case WAITING: return "WAITING";
-        case EXITED:  return "EXITED";
-        case BLOCKED_IO: return "BLOCKED IO";
-        default:      return "UNKNOWN";
-    }
-}
-
-// Convert process ground to string
-const char* get_process_ground_string(int ground) {
     return ground == 0 ? "BACKGROUND" : "FOREGROUND";
 }
 
-// Kernel function to get process information
-process_list_t* get_process_list() {
-    process_list_t* list = mm_malloc(sizeof(process_list_t));
-    if (!list) return NULL;
+process_list_t *get_process_list()
+{
+    process_list_t *list = mm_malloc(sizeof(process_list_t));
+    if (!list)
+        return NULL;
 
-    // Allocate space for maximum possible processes
     list->processes = mm_malloc(sizeof(process_info_t) * map->size);
-    if (!list->processes) {
+    if (!list->processes)
+    {
         mm_free(list);
         return NULL;
     }
 
     list->count = 0;
 
-    // Iterate through the process map
-    for (int i = 0, j = 0; j < map->size && i < MAX_MAP_SIZE; i++) {
-        if (map->PCB_arr[i] != NULL) {
-            map_node* aux = map->PCB_arr[i];
+    for (int i = 0, j = 0; j < map->size && i < MAX_MAP_SIZE; i++)
+    {
+        if (map->PCB_arr[i] != NULL)
+        {
+            map_node *aux = map->PCB_arr[i];
 
-            while (aux != NULL) {
-                process_info_t* proc = &list->processes[list->count];
+            while (aux != NULL)
+            {
+                process_info_t *proc = &list->processes[list->count];
 
-                // Copy process information
                 proc->pid = aux->key;
                 str_cpy(proc->name, aux->value->name);
                 proc->priority = aux->value->priority;
@@ -576,10 +459,12 @@ process_list_t* get_process_list() {
     return list;
 }
 
-// Helper function to free process list
-void free_process_list(process_list_t* list) {
-    if (list) {
-        if (list->processes) {
+void free_process_list(process_list_t *list)
+{
+    if (list)
+    {
+        if (list->processes)
+        {
             mm_free(list->processes);
         }
         mm_free(list);

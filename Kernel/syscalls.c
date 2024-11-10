@@ -207,7 +207,7 @@ int irq_beep()
     return 0;
 }
 
-memory_status_t * irq_mm_status()
+memory_status_t *irq_mm_status()
 {
     return mm_status();
 }
@@ -272,12 +272,6 @@ int irq_mm_free(void *rsi)
 pid_t irq_create_process(uint64_t rsi, int *rdx, uint64_t rcx, char **r8, int r9)
 {
     return create_process(rsi, rdx, rcx, r8, r9);
-}
-
-int irq_print_processes()
-{
-    print_processes();
-    return 0;
 }
 
 pid_t irq_get_current_pid()
@@ -352,10 +346,12 @@ void irq_pipes_status()
     pipes_status();
 }
 
-process_list_t* irq_get_process_list() {
+process_list_t *irq_get_process_list()
+{
     return get_process_list();
 }
 
-void irq_free_process_list(process_list_t* list) {
+void irq_free_process_list(process_list_t *list)
+{
     free_process_list(list);
 }

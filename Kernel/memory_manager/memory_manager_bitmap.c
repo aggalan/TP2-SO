@@ -163,10 +163,11 @@ void mm_free(void *ptr)
     } while (index < mm.blocks && mm.bitmap[index] == ALLOCATED);
 }
 
-memory_status_t * mm_status()
+memory_status_t *mm_status()
 {
-    memory_status_t* info = mm_malloc(sizeof(memory_status_t));
-    if (info == NULL) return NULL;
+    memory_status_t *info = mm_malloc(sizeof(memory_status_t));
+    if (info == NULL)
+        return NULL;
 
     info->total_memory = mm.status.total_memory;
     info->used_memory = mm.status.used_memory;

@@ -41,7 +41,7 @@ int irq_draw_rectangle(uint32_t rsi, uint32_t rdx, uint32_t rcx, uint32_t r8, ui
 int irq_sleepms(uint32_t rsi);
 int irq_set_font_size(uint32_t rsi);
 int irq_beep();
-memory_status_t * irq_mm_status();
+memory_status_t *irq_mm_status();
 int case_17();
 void irq_pipes_status();
 int irq_annihilate();
@@ -54,7 +54,6 @@ int irq_change_priority(pid_t rsi, uint8_t rdx);
 uint64_t irq_mm_malloc(uint32_t rsi);
 int irq_mm_free(void *rsi);
 pid_t irq_create_process(uint64_t rsi, int *rdx, uint64_t rcx, char **r8, int r9);
-int irq_print_processes();
 pid_t irq_get_current_pid();
 pid_t irq_kill_process();
 void irq_nice();
@@ -71,7 +70,7 @@ ssize_t irq_pipe_write(int rsi, char *rdx, size_t rcx);
 char irq_get_char_at(int rsi);
 int irq_get_buffer_position();
 int irq_anon_pipe_create();
-process_list_t* irq_get_process_list();
-void irq_free_process_list(process_list_t* rsi);
+process_list_t *irq_get_process_list();
+void irq_free_process_list(process_list_t *rsi);
 
 #endif // TPE_SYSCALLS_H

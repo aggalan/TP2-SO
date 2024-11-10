@@ -168,10 +168,11 @@ void mm_free(void *ptr)
     free_lists[order - MIN_ORDER] = block;
 }
 
-memory_status_t * mm_status()
+memory_status_t *mm_status()
 {
-    memory_status_t* info = mm_malloc(sizeof(memory_status_t));
-    if (info == NULL) return NULL;
+    memory_status_t *info = mm_malloc(sizeof(memory_status_t));
+    if (info == NULL)
+        return NULL;
 
     info->total_memory = memory_status.total_memory;
     info->used_memory = memory_status.used_memory;

@@ -28,6 +28,6 @@ typedef enum block_status
 void *mm_malloc(uint32_t size);
 void mm_free(void *ptr);
 void mm_init(void *mem_start, uint64_t mem_size);
-memory_status_t * mm_status();
+memory_status_t *mm_status();
 
 #endif
