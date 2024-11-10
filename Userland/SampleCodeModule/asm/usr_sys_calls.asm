@@ -43,7 +43,6 @@ GLOBAL call_pipe_write
 GLOBAL call_get_char_at
 GLOBAL call_get_buffer_position
 GLOBAL call_anon_pipe_create
-GLOBAL call_pipes_status
 GLOBAL call_get_process_list
 GLOBAL call_free_process_list
 
@@ -99,7 +98,7 @@ call_annihilate:
     call_to_handler 16
 call_get_buffer_position:
     call_to_handler 17
-call_pipes_status:
+call_get_process_list:
     call_to_handler 18
 call_block:
     call_to_handler 19
@@ -149,8 +148,6 @@ call_pipe_write:
     call_to_handler 41
 call_anon_pipe_create:
     call_to_handler 42
-call_get_process_list:
-    call_to_handler 43
 
 
 

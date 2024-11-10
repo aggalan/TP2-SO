@@ -9,6 +9,10 @@
 #define EOF -1
 #define WHITE 0xFFFFFF
 
+#define STDIN 0
+#define STDOUT 1
+#define STDERR 2
+
 
 typedef struct process_info {
     pid_t pid;

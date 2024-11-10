@@ -5,7 +5,6 @@
 #include "include/keyboard_buffer.h"
 #include "include/libasm.h"
 #include <naive_console.h>
-#include "include/fd_manager.h"
 #include "include/pipe_manager.h"
 #include "include/scheduler.h"
 #define EOF -1
@@ -212,16 +211,6 @@ memory_status_t *irq_mm_status()
     return mm_status();
 }
 
-int case_17()
-{
-    return 0;
-}
-
-int case_18()
-{
-    return 0;
-}
-
 int irq_annihilate()
 {
     annihilate();
@@ -241,11 +230,6 @@ pid_t irq_unblock_process(pid_t rsi)
 pid_t irq_kill_process_pid(pid_t rsi)
 {
     return kill_process_pid(rsi);
-}
-
-int case_22()
-{
-    return 0;
 }
 
 pid_t irq_wait_pid(pid_t rsi)
@@ -340,10 +324,6 @@ char irq_get_char_at(int rsi)
 int irq_get_buffer_position()
 {
     return get_buffer_position();
-}
-void irq_pipes_status()
-{
-    pipes_status();
 }
 
 process_list_t *irq_get_process_list()

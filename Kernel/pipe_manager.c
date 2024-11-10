@@ -325,17 +325,3 @@ void signal_anon_pipe_open(pid_t pid, int fd, int end)
         return;
     }
 }
-
-void pipes_status()
-{
-    print_kernel(WHITE, "Pipes status:\n");
-    for (int i = 0; i < MAX_PIPES; i++)
-    {
-        if (global_pipe_table[i] != NULL)
-        {
-            print_kernel(WHITE, "Pipe %d: %s\n", i, global_pipe_table[i]->name);
-        }
-
-    }
-    print_kernel(WHITE, "No pipes opened\n");
-}

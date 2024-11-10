@@ -24,7 +24,7 @@ syscall_func_t syscalls[] = {
     [15] = (syscall_func_t)irq_mm_status,
     [16] = (syscall_func_t)irq_annihilate,
     [17] = (syscall_func_t)irq_get_buffer_position,
-    [18] = (syscall_func_t)irq_pipes_status,
+    [18] = (syscall_func_t)irq_get_process_list,
     [19] = (syscall_func_t)irq_block_process,
     [20] = (syscall_func_t)irq_unblock_process,
     [21] = (syscall_func_t)irq_kill_process_pid,
@@ -49,7 +49,6 @@ syscall_func_t syscalls[] = {
     [40] = (syscall_func_t)irq_pipe_read,
     [41] = (syscall_func_t)irq_pipe_write,
     [42] = (syscall_func_t)irq_anon_pipe_create,
-    [43] = (syscall_func_t)irq_get_process_list,
 
 };
 

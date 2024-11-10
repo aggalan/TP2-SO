@@ -58,7 +58,7 @@ static command_t commands[] = {
     {"filter", filter_process, "Filters the input received.", true},
     {"wc", wc_process, "Counts the words in the input received.", true},
     {"red", turn_red, "To test the anonymous pipe. It reads from stdin and prints to the screen in red.", true},
-    {"pipes_status", call_pipes_status, "Displays the status of the pipes in the system.", true}};
+    };
 
 static command_t tests[] = {
     {"mem", mm_test, "Runs the memory test.", false},

@@ -7,10 +7,6 @@
 #ifndef USERSYSCALLS_H
 #define USERSYSCALLS_H
 
-#define STDIN 0
-#define STDOUT 1
-#define STDERR 2
-
 // Reads data from a file descriptor into the kernels buffer
 ssize_t call_sys_read(int fd, char *buf, int size);
 
@@ -124,8 +120,6 @@ ssize_t call_pipe_read(int fd, char *buff, size_t bytes_r);
 ssize_t call_pipe_write(int fd, char *buff, size_t bytes_w);
 
 int call_anon_pipe_create();
-
-void call_pipes_status();
 
 process_list_t* call_get_process_list();
 
