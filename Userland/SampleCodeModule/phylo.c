@@ -23,11 +23,11 @@ typedef enum
     THINKING,
     HUNGRY,
     EATING
-} State;
+} state_phylo;
 
 int global_count;
 
-State philo_state[MAX_PHYLO];
+state_phylo philo_state[MAX_PHYLO];
 int philo_pid[MAX_PHYLO];
 int sem_philo[MAX_PHYLO];
 int mutex;
