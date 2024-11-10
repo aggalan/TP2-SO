@@ -71,7 +71,7 @@ void call_move_cursor_x(uint16_t posX);
 // Gets the elapsed time since some reference point in milliseconds
 int call_get_ticks();
 
-void call_status();
+memory_status_t * call_status();
 
 void call_annihilate();
 

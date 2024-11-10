@@ -163,8 +163,16 @@ void mm_free(void *ptr)
     } while (index < mm.blocks && mm.bitmap[index] == ALLOCATED);
 }
 
-void mm_status()
+memory_status_t * mm_status()
 {
-    print_kernel(WHITE, "Running on Bitmap System\n TOTAL: %d\n USED: %d\n FREE: %d\n", mm.status.total_memory, mm.status.used_memory, mm.status.free_memory);
+    memory_status_t* info = mm_malloc(sizeof(memory_status_t));
+    if (info == NULL) return NULL;
+
+    info->total_memory = mm.status.total_memory;
+    info->used_memory = mm.status.used_memory;
+    info->free_memory = mm.status.free_memory;
+    str_cpy(info->allocator_type, "Bitmap System");
+
+    return info;
 }
 #endif

@@ -39,7 +39,7 @@ void turn_red();
 static command_t commands[] = {
     {"help", cmd_help, "Displays this help message.", true},
     {"clear", call_clear, "Clears the screen.", false},
-    {"status", call_status, "Displays the status of the memory in the system.", true},
+    {"status", memory_status_userland, "Displays the status of the memory in the system.", true},
     {"tests", cmd_tests, "Displays runnable tests", false},
     {"ps", cmd_ps, "Displays the processes in the system.", true},
     {"time", cmd_time, "Displays the current time.", true},

@@ -279,3 +279,15 @@ process_list_t * print_process_userland() {
     return list;
 
 }
+
+void memory_status_userland() {
+    memory_status_t * info = call_status();
+    if (info == NULL) return;
+
+    print(WHITE,"Running on %s\n", info->allocator_type);
+    print(WHITE,"TOTAL: %d\n", info->total_memory);
+    print(WHITE,"USED: %d\n", info->used_memory);
+    print(WHITE,"FREE: %d\n", info->free_memory);
+
+    call_free(info);
+}

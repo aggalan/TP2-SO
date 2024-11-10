@@ -15,6 +15,7 @@ typedef struct memory_status_t
     uint64_t total_memory;
     uint64_t used_memory;
     uint64_t free_memory;
+    char allocator_type[20];
 } memory_status_t;
 
 typedef enum block_status
@@ -27,6 +28,6 @@ typedef enum block_status
 void *mm_malloc(uint32_t size);
 void mm_free(void *ptr);
 void mm_init(void *mem_start, uint64_t mem_size);
-void mm_status();
+memory_status_t * mm_status();
 
 #endif

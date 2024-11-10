@@ -168,15 +168,16 @@ void mm_free(void *ptr)
     free_lists[order - MIN_ORDER] = block;
 }
 
-void mm_status()
+memory_status_t * mm_status()
 {
-    print_kernel(WHITE, "Running on Buddy System\n"
-                        "Memory Status:\n"
-                        "Total Memory: %d\n"
-                        "Used Memory: %d\n"
-                        "Free Memory: %d\n",
-                 memory_status.total_memory,
-                 memory_status.used_memory,
-                 memory_status.free_memory);
+    memory_status_t* info = mm_malloc(sizeof(memory_status_t));
+    if (info == NULL) return NULL;
+
+    info->total_memory = memory_status.total_memory;
+    info->used_memory = memory_status.used_memory;
+    info->free_memory = memory_status.free_memory;
+    str_cpy(info->allocator_type, "Buddy System");
+
+    return info;
 }
 #endif

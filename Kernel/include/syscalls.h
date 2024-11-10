@@ -41,7 +41,7 @@ int irq_draw_rectangle(uint32_t rsi, uint32_t rdx, uint32_t rcx, uint32_t r8, ui
 int irq_sleepms(uint32_t rsi);
 int irq_set_font_size(uint32_t rsi);
 int irq_beep();
-int irq_mm_status();
+memory_status_t * irq_mm_status();
 int case_17();
 void irq_pipes_status();
 int irq_annihilate();

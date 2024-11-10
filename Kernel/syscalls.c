@@ -207,10 +207,9 @@ int irq_beep()
     return 0;
 }
 
-int irq_mm_status()
+memory_status_t * irq_mm_status()
 {
-    mm_status();
-    return 0;
+    return mm_status();
 }
 
 int case_17()

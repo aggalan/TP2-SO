@@ -25,6 +25,14 @@ typedef struct process_list {
     size_t count;
 } process_list_t;
 
+typedef struct memory_status_t
+{
+    uint64_t total_memory;
+    uint64_t used_memory;
+    uint64_t free_memory;
+    char allocator_type[20];
+} memory_status_t;
+
 enum State
 {
     BLOCKED,
@@ -86,5 +94,7 @@ void loop();
 void int_to_str(uint64_t num, char *buffer);
 
 process_list_t * print_process_userland();
+
+void memory_status_userland();
 
 #endif // TPE_LIB_H
