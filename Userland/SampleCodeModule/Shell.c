@@ -161,9 +161,24 @@ void line_read(char *buffer, int *fds)
 
 void turn_red()
 {
-    char buff[3000] = {0};
-    call_sys_read(STDIN, buff, 3000);
-    call_sys_write(STDOUT, buff, str_len(buff), RED);
+    char c;
+    ssize_t status = -1;
+    char command[3000] = {0};
+    int i = 0;
+    do
+    {
+        status = getC(&c);
+        if (c != 0 && c != -1)
+        {
+            putC(c, WHITE);
+            command[i++] = c;
+        }
+
+    } while (status != EOF);
+    print(WHITE, "\n");
+    command[i] = '\0';
+    print(RED, "%s", command);
+    putC('\n', WHITE);
 }
 
 void piped_line_read(char *buffer)

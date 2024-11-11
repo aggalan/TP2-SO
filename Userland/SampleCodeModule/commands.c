@@ -326,7 +326,7 @@ void cat()
                 command[0] = '\0';
             }
         }
-    } while (status != EOF && status != 0);
+    } while (status != EOF);
     putC('\n', WHITE);
     return;
 }
@@ -355,7 +355,7 @@ void filter()
             }
         }
 
-    } while (status != EOF && status != 0);
+    } while (status != EOF);
     print(WHITE, "\n");
     command[i] = '\0';
     print(WHITE, "%s", command);
