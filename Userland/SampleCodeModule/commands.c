@@ -9,7 +9,7 @@
 #include "include/eliminator.h"
 #include "include/phylo.h"
 
-#define MAX_LENGTH 1024
+#define MAX_LENGTH 3000
 
 static int ampersen_searcher(char *str);
 
@@ -397,15 +397,15 @@ void turn_red()
         status = getC(&c);
         if (c != 0 && c != -1)
         {
-            putC(c, WHITE);
-            command[i++] = c;
+            putC(c, 0xff0000);
+//            command[i++] = c;
         }
 
     } while (status != EOF);
     print(WHITE, "\n");
-    command[i] = '\0';
-    print(RED, "%s", command);
-    putC('\n', WHITE);
+//    command[i] = '\0';
+//    print(RED, "%s", command);
+//    putC('\n', WHITE);
 }
 
 static int ampersen_searcher(char *input)
