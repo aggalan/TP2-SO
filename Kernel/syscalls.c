@@ -15,7 +15,12 @@ ssize_t shell_read(char *save, int len);
 
 ssize_t sys_write(int descriptor, const char *str, int len, uint32_t hexColor)
 {
-    fd_entry *entry = fd_get_entry(descriptor); // agregar chequeo de error, y ver porq aca misticamente no anda
+    fd_entry *entry = fd_get_entry(descriptor);
+    if (entry == NULL)
+    {
+        draw_word(0x00ff0000, "no such descriptor");
+        return -1;
+    }
     switch (entry->fd_type)
     {
     case STDOUT:
@@ -45,6 +50,11 @@ ssize_t sys_write(int descriptor, const char *str, int len, uint32_t hexColor)
 ssize_t sys_read(int descriptor, char *save, int len)
 {
     fd_entry *entry = fd_get_entry(descriptor);
+    if (entry == NULL)
+    {
+        draw_word(0x00ff0000, "no such descriptor");
+        return -1;
+    }
     switch (entry->fd_type)
     {
     case STDIN:
