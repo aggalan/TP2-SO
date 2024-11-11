@@ -173,7 +173,7 @@ ssize_t pipe_read(int fd, char *buff, size_t bytes_r)
             pipe->read_pos = (pipe->read_pos + 1) % BUFFER_SIZE;
         }
         else if (pipe->write_pid == -1) {
-            return 0;
+            return -1;
         }
         my_sem_post(pipe->write_sem);
     }
