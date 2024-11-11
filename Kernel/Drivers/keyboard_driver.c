@@ -22,6 +22,7 @@
 
 static uint8_t key_map_row = 0;
 static uint8_t control_pressed = 0;
+int keyboard_sem_id = -1;
 
 static uint8_t scancode_to_ascii[] = {
 
@@ -48,6 +49,16 @@ static uint8_t scancode_shift_to_ascii[] = {
 };
 
 static uint8_t *key_map[] = {scancode_to_ascii, scancode_shift_to_ascii};
+
+
+void keyboard_init() {
+    keyboard_sem_id = my_sem_init(0);
+}
+
+int get_keyboard_sem() {
+    return keyboard_sem_id;
+}
+
 
 void keyboard_handler()
 {
@@ -103,7 +114,7 @@ void keyboard_handler()
         buff[buff_pos] = EOF;
         inc_buffer_len(1);
         print_kernel(WHITE, "^D\n");
-        wake_up_shell();
+        my_sem_post(keyboard_sem_id);
       }
     }
     else if (key_map[key_map_row][code] != 0)
@@ -111,7 +122,7 @@ void keyboard_handler()
       buff[buff_pos] = key_map[key_map_row][code];
       inc_buffer_len(1);
       set_pos(buff_pos);
-      wake_up_shell();
+      my_sem_post(keyboard_sem_id);
     }
   }
   else

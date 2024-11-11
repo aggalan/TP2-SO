@@ -99,8 +99,4 @@ void free_process_list(process_list_t *list);
 
 void kill_foreground_process();
 
-void block_shell_read();
-
-void wake_up_shell();
-
 #endif

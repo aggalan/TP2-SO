@@ -20,7 +20,6 @@ static pid_t pids = 0;
 PCB *idle_proc = NULL;
 PCB *shell_process;
 PCB *foreground_process = NULL;
-PCB *io_process = NULL;
 
 PCB *create_pcb(void *fn, uint8_t prio, uint64_t argc, char **argv);
 PCB *get_idle();
@@ -82,7 +81,6 @@ pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int grou
         }
         else if (fds[STDOUT] != STDOUT)
         {
-            io_process = pcb; // this is valid because we do not offer the possibility of duping fds. that is why this only happens when using anonymous pipes, where the shell blocks.
             signal_anon_pipe_open(pcb->pid, fds[STDOUT], STDOUT);
         }
     }
@@ -119,16 +117,13 @@ pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int grou
         add_pcb(pcb->pid, pcb);
         add_process(pcb, pcb->priority);
         shell_process = pcb;
-        io_process = pcb;
     }
 
     if (ground && pcb->ppid == 1)
     {
         foreground_process = pcb;
-        io_process = pcb;
         wait_pid(pcb->pid);
         foreground_process = NULL;
-        io_process = shell_process;
     }
 
     return pcb->pid;
@@ -279,12 +274,6 @@ void remove_child(PCB *parent, pid_t pid)
 
 pid_t block_process(pid_t pid)
 {
-
-    if (pid == 1)
-    {
-        return -1;
-    }
-
     PCB *pcb = find_pcb(pid);
     if (pcb == NULL)
     {
@@ -338,34 +327,6 @@ pid_t wait_pid(pid_t pid_to_wait)
     }
 
     return pcb->pid;
-}
-
-void block_shell_read()
-{
-    if (io_process != NULL && (io_process->state == RUNNING || io_process->state == READY) && shell_process->state == WAITING)
-    {
-        io_process->updated = 0;
-        io_process->state = BLOCKED_IO;
-        nice();
-    }
-    else if (shell_process->state == RUNNING || shell_process->state == READY)
-    {
-        shell_process->updated = 0;
-        shell_process->state = BLOCKED_IO;
-        nice();
-    }
-}
-
-void wake_up_shell()
-{
-    if (io_process->state == BLOCKED_IO)
-    {
-        io_process->state = READY;
-    }
-    else if (shell_process->state == BLOCKED_IO)
-    {
-        shell_process->state = READY;
-    }
 }
 
 void hash_map_init()

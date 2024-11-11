@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include "process_manager.h"
 #include "../Drivers/include/video_driver.h"
+#include "../include/lib.h"
 
 queue_sem_ADT qs_init()
 {

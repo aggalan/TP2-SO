@@ -237,7 +237,7 @@ void cmd_block(char *args)
         put_string("Usage: block <pid>\n", WHITE);
         return;
     }
-    if (call_block(str_to_int(pid_str)) == -1)
+    if (str_to_int(pid_str) == 1 || call_block(str_to_int(pid_str)) == -1)
     {
         put_string("Invalid pid.\n", WHITE);
     }

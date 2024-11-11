@@ -14,6 +14,7 @@
 #include "semaphores.h"
 #include "include/pipe_manager.h"
 #include "include/fd_manager.h"
+#include "../Drivers/include/keyboard_driver.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -69,9 +70,10 @@ int main()
 {
 	load_idt();
 	mm_init((void *)0x600000, 0x2700000);
-	sem_manager();
 	pipe_table_init();
 	fd_init();
+    sem_manager();
+    keyboard_init();
 	scheduler_init();
 	shell();
 

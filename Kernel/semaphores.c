@@ -142,7 +142,7 @@ int post(sem *semaphore)
     acquire(&semaphore->lock);
 
     pid_t pid = sem_remove(semaphore->blocked);
-    if (pid > 1)
+    if (pid >= 1)
     {
         unblock_process(pid);
         release(&semaphore->lock);

@@ -7,6 +7,7 @@
 #include <naive_console.h>
 #include "include/pipe_manager.h"
 #include "include/scheduler.h"
+#include "include/semaphores.h"
 #define EOF -1
 
 #define MIN(x, y) x < y ? x : y
@@ -89,7 +90,7 @@ ssize_t shell_read(char *save, int len)
         return 0;
     }
 
-    block_shell_read();
+    my_sem_wait(get_keyboard_sem());
 
     int n = get_buffer_position();
 
