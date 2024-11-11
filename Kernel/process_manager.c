@@ -67,23 +67,23 @@ pid_t create_process(uint64_t fn, int *fds, uint64_t argc, char **argv, int grou
     }
     if (fds == NULL)
     {
-        pcb->fds[0] = 0;
-        pcb->fds[1] = 1;
-        pcb->fds[2] = 2;
+        pcb->fds[STDIN] = STDIN;
+        pcb->fds[STDOUT] = STDOUT;
+        pcb->fds[ERROUT] = ERROUT;
     }
     else
     {
-        pcb->fds[0] = fds[0];
-        pcb->fds[1] = fds[1];
-        pcb->fds[2] = fds[2];
-        if (fds[0] != 0)
+        pcb->fds[STDIN] = fds[STDIN];
+        pcb->fds[STDOUT] = fds[STDOUT];
+        pcb->fds[ERROUT] = fds[ERROUT];
+        if (fds[STDIN] != STDIN)
         {
-            signal_anon_pipe_open(pcb->pid, fds[0], STDIN);
+            signal_anon_pipe_open(pcb->pid, fds[STDIN], STDIN);
         }
-        else if (fds[1] != 1)
+        else if (fds[STDOUT] != STDOUT)
         {
             io_process = pcb; // this is valid because we do not offer the possibility of duping fds. that is why this only happens when using anonymous pipes, where the shell blocks.
-            signal_anon_pipe_open(pcb->pid, fds[1], STDOUT);
+            signal_anon_pipe_open(pcb->pid, fds[STDOUT], STDOUT);
         }
     }
 

@@ -220,7 +220,6 @@ void piped_line_read(char *buffer)
             {
                 func2 = wc;
             }
-
             else
             {
                 func2 = commands[i].func;
@@ -260,13 +259,13 @@ void piped_line_read(char *buffer)
     static char *argv[] = {"P1"};
     static char *argv2[] = {"P2"};
     int *fds = (int *)call_malloc(sizeof(int) * 3);
-    fds[0] = 0;
-    fds[1] = fd;
-    fds[2] = 2;
+    fds[STDIN] = STDIN;
+    fds[STDOUT] = fd;
+    fds[STDERR] = STDERR;
     int *fds2 = (int *)call_malloc(sizeof(int) * 3);
-    fds2[0] = fd;
-    fds2[1] = 1;
-    fds2[2] = 2;
+    fds2[STDIN] = fd;
+    fds2[STDOUT] = STDOUT;
+    fds2[STDERR] = STDERR;
 
     pid_t pid1 = call_create_process(func1, fds, 1, argv, 0);
     pid_t pid2 = call_create_process(func2, fds2, 1, argv2, 0);
