@@ -159,7 +159,7 @@ ssize_t pipe_read(int fd, char *buff, size_t bytes_r)
 
     pid_t pid = get_current_pid();
 
-    if (pipe->read_pid != pid || (pipe->end_closed && pipe->read_pos == pipe->write_pos)) //por si lo llamann dsp se va a quedar bloqueado y sin razon
+    if (pipe->read_pid != pid || (pipe->end_closed && pipe->read_pos == pipe->write_pos))
     {
         return -1;
     }

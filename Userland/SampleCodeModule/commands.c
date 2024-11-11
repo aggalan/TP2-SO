@@ -92,7 +92,7 @@ void prio_test(char *args)
 
 void sync_test(char *args)
 {
-    // Malloc must be used here becauas eotherwise the reference to the argvs are lost
+    // Malloc must be used here because otherwise the reference to the argvs are lost
     char **argv_sync = (char **)(uintptr_t)call_malloc(4 * sizeof(char *));
 
     argv_sync[0] = (char *)call_malloc(sizeof(char) * (str_len("sync test") + 1));

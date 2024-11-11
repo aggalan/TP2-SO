@@ -18,7 +18,6 @@ int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
 void test_prio()
 {
    int64_t pids[TOTAL_PROCESSES];
-   //   char *argv[] = {"test"};
    char **mem_loc[TOTAL_PROCESSES];
    for (int i = 0; i < TOTAL_PROCESSES; i++)
    {
