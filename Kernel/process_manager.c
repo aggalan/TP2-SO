@@ -186,13 +186,13 @@ pid_t kill_process_pid(pid_t pid)
         return 0;
     }
 
-    if (pcb->fds[0] != 0)
+    if (pcb->fds[STDIN] != STDIN)
     {
-        signal_anon_pipe_close(pid, pcb->fds[0]);
+        signal_anon_pipe_close(pid, pcb->fds[STDIN]);
     }
-    else if (pcb->fds[1] != 1)
+    else if (pcb->fds[STDOUT] != STDOUT)
     {
-        signal_anon_pipe_close(pid, pcb->fds[1]);
+        signal_anon_pipe_close(pid, pcb->fds[STDOUT]);
     }
 
     abandon_children(pcb); // the children have been abandoned, the shell adopted them.
