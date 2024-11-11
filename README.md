@@ -7,23 +7,19 @@ Este proyecto forma parte de la asignatura 72.11 - Sistemas Operativos, y se bas
 Sigue los pasos a continuación para compilar y ejecutar el proyecto correctamente dentro del contenedor Docker provisto por la cátedra:
 
 1. Dirígete al directorio raíz del proyecto en el contenedor Docker.
-2. Accede a la carpeta `Toolchain` y ejecuta el siguiente comando para limpiar y compilar las herramientas necesarias:
-    ```bash
-    make clean all
-    ```
-3. Regresa al directorio raíz del proyecto y ejecuta:
+2. En el directorio raíz del proyecto ejecuta:
     ```bash
     make clean
     ```
-4. Para compilar el proyecto utilizando el gestor de memoria basado en **bitmap**, ejecuta:
+3. Para compilar el proyecto utilizando el gestor de memoria basado en **bitmap**, ejecuta:
     ```bash
     make all MM=BITMAP
     ```
-5. Para compilar el proyecto utilizando el gestor de memoria basado en **buddy**, ejecuta:
+4. Para compilar el proyecto utilizando el gestor de memoria basado en **buddy**, ejecuta:
     ```bash
     make all MM=BUDDY
     ```
-6. Corre el programa ejecutando el siguiente script:
+5. Salir del contenedor y correr el programa ejecutando el siguiente script:
     ```bash
     ./run.sh
     ```
@@ -31,6 +27,9 @@ Sigue los pasos a continuación para compilar y ejecutar el proyecto correctamen
     ```bash
     sudo ./run.sh
     ```
+
+## Aclaracion
+Si no se aclara un gestor de memoria, corre por defecto el Bitmap.
 
 ## Requisitos Previos
 
