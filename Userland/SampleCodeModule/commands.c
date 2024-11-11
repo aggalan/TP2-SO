@@ -386,6 +386,28 @@ void wc()
     put_string("\n", WHITE);
 }
 
+void turn_red()
+{
+    char c;
+    ssize_t status = -1;
+    char command[MAX_LENGTH] = {0};
+    int i = 0;
+    do
+    {
+        status = getC(&c);
+        if (c != 0 && c != -1)
+        {
+            putC(c, WHITE);
+            command[i++] = c;
+        }
+
+    } while (status != EOF);
+    print(WHITE, "\n");
+    command[i] = '\0';
+    print(RED, "%s", command);
+    putC('\n', WHITE);
+}
+
 static int ampersen_searcher(char *input)
 {
     int len = str_len(input);

@@ -34,7 +34,6 @@ void piped_line_read(char *buffer);
 int is_space(char c);
 void line_read(char *buffer, int *fds);
 void cmd_exit(char *args);
-void turn_red();
 
 static command_t commands[] = {
     {"help", cmd_help, "Displays this help message.", true},
@@ -157,28 +156,6 @@ void line_read(char *buffer, int *fds)
     put_string(": command not found", WHITE);
     put_string("\n", WHITE);
     call_free(command_copy);
-}
-
-void turn_red()
-{
-    char c;
-    ssize_t status = -1;
-    char command[3000] = {0};
-    int i = 0;
-    do
-    {
-        status = getC(&c);
-        if (c != 0 && c != -1)
-        {
-            putC(c, WHITE);
-            command[i++] = c;
-        }
-
-    } while (status != EOF);
-    print(WHITE, "\n");
-    command[i] = '\0';
-    print(RED, "%s", command);
-    putC('\n', WHITE);
 }
 
 void piped_line_read(char *buffer)
