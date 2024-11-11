@@ -64,7 +64,7 @@ static command_t tests[] = {
     {"process", process_test, "Runs the process test.", false},
     {"prio", prio_test, "Runs the priority test.", false},
     {"sync", sync_test, "Runs the sync test. (usage: sync <N value> [-no-sem])", false},
-    {"pipes", pipe_test, "Runs the pipes test.", false}};
+    };
 
 void starting_line()
 {

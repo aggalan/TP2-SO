@@ -68,9 +68,13 @@ int phylo_init()
         switch (cmd)
         {
         case ADD:
-            if (global_count <= MAX_PHYLO)
+            if (global_count < MAX_PHYLO)
             {
-                add_philo();
+                int status = add_philo();
+                if (status == -1)
+                {
+                    break;
+                }
             }
             else
             {
@@ -111,8 +115,17 @@ int add_philo()
     }
     philo_state[id] = THINKING;
     char *buffer = (char *)call_malloc(MAX_BUFFER);
+    if (buffer == NULL)
+    {
+        return -1;
+    }
     int_to_str(id, buffer);
     char **argv = (char **)call_malloc(2 * sizeof(char *));
+    if (argv == NULL)
+    {
+        call_free(buffer);
+        return -1;
+    }
     argv[0] = "philosopher";
     argv[1] = buffer;
     philo_pid[id] = call_create_process(philo, 0, 2, argv, 1);

@@ -153,28 +153,6 @@ void sync_test(char *args)
     }
 }
 
-void pipe_test(char *args)
-{
-
-    char *argv[1] = {"pipes test"};
-
-    int ampersen = ampersen_searcher(args);
-
-    if (ampersen == -1)
-    {
-        print(WHITE, "Syntax error on or near '&'\n");
-        return;
-    }
-    else if (ampersen)
-    {
-        call_create_process(main_test_pipes, 0, 1, argv, 0);
-    }
-    else
-    {
-        call_create_process(main_test_pipes, 0, 1, argv, 1);
-    }
-}
-
 void busy_wait()
 {
     char *argv[1] = {"loop"};
@@ -378,7 +356,7 @@ void wc()
         {
             putC(c, WHITE);
         }
-    } while (status != EOF && status != 0);
+    } while (status != EOF);
     putC('\n', WHITE);
     put_string("Lines: ", WHITE);
     put_int(lines, WHITE);
@@ -398,7 +376,6 @@ void turn_red()
         }
 
     } while (status != EOF);
-    print(WHITE, "\n");
 }
 
 static int ampersen_searcher(char *input)
