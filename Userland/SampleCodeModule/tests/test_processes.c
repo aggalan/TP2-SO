@@ -5,15 +5,6 @@
 #include "../include/lib.h"
 #include "include/test_processes.h"
 
-enum State
-{
-  BLOCKED,
-  READY,
-  RUNNING,
-  ZOMBIE,
-  KILLED
-};
-
 typedef struct P_rq
 {
   int32_t pid;
