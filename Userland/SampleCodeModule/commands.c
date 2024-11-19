@@ -13,7 +13,7 @@
 static int ampersen_searcher(char *str);
 void defence(char *args);
 void producer();
-void consumer_white();
+void consumer_blue();
 void consumer_red();
 
 void cmd_ps()
@@ -491,11 +491,11 @@ MVar_t * mvar;
 
 void defence(char *args)
 {
-    char *argv_p1[1] = {"p1"};   
-    char *argv_p2[1] = {"p2"};
+    char *argv_p1[1] = {"Producer 1"};   
+    char *argv_p2[1] = {"Producer 2"};
 
-    char *argv_p3[1] = {"p3 red"};
-    char *argv_p4[1] = {"p4 white"};
+    char *argv_p3[1] = {"Red Consumer"};
+    char *argv_p4[1] = {"Blue Consumer"};
 
     call_openMVar(mvar);
 
@@ -503,7 +503,7 @@ void defence(char *args)
     call_create_process(producer, 0, 1, argv_p2, 0);
 
     call_create_process(consumer_red, 0, 1, argv_p3, 0);
-    call_create_process(consumer_white, 0, 1, argv_p4, 0);
+    call_create_process(consumer_blue, 0, 1, argv_p4, 0);
 
 }
 
@@ -513,23 +513,23 @@ void producer(){
     while(1){
         int value = call_get_current_pid();
         call_putMVar(mvar, value);
-        print(0x0000FF, "Produced: %d\n \n", value);
+        print(WHITE, "%d ", value);
     }
     
 }
 
-void consumer_white(){
+void consumer_blue(){
     while(1){
         int value = call_takeMVar(mvar);
-        print(WHITE, "Consumed: %d\n \n", value);
-        call_sleepms(500);
+        print(0x0000FF, "%d ", value);
+        call_sleepms(100);
     }
 }
 
 void consumer_red(){
     while(1){
         int value = call_takeMVar(mvar);
-        print(0xFF0000, "Consumed: %d\n \n", value);
-        call_sleepms(500);
+        print(0xFF0000, "%d ", value);
+        call_sleepms(100);
     }
 }
