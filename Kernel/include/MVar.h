@@ -4,8 +4,8 @@
 
 typedef struct mvar_t{
     pid_t * value;
-    sem_t * full_sem;
-    sem_t * empty_sem;
+    int full_sem;
+    int empty_sem;
 }mvar_t;
 
 

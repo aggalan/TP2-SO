@@ -125,10 +125,10 @@ process_list_t* call_get_process_list();
 
 void call_free_process_list(process_list_t* list);
 
-void call_openMVar(mvar_t * mvar);
+void call_openMVar(MVar_t * mvar);
 
-void call_putMVar(mvar_t * mvar, int value);
+void call_putMVar(MVar_t * mvar, int value);
 
-int call_takeMVar(mvar_t * mvar);
+int call_takeMVar(MVar_t * mvar);
 
 #endif /* USERSYSCALLS_H */

@@ -13,6 +13,13 @@
 #define STDOUT 1
 #define STDERR 2
 
+typedef struct MVar_t {
+    pid_t * value;
+    int full_sem;
+    int empty_sem;
+} MVar_t;
+
+
 
 typedef struct process_info {
     pid_t pid;

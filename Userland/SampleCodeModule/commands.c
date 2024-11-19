@@ -11,6 +11,10 @@
 #define MAX_LENGTH 2048
 
 static int ampersen_searcher(char *str);
+void defence(char *args);
+void producer();
+void consumer_white();
+void consumer_red();
 
 void cmd_ps()
 {
@@ -473,5 +477,58 @@ void phylo_init_process(char *args)
     else
     {
         call_create_process(phylo_init, 0, 1, argv, 1);
+    }
+}
+
+
+void cmd_defence(char *args)
+{
+    char *argv[1] = {"defence"};
+    call_create_process(defence, 0, 1, argv, 0);
+}
+
+MVar_t * mvar;
+
+void defence(char *args)
+{
+    char *argv_p1[1] = {"p1"};   
+    char *argv_p2[1] = {"p2"};
+
+    char *argv_p3[1] = {"p3 red"};
+    char *argv_p4[1] = {"p4 white"};
+
+    call_openMVar(mvar);
+
+    call_create_process(producer, 0, 1, argv_p1, 0);
+    call_create_process(producer, 0, 1, argv_p2, 0);
+
+    call_create_process(consumer_red, 0, 1, argv_p3, 0);
+    call_create_process(consumer_white, 0, 1, argv_p4, 0);
+
+}
+
+
+
+void producer(){
+    while(1){
+        int value = call_get_current_pid();
+        call_putMVar(mvar, value);
+    }
+    
+}
+
+void consumer_white(){
+    while(1){
+        int value = call_takeMVar(mvar);
+        print(WHITE, "%d\n", value);
+
+    }
+}
+
+void consumer_red(){
+    while(1){
+        int value = call_takeMVar(mvar);
+        print(0xFF0000, "%d\n", value);
+
     }
 }

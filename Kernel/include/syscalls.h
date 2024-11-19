@@ -17,6 +17,7 @@
 #include <sys/types.h>
 #include "time.h"
 #include "fd_manager.h"
+#include "MVar.h"
 
 ssize_t sys_write(int descriptor, const char *str, int len, uint32_t hexColor);
 

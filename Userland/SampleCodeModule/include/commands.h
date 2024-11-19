@@ -36,5 +36,6 @@ void filter();
 void wc();
 void turn_red();
 void phylo_init_process(char *args);
+void cmd_defence(char *args);
 
 #endif
