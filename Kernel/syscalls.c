@@ -8,6 +8,7 @@
 #include "include/pipe_manager.h"
 #include "include/scheduler.h"
 #include "include/semaphores.h"
+#include "include/MVar.h"
 #define EOF -1
 
 #define MIN(x, y) x < y ? x : y
@@ -345,4 +346,19 @@ process_list_t *irq_get_process_list()
 void irq_free_process_list(process_list_t *list)
 {
     free_process_list(list);
+}
+
+void irq_openMVar(mvar_t * rsi)
+{
+    openMVar(mvar);
+}
+
+void irq_putMVar(mvar_t * rsi, int rdx)
+{
+    putMVar(rsi, rdx)
+}
+
+int irq_takeMVar(mvar_t * rsi)
+{
+    return takeMVar(rsi);
 }

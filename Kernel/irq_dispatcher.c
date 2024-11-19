@@ -49,7 +49,9 @@ syscall_func_t syscalls[] = {
     [40] = (syscall_func_t)irq_pipe_read,
     [41] = (syscall_func_t)irq_pipe_write,
     [42] = (syscall_func_t)irq_anon_pipe_create,
-
+    [43] = (syscall_func_t)irq_openMVar,
+    [44] = (syscall_func_t)irq_putMVar,
+    [45] = (syscall_func_t)irq_takeMVar,
 };
 
 static void int_20();

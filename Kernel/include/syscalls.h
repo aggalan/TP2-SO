@@ -106,4 +106,10 @@ process_list_t *irq_get_process_list();
 
 void irq_free_process_list(process_list_t *rsi);
 
+void irq_openMVar(mvar_t * mvar);
+
+void irq_putMVar(mvar_t * mvar, int value);
+
+int irq_takeMVar(mvar_t * mvar);
+
 #endif
