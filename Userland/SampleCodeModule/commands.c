@@ -513,6 +513,7 @@ void producer(){
     while(1){
         int value = call_get_current_pid();
         call_putMVar(mvar, value);
+        print(0x0000FF, "Produced: %d\n \n", value);
     }
     
 }
@@ -520,15 +521,15 @@ void producer(){
 void consumer_white(){
     while(1){
         int value = call_takeMVar(mvar);
-        print(WHITE, "%d\n", value);
-
+        print(WHITE, "Consumed: %d\n \n", value);
+        call_sleepms(500);
     }
 }
 
 void consumer_red(){
     while(1){
         int value = call_takeMVar(mvar);
-        print(0xFF0000, "%d\n", value);
-
+        print(0xFF0000, "Consumed: %d\n \n", value);
+        call_sleepms(500);
     }
 }
