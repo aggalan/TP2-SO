@@ -13,7 +13,7 @@
 static int ampersen_searcher(char *str);
 void defence(char *args);
 void producer();
-void consumer_blue();
+void consumer_white();
 void consumer_red();
 
 void cmd_ps()
@@ -503,7 +503,7 @@ void defence(char *args)
     call_create_process(producer, 0, 1, argv_p2, 0);
 
     call_create_process(consumer_red, 0, 1, argv_p3, 0);
-    call_create_process(consumer_blue, 0, 1, argv_p4, 0);
+    call_create_process(consumer_white, 0, 1, argv_p4, 0);
 
 }
 
@@ -513,16 +513,15 @@ void producer(){
     while(1){
         int value = call_get_current_pid();
         call_putMVar(mvar, value);
-        print(WHITE, "%d ", value);
+        call_sleepms(1);
     }
     
 }
 
-void consumer_blue(){
+void consumer_white(){
     while(1){
         int value = call_takeMVar(mvar);
-        print(0x0000FF, "%d ", value);
-        call_sleepms(100);
+        print(WHITE, "%d ", value);
     }
 }
 
@@ -530,6 +529,5 @@ void consumer_red(){
     while(1){
         int value = call_takeMVar(mvar);
         print(0xFF0000, "%d ", value);
-        call_sleepms(100);
     }
 }
